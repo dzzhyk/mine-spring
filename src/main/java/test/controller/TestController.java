@@ -1,15 +1,14 @@
-package com.yankaizhang.springframework.test.controller;
+package test.controller;
 
 import com.yankaizhang.springframework.annotation.Autowired;
 import com.yankaizhang.springframework.annotation.Controller;
 import com.yankaizhang.springframework.annotation.RequestMapping;
 import com.yankaizhang.springframework.annotation.RequestParam;
-import com.yankaizhang.springframework.test.service.TestService;
+import test.service.TestService;
 import com.yankaizhang.springframework.webmvc.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.HashMap;
 
 @Controller

@@ -142,8 +142,17 @@ public class DispatcherServlet extends HttpServlet {
             doDispatch(req, resp);
         }catch (Exception e){
             e.printStackTrace();
-            resp.getWriter().write("<h1>500 Exception</h1>\n Message：\n" +
-                    e.getMessage() + "\nStackTrace：\n" + Arrays.toString(e.getStackTrace()));
+            try {
+                ModelAndView modelAndView = new ModelAndView("500");
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("stackTrace", Arrays.toString(e.getStackTrace()));
+                modelAndView.setModel(map);
+                processDispatchResult(req, resp, modelAndView); // 返回500渲染页面
+            }catch (Exception e1){
+                e1.printStackTrace();
+                resp.getWriter().write("<h1>500 Exception</h1>\n Message：\n" +
+                        e.getMessage() + "\nStackTrace：\n" + Arrays.toString(e.getStackTrace()));
+            }
         }
     }
 

@@ -1,7 +1,7 @@
-package com.yankaizhang.springframework.test;
+package test;
 
 import com.yankaizhang.springframework.context.ApplicationContext;
-import com.yankaizhang.springframework.test.service.TestService;
+import test.service.TestService;
 
 public class Test {
     public static void main(String[] args) throws Exception {

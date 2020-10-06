@@ -4,12 +4,18 @@ import com.yankaizhang.springframework.annotation.Autowired;
 import com.yankaizhang.springframework.annotation.Controller;
 import com.yankaizhang.springframework.annotation.FrameworkAnnotation;
 import com.yankaizhang.springframework.annotation.Service;
+import com.yankaizhang.springframework.aop.AopConfig;
+import com.yankaizhang.springframework.aop.AopProxy;
+import com.yankaizhang.springframework.aop.CglibAopProxy;
+import com.yankaizhang.springframework.aop.JdkDynamicAopProxy;
+import com.yankaizhang.springframework.aop.support.AdvisedSupport;
 import com.yankaizhang.springframework.beans.BeanWrapper;
 import com.yankaizhang.springframework.beans.config.BeanDefinition;
 import com.yankaizhang.springframework.beans.config.BeanPostProcessor;
 import com.yankaizhang.springframework.beans.support.BeanDefinitionReader;
 import com.yankaizhang.springframework.context.support.DefaultListableBeanFactory;
 import com.yankaizhang.springframework.core.BeanFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -24,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 完成IoC、DI、AOP的衔接
  */
 @SuppressWarnings("all")
+@Slf4j
 public class ApplicationContext extends DefaultListableBeanFactory implements BeanFactory {
 
     private String[] configLocations;
@@ -205,6 +212,7 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
 
     /**
      * 实例化Bean定义
+     * 传入bean定义，返回bean实例
      */
     private Object instantiateBean(BeanDefinition beanDefinition) throws Exception {
         Object instance = null;
@@ -218,6 +226,17 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
             }else {
                 Class<?> clazz = Class.forName(beanClassName);
                 instance = clazz.newInstance();
+
+                // AOP支持
+                AdvisedSupport config = instantiateAopConfig(beanDefinition);
+                config.setTargetClass(clazz);   // 设置目标类
+                config.setTarget(instance);
+                if (config.pointCutMatch()){
+                    // 如果切点表达式命中了，说明这个实例中有方法需要被切入
+                    log.info("切点表达式命中于 ==> " + config.getTargetClass());
+                    instance = createProxy(config).getProxy();
+                }
+
                 this.factoryBeanObjectCache.put(beanClassName, instance);
             }
             return instance;
@@ -225,6 +244,33 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
             throw new Exception("bean实例化错误：" + beanClassName);
         }
     }
+
+
+    /**
+     * 加载aop配置，返回包装类
+     */
+    private AdvisedSupport instantiateAopConfig(BeanDefinition beanDefinition) throws Exception{
+        AopConfig aopConfig = new AopConfig();
+
+        aopConfig.setPointCut(reader.getConfig().getProperty("pointCut"));
+        aopConfig.setAspectClass(reader.getConfig().getProperty("aspectClass"));
+        aopConfig.setAspectBefore(reader.getConfig().getProperty("aspectBefore"));
+        aopConfig.setAspectAfter(reader.getConfig().getProperty("aspectAfter"));
+        aopConfig.setAspectAfterThrow(reader.getConfig().getProperty("aspectAfterThrow"));
+        aopConfig.setAspectAfterThrowingName(reader.getConfig().getProperty("aspectAfterThrowingName"));
+        return new AdvisedSupport(aopConfig);
+    }
+
+    /**
+     * 创建代理对象
+     */
+    private AopProxy createProxy(AdvisedSupport config){
+        if (config.getTargetClass().getInterfaces().length > 0){
+            return new JdkDynamicAopProxy(config);  // 如果对象存在接口，默认使用jdk动态代理
+        }
+        return new CglibAopProxy(config);       // 如果对象没有接口，使用CGLib动态代理
+    }
+
 
     /**
      * 获取容器中bean定义名称列表
