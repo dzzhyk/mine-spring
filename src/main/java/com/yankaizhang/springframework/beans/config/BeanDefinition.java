@@ -9,7 +9,7 @@ package com.yankaizhang.springframework.beans.config;
  */
 public class BeanDefinition {
     private String beanClassName;   // 用于实例化该bean定义的真正ClassName
-    private boolean lazyInit = false;
+    private boolean lazyInit = false;   // 默认关闭懒加载
     private String factoryBeanName; // IoC容器中该Bean对象的id
 
     public BeanDefinition(String beanClassName, String factoryBeanName) {

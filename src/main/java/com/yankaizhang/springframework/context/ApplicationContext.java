@@ -228,13 +228,15 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
                 Class<?> clazz = Class.forName(beanClassName);
                 instance = clazz.newInstance();
 
+
+
                 // AOP支持
                 AdvisedSupport config = instantiateAopConfig(beanDefinition);
                 config.setTargetClass(clazz);   // 设置目标类
                 config.setTarget(instance);
                 if (config.pointCutMatch()){
                     // 如果切点表达式命中了，说明这个实例中有方法需要被切入
-                    log.info("切点表达式命中于 ==> " + config.getTargetClass());
+                    log.debug("切点表达式命中于 ==> " + config.getTargetClass());
                     instance = createProxy(config).getProxy();
                 }
 

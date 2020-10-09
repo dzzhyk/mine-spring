@@ -39,10 +39,10 @@ public class DispatcherServlet extends HttpServlet {
         // 初始化IoC容器
         context = new ApplicationContext(config.getInitParameter(LOCATION));
         initStrategies(context);
-        logger.debug("容器中实例个数：" + String.valueOf(context.getFactoryBeanInstanceCache().size()));
     }
 
     private void initStrategies(ApplicationContext context){
+        logger.debug("**********Dispatcher Servlet 初始化开始**********");
         initMultipartResolver(context); // 多部分文件上传解析multipart
         initLocaleResolver(context);    // 本地化解析
         initThemeResolver(context);     // 主题解析
@@ -55,7 +55,8 @@ public class DispatcherServlet extends HttpServlet {
         initViewResolvers(context);     // 通过viewResolver将逻辑视图解析为具体视图实现
         initFlashMapManager(context);   // 初始化Flash映射管理器
 
-        logger.debug("Dispatcher Servlet init done!");
+        logger.debug("IoC容器中实例个数 ===> " + String.valueOf(context.getFactoryBeanInstanceCache().size()) + " 个");
+        logger.debug("**********Dispatcher Servlet 初始化完成**********");
     }
 
     /*
@@ -98,8 +99,7 @@ public class DispatcherServlet extends HttpServlet {
                     String url = ("/" + baseUrl + "/" + requestMapping.value()).replaceAll("/+", "/");
                     Pattern pattern = Pattern.compile(url);
                     handlerMappings.add(new HandlerMapping(beanInstance, method, pattern));
-
-                    System.out.println("Mapped: " + url + " ===> " + method);
+                    log.debug("Mapped: " + url + " ===> " + method);
                 }
             }
         }catch (Exception e){
@@ -157,7 +157,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void doDispatch(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        logger.debug("请求==>" + req.getRequestURI());
+        logger.debug("收到请求 ===> " + req.getRequestURI());
         HandlerMapping handlerMapping = getHandlerMapping(req);
         if (null == handlerMapping){
             // 如果没有这个controller，返回404页面

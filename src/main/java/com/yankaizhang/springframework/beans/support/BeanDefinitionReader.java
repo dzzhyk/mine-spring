@@ -1,6 +1,7 @@
 package com.yankaizhang.springframework.beans.support;
 
 import com.yankaizhang.springframework.beans.config.BeanDefinition;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.util.Properties;
 /**
  * BeanDefinitionReader主要完成对application.properties配置文件的解析
  */
+@Slf4j
 public class BeanDefinitionReader {
 
     private List<String> registryBeanClasses = new ArrayList<>();
@@ -69,11 +71,11 @@ public class BeanDefinitionReader {
             for (String className : registryBeanClasses) {
                 Class<?> clazz = Class.forName(className);
 
-                if (clazz.isInterface()) continue;
+                if (clazz.isInterface()) continue;  // 如果clazz就是接口就撤
 
                 result.add(doCreateBeanDefinition(toLowerCase(clazz.getSimpleName()), clazz.getName()));
 
-                // ?
+                // 接口的bean定义
                 for (Class<?> i : clazz.getInterfaces()) {
                     result.add(doCreateBeanDefinition(toLowerCase(i.getSimpleName()), clazz.getName()));
                 }
@@ -88,6 +90,7 @@ public class BeanDefinitionReader {
      * 将某个beanName创建为BeanDefinition对象
      */
     private BeanDefinition doCreateBeanDefinition(String factoryBeanName, String beanClassName){
+        log.debug("创建bean定义: "+ factoryBeanName + " ===> " + beanClassName);
         return new BeanDefinition(beanClassName, factoryBeanName);
     }
 

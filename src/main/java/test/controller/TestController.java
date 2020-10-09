@@ -4,6 +4,7 @@ import com.yankaizhang.springframework.annotation.Autowired;
 import com.yankaizhang.springframework.annotation.Controller;
 import com.yankaizhang.springframework.annotation.RequestMapping;
 import com.yankaizhang.springframework.annotation.RequestParam;
+import lombok.extern.slf4j.Slf4j;
 import test.service.TestService;
 import com.yankaizhang.springframework.webmvc.ModelAndView;
 import test.service.impl.UserServiceImpl;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
+@Slf4j
 @Controller
 public class TestController {
 

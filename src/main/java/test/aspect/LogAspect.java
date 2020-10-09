@@ -1,5 +1,6 @@
 package test.aspect;
 
+import com.yankaizhang.springframework.annotation.Component;
 import com.yankaizhang.springframework.annotation.aopanno.Aspect;
 import com.yankaizhang.springframework.aop.aspect.JoinPoint;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
  * 自定义切点类
  */
 @Slf4j
-@Aspect
 public class LogAspect {
 
     /**

@@ -1,5 +1,6 @@
 package com.yankaizhang.springframework.aop;
 
+import com.yankaizhang.springframework.aop.intercept.MethodInvocation;
 import com.yankaizhang.springframework.aop.support.AdvisedSupport;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.cglib.proxy.Enhancer;
@@ -8,12 +9,13 @@ import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * CGLib动态代理实现
  */
 @Slf4j
-public class CglibAopProxy implements AopProxy, InvocationHandler, MethodInterceptor {
+public class CglibAopProxy implements AopProxy, MethodInterceptor {
 
     private AdvisedSupport config;  // 获取代理配置文件封装
 
@@ -23,7 +25,7 @@ public class CglibAopProxy implements AopProxy, InvocationHandler, MethodInterce
 
     @Override
     public Object getProxy() {
-        log.info("创建CGLib动态代理目标 ===> " + this.config.getTargetClass().toString());
+        log.debug("创建CGLib动态代理目标 ===> " + this.config.getTargetClass().toString());
         return getProxy(this.config.getTargetClass().getClassLoader());
     }
 
@@ -37,20 +39,20 @@ public class CglibAopProxy implements AopProxy, InvocationHandler, MethodInterce
         return en.create();
     }
 
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return null;
-    }
-
     /**
      * intercept是执行代理方法的入口
      */
     @Override
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
-        // 执行原对象的方法
-        Object returnValue = methodProxy.invokeSuper(obj, args);
-        // 代理执行内容
-        log.info("执行CGLib代理对象代理方法 ===> " + method.getName());
-        return returnValue;
+
+        // 获取这个方法的拦截器链
+        List<Object> interceptorsAdvices = config.getInterceptorsAdvice(method, this.config.getTargetClass());
+
+        // 创建拦截器链的执行对象 MethodInvocation
+        MethodInvocation invocation =
+                new MethodInvocation(obj, method, this.config.getTarget(), this.config.getTargetClass(), args, interceptorsAdvices);
+        
+        // 执行这个拦截器链
+        return invocation.proceed();
     }
 }

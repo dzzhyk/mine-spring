@@ -26,7 +26,7 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
      */
     @Override
     public Object getProxy() {
-        log.info("创建JDK动态代理目标 ===> " + this.config.getTargetClass().toString());
+        log.debug("创建JDK动态代理目标 ===> " + this.config.getTargetClass().toString());
         return getProxy(this.config.getTargetClass().getClassLoader());
     }
 
