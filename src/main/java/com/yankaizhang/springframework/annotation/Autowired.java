@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@FrameworkAnnotation
+@Component
 public @interface Autowired {
     String value() default "";
 }

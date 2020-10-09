@@ -2,7 +2,7 @@ package com.yankaizhang.springframework.context;
 
 import com.yankaizhang.springframework.annotation.Autowired;
 import com.yankaizhang.springframework.annotation.Controller;
-import com.yankaizhang.springframework.annotation.FrameworkAnnotation;
+import com.yankaizhang.springframework.annotation.Component;
 import com.yankaizhang.springframework.annotation.Service;
 import com.yankaizhang.springframework.aop.AopConfig;
 import com.yankaizhang.springframework.aop.AopProxy;
@@ -123,7 +123,8 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
             if (!beanDefinitionEntry.getValue().isLazyInit()){
                 try {
                     Class<?> clazz = Class.forName(beanDefinitionEntry.getValue().getBeanClassName());
-                    if (clazz.isAnnotationPresent((Class<? extends FrameworkAnnotation>) type)){
+                    if (clazz.isAnnotationPresent((Class<? extends Component>) type)){
+                        // 如果是注解定义的组件
                         getBean(beanName);
                     }
 

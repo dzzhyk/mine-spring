@@ -6,9 +6,9 @@ import java.lang.annotation.*;
 /**
  * 元注解
  */
-@Target(ElementType.ANNOTATION_TYPE)
+@Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE})
 @Documented
 @Inherited
-public @interface FrameworkAnnotation {
+public @interface Component {
     String value() default "";
 }

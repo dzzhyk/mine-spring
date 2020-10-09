@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@FrameworkAnnotation
+@Component
 public @interface Service {
     String value() default "";
 }
