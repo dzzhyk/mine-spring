@@ -23,7 +23,7 @@ public class AfterThrowingAdvice extends AbstractAspectJAdvice implements Advice
         try {
             return methodInvocation.proceed();
         }catch (Throwable ex){
-            invokeAdviceMethod(methodInvocation, null, ex.getCause());  // 在方法调用过程中拦截异常
+            invokeAdviceMethod(methodInvocation, null, ex);  // 在方法调用过程中拦截异常
             throw ex;
         }
     }

@@ -71,7 +71,7 @@ public class BeanDefinitionReader {
             for (String className : registryBeanClasses) {
                 Class<?> clazz = Class.forName(className);
 
-                if (clazz.isInterface()) continue;  // 如果clazz就是接口就撤
+                if (clazz.isInterface()) continue;  // 如果clazz是接口就撤
 
                 result.add(doCreateBeanDefinition(toLowerCase(clazz.getSimpleName()), clazz.getName()));
 
@@ -90,7 +90,7 @@ public class BeanDefinitionReader {
      * 将某个beanName创建为BeanDefinition对象
      */
     private BeanDefinition doCreateBeanDefinition(String factoryBeanName, String beanClassName){
-        log.debug("创建bean定义: "+ factoryBeanName + " ===> " + beanClassName);
+        log.debug("创建bean定义: [factoryBeanName ==> "+ factoryBeanName + "] [beanClassName ==> " + beanClassName + "]");
         return new BeanDefinition(beanClassName, factoryBeanName);
     }
 

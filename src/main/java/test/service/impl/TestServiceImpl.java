@@ -9,7 +9,7 @@ import test.service.TestService;
 public class TestServiceImpl implements TestService {
     @Override
     public String sayHello(String name) {
-        log.info("hello函数体执行...");
+        log.info("sayHello函数体执行...");
         return "哈哈！原来你就是那个" + name + "啊，你好你好！";
     }
 }

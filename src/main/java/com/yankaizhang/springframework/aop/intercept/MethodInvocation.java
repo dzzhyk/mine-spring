@@ -1,6 +1,7 @@
 package com.yankaizhang.springframework.aop.intercept;
 
 import com.yankaizhang.springframework.aop.aspect.JoinPoint;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 /**
  * 执行整个拦截器链
  */
+@Slf4j
 public class MethodInvocation implements JoinPoint {
 
 
@@ -34,6 +36,7 @@ public class MethodInvocation implements JoinPoint {
         if (currentInterceptorIndex == this.interceptors.size() -1){
             // 如果没有拦截器或者已经执行完毕了
             // 就正常执行方法
+            log.debug("执行方法 ==> " + method.getName());
             return this.method.invoke(this.target, this.arguments);
         }
 

@@ -6,5 +6,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface AfterThrowing {
-    String pointcut() default "";
+    String value() default "";
+    String exception() default "java.lang.Exception";
 }

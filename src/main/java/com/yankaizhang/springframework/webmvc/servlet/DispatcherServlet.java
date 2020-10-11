@@ -55,7 +55,8 @@ public class DispatcherServlet extends HttpServlet {
         initViewResolvers(context);     // 通过viewResolver将逻辑视图解析为具体视图实现
         initFlashMapManager(context);   // 初始化Flash映射管理器
 
-        logger.debug("IoC容器中实例个数 ===> " + String.valueOf(context.getFactoryBeanInstanceCache().size()) + " 个");
+        logger.debug("IoC容器中 name实例个数 ===> " + String.valueOf(context.getFactoryBeanInstanceCacheByName().size()) + " 个");
+        logger.debug("IoC容器中 type实例个数 ===> " + String.valueOf(context.getFactoryBeanInstanceCacheByType().size()) + " 个");
         logger.debug("**********Dispatcher Servlet 初始化完成**********");
     }
 
@@ -74,7 +75,8 @@ public class DispatcherServlet extends HttpServlet {
      * 初始化HandlerMapping
      */
     private void initHandlerMappings(ApplicationContext context){
-        Map<String, BeanWrapper> ioc = context.getFactoryBeanInstanceCache();   // 获取已经存在的实例化好的对象
+        // TODO: 只加载name空间的ioc
+        Map<String, BeanWrapper> ioc = context.getFactoryBeanInstanceCacheByName();   // 获取已经存在的实例化好的对象
         try {
             for (BeanWrapper beanWrapper : ioc.values()) {
                 Object beanInstance = beanWrapper.getWrappedInstance();

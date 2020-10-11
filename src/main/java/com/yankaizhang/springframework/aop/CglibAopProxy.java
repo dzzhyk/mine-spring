@@ -43,15 +43,23 @@ public class CglibAopProxy implements AopProxy, MethodInterceptor {
      * intercept是执行代理方法的入口
      */
     @Override
-    public Object intercept(Object obj, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+    public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
 
         // 获取这个方法的拦截器链
         List<Object> interceptorsAdvices = config.getInterceptorsAdvice(method, this.config.getTargetClass());
 
         // 创建拦截器链的执行对象 MethodInvocation
         MethodInvocation invocation =
-                new MethodInvocation(obj, method, this.config.getTarget(), this.config.getTargetClass(), args, interceptorsAdvices);
-        
+                new MethodInvocation(proxy, method, this.config.getTarget(), this.config.getTargetClass(), args, interceptorsAdvices);
+
+        if (!method.getName().equals("toString")){
+            log.debug(method.getName() + " 方法 获取拦截器链 ===>");
+            for (int i = 0; i < interceptorsAdvices.size(); i++) {
+                log.debug(i + " ==> " + interceptorsAdvices.get(i).getClass());
+            }
+            log.debug("==> 执行以上拦截器链...");
+        }
+
         // 执行这个拦截器链
         return invocation.proceed();
     }

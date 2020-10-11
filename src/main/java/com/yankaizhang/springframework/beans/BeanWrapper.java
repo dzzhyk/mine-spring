@@ -6,11 +6,12 @@ package com.yankaizhang.springframework.beans;
  */
 public class BeanWrapper {
 
-    private Object wrappedInstance;
-    private Class<?> wrappedClass;
+    private Object wrappedInstance; // 包装对象
+    private Class<?> wrappedClass;  // 包装对象目标最终的实现类
 
     public BeanWrapper(Object wrappedInstance) {
         this.wrappedInstance = wrappedInstance;
+        this.wrappedClass = wrappedInstance.getClass(); // 只有在创建最初包装对象的时候，保存目标类
     }
 
     public Object getWrappedInstance() {
@@ -21,6 +22,11 @@ public class BeanWrapper {
      * @return 代理以后的Class ($Proxy0)
      */
     public Class<?> getWrappedClass() {
-        return this.wrappedInstance.getClass();
+        return wrappedClass;
     }
+
+    public void setWrappedInstance(Object wrappedInstance) {
+        this.wrappedInstance = wrappedInstance;
+    }
+
 }

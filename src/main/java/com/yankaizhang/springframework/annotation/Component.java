@@ -8,7 +8,6 @@ import java.lang.annotation.*;
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE})
 @Documented
-@Inherited
 public @interface Component {
     String value() default "";
 }
