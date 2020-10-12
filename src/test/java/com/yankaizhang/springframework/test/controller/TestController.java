@@ -1,19 +1,17 @@
-package test.controller;
+package com.yankaizhang.springframework.test.controller;
 
 import com.yankaizhang.springframework.annotation.Autowired;
 import com.yankaizhang.springframework.annotation.Controller;
 import com.yankaizhang.springframework.annotation.RequestMapping;
 import com.yankaizhang.springframework.annotation.RequestParam;
-import lombok.extern.slf4j.Slf4j;
-import test.service.TestService;
+import com.yankaizhang.springframework.test.service.TestService;
 import com.yankaizhang.springframework.webmvc.ModelAndView;
-import test.service.impl.UserServiceImpl;
+import com.yankaizhang.springframework.test.service.impl.UserServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
-@Slf4j
 @Controller
 public class TestController {
 
@@ -39,5 +37,10 @@ public class TestController {
         map.put("answer", result);
         ModelAndView modelAndView = new ModelAndView("hello", map);     // 返回到hello.html
         return modelAndView;
+    }
+
+    @RequestMapping("/index")
+    public String toIndex(HttpServletRequest req, HttpServletResponse resp){
+        return "index";
     }
 }
