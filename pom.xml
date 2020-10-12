@@ -6,8 +6,11 @@
 
     <groupId>com.yankaizhang</groupId>
     <artifactId>springframework</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
+
+    <description>springframework实现By: dzzhyk</description>
+    <url>https://www.yankaizhang.com</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

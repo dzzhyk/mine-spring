@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,15 +79,38 @@ public class HandlerAdapter {
         Object returnValue = handlerMapping.getMethod().invoke(handlerMapping.getController(), paramValues);
         if (returnValue == null) return null;
 
+
         // 判断返回类型
         Class<?> returnType = handlerMapping.getMethod().getReturnType();
+        ModelAndView modelAndView = null;
         if (ModelAndView.class.equals(returnType)) {
-            return (ModelAndView) returnValue;
+            modelAndView = (ModelAndView) returnValue;
         } else if (String.class.equals(returnType)) {
-            return new ModelAndView((String) returnValue);
+            modelAndView = new ModelAndView((String) returnValue);
         } else {
             return null;
         }
+        // 将request中的内容加入model
+        return parseRequestAttributes(modelAndView, req);
+    }
+
+
+    /**
+     * 解析request中的attribute，将其加入model
+     */
+    private ModelAndView parseRequestAttributes(ModelAndView modelAndView, HttpServletRequest request){
+        Enumeration attributeNames = request.getAttributeNames();
+        Map<String, Object> model = (Map<String, Object>) modelAndView.getModel();
+        if (null == model){
+            model = new HashMap<>();
+        }
+        while (attributeNames.hasMoreElements()){
+            String s = (String) attributeNames.nextElement();
+            Object attribute = request.getAttribute(s);
+            model.put(s, attribute);
+        }
+        modelAndView.setModel(model);
+        return modelAndView;
     }
 
 

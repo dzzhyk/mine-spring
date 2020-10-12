@@ -41,6 +41,7 @@ public class TestController {
 
     @RequestMapping("/index")
     public String toIndex(HttpServletRequest req, HttpServletResponse resp){
+        req.setAttribute("username", "用户名");
         return "index";
     }
 }
