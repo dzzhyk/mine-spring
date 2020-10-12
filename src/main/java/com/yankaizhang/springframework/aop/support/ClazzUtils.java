@@ -1,6 +1,6 @@
 package com.yankaizhang.springframework.aop.support;
 
-import lombok.extern.slf4j.Slf4j;
+import com.yankaizhang.springframework.context.ApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,14 +15,13 @@ import java.util.jar.JarFile;
 /**
  * 包名工具类
  */
-@Slf4j
 public class ClazzUtils {
     private static final String CLASS_SUFFIX = ".class";
     private static final String CLASS_FILE_PREFIX = File.separator + "classes"  + File.separator;
     private static final String PACKAGE_SEPARATOR = ".";
 
 
-
+    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ClazzUtils.class);
 
     /**
      * 查找包下的所有类的名字
@@ -164,7 +163,7 @@ public class ClazzUtils {
 
     /**
      * 分离字符串
-     * test.service.impl.*.*(*)
+     * com.yankaizhang.springframework.test.service.impl.*.*(*)
      */
     public static String[] dividePackageClassMethodParamsString(String ss) throws Exception{
         String[] strings = new String[4];

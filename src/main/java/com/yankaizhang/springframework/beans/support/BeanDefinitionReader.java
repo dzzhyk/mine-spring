@@ -1,7 +1,7 @@
 package com.yankaizhang.springframework.beans.support;
 
 import com.yankaizhang.springframework.beans.config.BeanDefinition;
-import lombok.extern.slf4j.Slf4j;
+import com.yankaizhang.springframework.context.ApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +14,9 @@ import java.util.Properties;
 /**
  * BeanDefinitionReader主要完成对application.properties配置文件的解析
  */
-@Slf4j
 public class BeanDefinitionReader {
+
+    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BeanDefinitionReader.class);
 
     private List<String> registryBeanClasses = new ArrayList<>();
     private Properties config = new Properties();

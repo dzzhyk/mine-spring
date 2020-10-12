@@ -14,7 +14,7 @@
     </appender>
 
     <!-- 项目默认日志等级 -->
-    <logger name="com.yankaizhang" level="DEBUG" />
+    <logger name="com.yankaizhang.springframework" level="DEBUG" />
 
     <!-- 日志输出级别 -->
     <root level="INFO">

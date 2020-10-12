@@ -1,7 +1,7 @@
 package com.yankaizhang.springframework.aop.intercept;
 
 import com.yankaizhang.springframework.aop.aspect.JoinPoint;
-import lombok.extern.slf4j.Slf4j;
+import com.yankaizhang.springframework.context.ApplicationContext;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -10,9 +10,9 @@ import java.util.List;
 /**
  * 执行整个拦截器链
  */
-@Slf4j
 public class MethodInvocation implements JoinPoint {
 
+    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MethodInvocation.class);
 
     private Object proxy;   // 代理对象
     private Method method;  // 代理的目标方法

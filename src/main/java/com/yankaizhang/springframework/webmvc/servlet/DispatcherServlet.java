@@ -5,7 +5,6 @@ import com.yankaizhang.springframework.annotation.RequestMapping;
 import com.yankaizhang.springframework.beans.BeanWrapper;
 import com.yankaizhang.springframework.context.ApplicationContext;
 import com.yankaizhang.springframework.webmvc.*;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +22,6 @@ import java.util.regex.Pattern;
 /**
  * 手写实现DispatcherServlet
  */
-@Slf4j
 @SuppressWarnings("all")
 public class DispatcherServlet extends HttpServlet {
 
@@ -101,7 +99,7 @@ public class DispatcherServlet extends HttpServlet {
                     String url = ("/" + baseUrl + "/" + requestMapping.value()).replaceAll("/+", "/");
                     Pattern pattern = Pattern.compile(url);
                     handlerMappings.add(new HandlerMapping(beanInstance, method, pattern));
-                    log.debug("Mapped: " + url + " ===> " + method);
+                    logger.debug("Mapped: " + url + " ===> " + method);
                 }
             }
         }catch (Exception e){

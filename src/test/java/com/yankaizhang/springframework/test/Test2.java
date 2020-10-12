@@ -1,8 +1,8 @@
-package test;
+package com.yankaizhang.springframework.test;
 
 import com.yankaizhang.springframework.aop.support.ClazzUtils;
-import test.service.TestService;
-import test.service.impl.TestServiceImpl;
+import com.yankaizhang.springframework.test.service.TestService;
+import com.yankaizhang.springframework.test.service.impl.TestServiceImpl;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class Test2 {
     public static void main(String[] args) {
 
-        String pointCut = "* test.service.impl.TestServiceImpl.*(*)";
+        String pointCut = "* com.yankaizhang.springframework.test.service.impl.TestServiceImpl.*(*)";
 
         // test\.service\..*\..*\(.*\)
         // test\.service\..*\..*\(\..*\)

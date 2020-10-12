@@ -2,10 +2,8 @@ package com.yankaizhang.springframework.context;
 
 import com.yankaizhang.springframework.annotation.Autowired;
 import com.yankaizhang.springframework.annotation.Controller;
-import com.yankaizhang.springframework.annotation.Component;
 import com.yankaizhang.springframework.annotation.Service;
 import com.yankaizhang.springframework.annotation.aopanno.Aspect;
-import com.yankaizhang.springframework.annotation.aopanno.Before;
 import com.yankaizhang.springframework.annotation.aopanno.PointCut;
 import com.yankaizhang.springframework.aop.AopConfig;
 import com.yankaizhang.springframework.aop.AopProxy;
@@ -20,7 +18,6 @@ import com.yankaizhang.springframework.beans.config.BeanPostProcessor;
 import com.yankaizhang.springframework.beans.support.BeanDefinitionReader;
 import com.yankaizhang.springframework.context.support.DefaultListableBeanFactory;
 import com.yankaizhang.springframework.core.BeanFactory;
-import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -35,8 +32,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * 完成IoC、DI、AOP的衔接
  */
 @SuppressWarnings("all")
-@Slf4j
 public class ApplicationContext extends DefaultListableBeanFactory implements BeanFactory {
+
+    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ApplicationContext.class);
 
     private String[] configLocations;
     private BeanDefinitionReader reader;

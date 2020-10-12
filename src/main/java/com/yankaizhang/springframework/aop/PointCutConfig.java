@@ -1,9 +1,9 @@
 package com.yankaizhang.springframework.aop;
 
-import lombok.Data;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.yankaizhang.springframework.aop.support.ClazzUtils.dividePackageClassMethodParamsString;
@@ -11,7 +11,6 @@ import static com.yankaizhang.springframework.aop.support.ClazzUtils.dividePacka
 /**
  * pointCut信息封装类
  */
-@Data
 public class PointCutConfig {
 
     private int modifyType;
@@ -39,7 +38,7 @@ public class PointCutConfig {
             }
         }
 
-        // "public static final java.lang.String test.service.impl.UserServiceImpl.helloUser(java.lang.String)"
+        // "public static final java.lang.String com.yankaizhang.springframework.test.service.impl.UserServiceImpl.helloUser(java.lang.String)"
         String methodString = method.toString();
         String[] methodParts = methodString.split(" ");
         int index = 2;
@@ -55,7 +54,7 @@ public class PointCutConfig {
                default:break;
            }
         }
-        // "java.lang.String test.service.impl.UserServiceImpl.helloUser(java.lang.String)"
+        // "java.lang.String com.yankaizhang.springframework.test.service.impl.UserServiceImpl.helloUser(java.lang.String)"
         String backPart = methodParts[index];
         String withoutParams = backPart.substring(0, backPart.lastIndexOf("("));
         String[] withoutParamsSplit = withoutParams.split("\\.");
@@ -77,7 +76,7 @@ public class PointCutConfig {
 
     /**
      * 判断切点表达式和该config包装是否匹配
-     * public * test.service.impl.*.*(*)
+     * public * com.yankaizhang.springframework.test.service.impl.*.*(*)
      * 注意：切点表达式暂时不支持 声明异常类型匹配
      */
     public boolean matches(String pointCut) throws Exception {
@@ -197,5 +196,83 @@ public class PointCutConfig {
                 checkClassNameMatches(strings[1]) &&
                 checkMethodNameMatches(strings[2]) &&
                 checkParamsTypeMatches(strings[3]);
+    }
+
+    public int getModifyType() {
+        return modifyType;
+    }
+
+    public void setModifyType(int modifyType) {
+        this.modifyType = modifyType;
+    }
+
+    public String getReturnType() {
+        return returnType;
+    }
+
+    public void setReturnType(String returnType) {
+        this.returnType = returnType;
+    }
+
+    public int getDeclareType() {
+        return declareType;
+    }
+
+    public void setDeclareType(int declareType) {
+        this.declareType = declareType;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public Class<?>[] getParamTypes() {
+        return paramTypes;
+    }
+
+    public void setParamTypes(Class<?>[] paramTypes) {
+        this.paramTypes = paramTypes;
+    }
+
+    public Class<?>[] getThrowTypes() {
+        return throwTypes;
+    }
+
+    public void setThrowTypes(Class<?>[] throwTypes) {
+        this.throwTypes = throwTypes;
+    }
+
+    @Override
+    public String toString() {
+        return "PointCutConfig{" +
+                "modifyType=" + modifyType +
+                ", returnType='" + returnType + '\'' +
+                ", declareType=" + declareType +
+                ", packageName='" + packageName + '\'' +
+                ", className='" + className + '\'' +
+                ", methodName='" + methodName + '\'' +
+                ", paramTypes=" + Arrays.toString(paramTypes) +
+                ", throwTypes=" + Arrays.toString(throwTypes) +
+                '}';
     }
 }

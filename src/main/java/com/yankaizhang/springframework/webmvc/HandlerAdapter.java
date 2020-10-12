@@ -78,12 +78,13 @@ public class HandlerAdapter {
         Object returnValue = handlerMapping.getMethod().invoke(handlerMapping.getController(), paramValues);
         if (returnValue == null) return null;
 
-        // 判断返回类型是否是ModelAndView类型
-        boolean isModelAndView = handlerMapping.getMethod().getReturnType() == ModelAndView.class;
-        if (isModelAndView){
+        // 判断返回类型
+        Class<?> returnType = handlerMapping.getMethod().getReturnType();
+        if (ModelAndView.class.equals(returnType)) {
             return (ModelAndView) returnValue;
-        }else {
-            // 如果不是返回ModelAndView，返回Null
+        } else if (String.class.equals(returnType)) {
+            return new ModelAndView((String) returnValue);
+        } else {
             return null;
         }
     }

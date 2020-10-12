@@ -2,21 +2,18 @@ package com.yankaizhang.springframework.aop;
 
 import com.yankaizhang.springframework.aop.intercept.MethodInvocation;
 import com.yankaizhang.springframework.aop.support.AdvisedSupport;
-import lombok.extern.slf4j.Slf4j;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
 
 /**
  * CGLib动态代理实现
  */
-@Slf4j
 public class CglibAopProxy implements AopProxy, MethodInterceptor {
-
+    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CglibAopProxy.class);
     private AdvisedSupport config;  // 获取代理配置文件封装
 
     public CglibAopProxy(AdvisedSupport config) {

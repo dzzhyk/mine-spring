@@ -1,18 +1,13 @@
 package com.yankaizhang.springframework.aop.support;
 
-import com.sun.xml.internal.ws.util.StringUtils;
-import com.yankaizhang.springframework.aop.PointCutConfig;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.Comparator;
 
 /**
  * AdviceSupport比较器
  * 按照目标层级深度从深到浅排列
  */
-@Slf4j
 public class AdviceSupportComparator implements Comparator<AdvisedSupport> {
-
+    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AdviceSupportComparator.class);
     @Override
     public int compare(AdvisedSupport o1, AdvisedSupport o2) {
         String pointCut1 = o1.getAopConfig().getPointCut();
@@ -22,7 +17,7 @@ public class AdviceSupportComparator implements Comparator<AdvisedSupport> {
 
     private int doCompare(String pointCut1, String pointCut2){
 
-        // test.service.impl.TestServiceImpl.*(*)
+        // com.yankaizhang.springframework.test.service.impl.TestServiceImpl.*(*)
         String[] split1 = pointCut1.split(" ");
         String[] split2 = pointCut2.split(" ");
         String temp1 = "";

@@ -2,7 +2,7 @@ package com.yankaizhang.springframework.aop;
 
 import com.yankaizhang.springframework.aop.intercept.MethodInvocation;
 import com.yankaizhang.springframework.aop.support.AdvisedSupport;
-import lombok.extern.slf4j.Slf4j;
+import com.yankaizhang.springframework.context.ApplicationContext;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -12,9 +12,8 @@ import java.util.List;
 /**
  * Jdk动态代理实现
  */
-@Slf4j
 public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
-
+    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JdkDynamicAopProxy.class);
     private AdvisedSupport config;  // 获取代理配置文件封装
 
     public JdkDynamicAopProxy(AdvisedSupport config) {

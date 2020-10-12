@@ -1,4 +1,4 @@
-package test;
+package com.yankaizhang.springframework.test;
 
 import com.yankaizhang.springframework.aop.PointCutConfig;
 
