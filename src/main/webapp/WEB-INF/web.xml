@@ -3,10 +3,9 @@
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-  <display-name>springMVC</display-name>
-  <!-- 配置好web.xml -->
+  <display-name>com.yankaizhang.springframework</display-name>
   <servlet>
-    <servlet-name>springMVC</servlet-name>
+    <servlet-name>dispatcherServlet</servlet-name>
     <servlet-class>com.yankaizhang.springframework.webmvc.servlet.DispatcherServlet</servlet-class>
     <init-param>
       <param-name>contextConfigLocation</param-name>
@@ -16,7 +15,7 @@
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>springMVC</servlet-name>
+    <servlet-name>dispatcherServlet</servlet-name>
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
 </web-app>
