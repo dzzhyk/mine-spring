@@ -77,16 +77,14 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
         doRegisterBeanDefinition(beanDefinitions);
         // 4. 将所有bean定义实例化
         doInstance();
-        // 5. 处理AOP切面
-        doAop();
-        // 6. 对当前bean依赖注入
+        // 5. 对当前bean依赖注入
         doAutowired();
     }
 
     /**
      * 处理Aop切面
      */
-    private void doAop() throws Exception {
+    public void doAop() throws Exception {
 
         postProcessAspects();
 

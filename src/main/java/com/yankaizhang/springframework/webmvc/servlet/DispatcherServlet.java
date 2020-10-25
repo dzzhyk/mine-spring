@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebInitParam;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +25,15 @@ import java.util.regex.Pattern;
  * 手写实现DispatcherServlet
  */
 @SuppressWarnings("all")
+@WebServlet(
+        name = "dispatcherServlet",
+        displayName = "com.yankaizhang.springframework",
+        urlPatterns="/*",
+        loadOnStartup = 1,
+        initParams = {
+                @WebInitParam(name = "contextConfigLocation", value = "classpath:application.properties")
+        }
+)
 public class DispatcherServlet extends HttpServlet {
 
     public static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
@@ -56,6 +67,13 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("IoC容器中 name实例个数 ===> " + String.valueOf(context.getFactoryBeanInstanceCacheByName().size()) + " 个");
         logger.debug("IoC容器中 type实例个数 ===> " + String.valueOf(context.getFactoryBeanInstanceCacheByType().size()) + " 个");
         logger.debug("**********Dispatcher Servlet 初始化完成**********");
+
+        try {
+            context.doAop();
+        } catch (Exception e) {
+            logger.error("Context 初始化AOP错误");
+            e.printStackTrace();
+        }
     }
 
     /*
