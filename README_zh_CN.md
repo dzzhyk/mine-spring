@@ -1,7 +1,5 @@
 # mine-springframework 简洁的Spring框架实现
 
-[Chinese](./README_zh_CN.md)
-
 ## 背景
 
 手写springframework是本人学习spring框架原理和学习spring源码的练习产物。  
