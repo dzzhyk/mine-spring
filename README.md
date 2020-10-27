@@ -1,73 +1,101 @@
-# mine-springframework 简洁的Spring框架实现
+# mine-springframework
+A Simple Spring-Framework implementation for learning.
 
-[Chinese](./README_zh_CN.md)
+[README_zh_CN](./README_zh_CN.md)
 
-## 背景
+## Background
 
-手写springframework是本人学习spring框架原理和学习spring源码的练习产物。  
-通过本项目，可以了解spring的简易原理，以及spring主要功能的底层实现，学习spring更加清晰明白！
+mine-springframework is a practice product of learning Spring-Framework source code.  
+Through this project, you can understand the simple implementation ways of spring and learn about Spring more clearly!
 
-## 功能
+## Features
 
-1. springIoC容器实现
-2. 简单又不失功能的springMVC功能
-3. AOP编程
-4. 以上功能的注解支持，注解名称和使用方法基本与spring相同~
+1. Simple Spring IoC container implementation.
+2. Simple yet functional springMVC function.
+3. Annotation based AOP programming support.
+4. Almost the same annotation usage as Spring-Framework.
+5. coming soon...
 
-## 下载源码
+## Install
 
-## 如何使用mine-springframework
-使用方式基本和创建spring项目完全相同，只需要创建一个web项目并且导入maven依赖即可
+```shell script
+$ git clone https://github.com/dzzhyk/mine-springframework.git
+$ cd mine-springframework
+```
 
-首先可以下载项目源码，然后使用maven进行打包得到jar，在项目中添加jar包依赖即可使用
+## Usage
 
----
+### 1. Add lib dependency to your project.
 
-除此之外，如果你可以访问我的maven仓库，可以直接使用maven坐标导入依赖：
+1. Download the latest release version .jar package of this project.
+2. Create or open your web project using an IDE (such as `IntelliJ IDEA`).
+3. Create a new `lib` directory under your project directory, place the jar package in it,
+ and then add `lib` as External Library for your project.
+
+### 2. Create a new project in the way of a classical Spring project.
+The usage is basically the same as creating a Spring project, you only need to create a Spring-web project and import maven dependencies.  
+
+Use [maven coordinates](https://en.wikipedia.org/wiki/Apache_Maven) to import the following dependencies:
 ```xml
 <dependency>
   <groupId>com.yankaizhang</groupId>
   <artifactId>dzzhyk-springframework</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${version}</version>
 </dependency>
 ```
 
-或者使用以下提供好的maven archetype工程文件来快速创建工程
+### 3. Create your project through a maven-archetype.
+Directly use the following provided maven-archetype to quickly create a web project using mine-springframework.  
+
+This requires that you need to add this archetype to your maven tool.
 
 ```xml
 <dependency>
   <groupId>com.yankaizhang</groupId>
   <artifactId>dzzhyk-archetype-springframework</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${version}</version>
 </dependency>
 ```
 
-## 相关项目
+## Related Efforts
 
-- [spring-framework](https://github.com/spring-projects/spring-framework) - Spring 框架源码
+- [spring-framework](https://github.com/spring-projects/spring-framework) - spring-projects/spring-framework
 
-## 更新日志
+## Update
+
 [logs](./UPDATE.md)
 
 ## TODO
 
-- [ ] springJDBC实现
-- [x] 多切面AOP支持
-- [ ] 类似JPA的简易orm框架实现
-- [ ] @ResponseBody注解和json解析支持
-- [ ] Controller参数简化
+- [ ] Simple Spring JDBC.
+- [x] Multi-Aspect AOP support.
+- [ ] Simple ORM like Spring Data JPA.
+- [ ] @ResponseBody and JSON parser.
+- [ ] Simplify to Controller params.
 
-## 已知问题
+## Known Bugs
 
-- [ ] Controller方法不能被AOP切面切入问题
+**NEED YOUR HELP!**
+
+- [ ] The Controller's method cannot be accessed by the AOP aspect.
 
 
-## 联系作者
+## Maintainer
 
-- 作者：dzzhyk
-- 邮箱：1354839386@qq.com
-- [欢迎关注CSDN](https://dzzhyk.blog.csdn.net/)
+[@dzzhyk.](https://github.com/dzzhyk)
 
-## 开源协议
+## Contribute
 
-- [MIT]() © Richard Littauer
+Feel free to dive in! Open an issue or submit PRs.
+
+
+## Contact
+
+- Author：dzzhyk
+- Email：dzzhyk@qq.com
+- [Personal Blog](https://dzzhyk.blog.csdn.net/)
+
+
+## License
+
+- [MIT](./LICENSE) © dzzhyk
