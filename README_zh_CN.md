@@ -1,4 +1,6 @@
-# mine-springframework 简洁的Spring框架实现
+# mine-springframework
+
+> 简洁的Spring框架实现
 
 [Chinese](./README_zh_CN.md)
 

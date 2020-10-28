@@ -1,5 +1,5 @@
 # mine-springframework
-A Simple Spring-Framework implementation for learning.
+> A Simple Spring-Framework implementation for learning.
 
 [README_zh_CN](./README_zh_CN.md)
 
