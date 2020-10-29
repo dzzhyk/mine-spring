@@ -7,7 +7,16 @@
     <groupId>com.yankaizhang</groupId>
     <artifactId>dzzhyk-springframework</artifactId>
     <version>1.0.1</version>
-    <packaging>jar</packaging>
+    <modules>
+        <module>dzzhyk-springframework-core</module>
+        <module>dzzhyk-springframework-beans</module>
+        <module>dzzhyk-springframework-context</module>
+        <module>dzzhyk-springframework-aop</module>
+        <module>dzzhyk-springframework-webmvc</module>
+        <module>dzzhyk-springframework-test</module>
+        <module>dzzhyk-springframework-pom</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <description>springframework实现By: dzzhyk</description>
     <url>https://www.yankaizhang.com</url>
@@ -18,55 +27,77 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>3.3.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>8.0</version>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.11</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.25</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>3.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>8.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yankaizhang</groupId>
+                <artifactId>dzzhyk-springframework-core</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yankaizhang</groupId>
+                <artifactId>dzzhyk-springframework-beans</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yankaizhang</groupId>
+                <artifactId>dzzhyk-springframework-context</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yankaizhang</groupId>
+                <artifactId>dzzhyk-springframework-aop</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yankaizhang</groupId>
+                <artifactId>dzzhyk-springframework-webmvc</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yankaizhang</groupId>
+                <artifactId>dzzhyk-springframework-pom</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <defaultGoal>install</defaultGoal>
         <directory>${basedir}/target</directory>
         <finalName>${project.artifactId}-${project.version}</finalName>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/*</exclude>
-                </excludes>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -76,9 +107,6 @@
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>
                     </archive>
-                    <excludes>
-                        <exclude>/com/yankaizhang/springframework/test/</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
