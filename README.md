@@ -36,10 +36,11 @@ $ cd mine-springframework
 The usage is basically the same as creating a Spring project, you only need to create a Spring-web project and import maven dependencies.  
 
 Use [maven coordinates](https://en.wikipedia.org/wiki/Apache_Maven) to import the following dependencies:
+
 ```xml
 <dependency>
   <groupId>com.yankaizhang</groupId>
-  <artifactId>dzzhyk-springframework</artifactId>
+  <artifactId>dzzhyk-springframework-${module}</artifactId>
   <version>${version}</version>
 </dependency>
 ```

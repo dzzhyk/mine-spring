@@ -35,12 +35,12 @@ $ cd mine-springframework
 ### 2. 用Spring项目的方式创建项目
 使用方式基本和创建一个Spring项目完全相同，只需要创建一个Spring-web项目并且导入maven依赖即可
 
-使用maven坐标导入如下依赖：
+使用maven坐标导入如下模块依赖：
 
 ```xml
 <dependency>
   <groupId>com.yankaizhang</groupId>
-  <artifactId>dzzhyk-springframework</artifactId>
+  <artifactId>dzzhyk-springframework-${module}</artifactId>
   <version>${version}</version>
 </dependency>
 ```
