@@ -158,7 +158,8 @@ public class PointCutConfig {
      * 检查包名是否匹配
      */
     private boolean checkPackageNameMatches(String packageNameString){
-        return "*".equals(packageNameString) || packageName.equals(packageNameString);
+        // 可能存在子包
+        return "*".equals(packageNameString) || packageName.equals(packageNameString) || packageName.contains(packageNameString);
     }
 
     private boolean checkClassNameMatches(String classNameString){

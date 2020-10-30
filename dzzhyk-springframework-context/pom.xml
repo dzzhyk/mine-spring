@@ -12,7 +12,6 @@
     <artifactId>dzzhyk-springframework-context</artifactId>
 
     <dependencies>
-
         <dependency>
             <groupId>com.yankaizhang</groupId>
             <artifactId>dzzhyk-springframework-beans</artifactId>

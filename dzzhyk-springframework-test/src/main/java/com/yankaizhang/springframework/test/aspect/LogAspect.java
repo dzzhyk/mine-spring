@@ -1,5 +1,6 @@
 package com.yankaizhang.springframework.test.aspect;
 
+import com.yankaizhang.springframework.aop.aopanno.AfterReturning;
 import com.yankaizhang.springframework.aop.aopanno.Aspect;
 import com.yankaizhang.springframework.aop.aopanno.Before;
 import com.yankaizhang.springframework.aop.aopanno.PointCut;
@@ -14,13 +15,18 @@ public class LogAspect {
 
     private static final Logger log = LoggerFactory.getLogger(LogAspect.class);
 
-    @PointCut("public * com.yankaizhang.springframework.test.controller.*.*(*)")
+    @PointCut("public * com.yankaizhang.springframework.test.service.*.*(*)")
     public void pt(){}
 
 
     @Before
     public void before(JoinPoint joinPoint){
         log.info("==> " + joinPoint.getMethod().getName() + "执行了");
+    }
+
+    @AfterReturning
+    public void after(JoinPoint joinPoint){
+        log.info("==> " + joinPoint.getMethod().getName() + "执行结束");
     }
 
 }

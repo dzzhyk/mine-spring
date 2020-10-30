@@ -32,6 +32,7 @@ public class CglibAopProxy implements AopProxy, MethodInterceptor {
         Enhancer en = new Enhancer();
         // 设置代理对象父类
         en.setSuperclass(config.getTargetClass());
+        en.setInterfaces(new Class[]{SpringProxy.class});   // 给代理类实现SpringProxy接口
         en.setCallback(this);
         return en.create();
     }

@@ -146,8 +146,8 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
         return myAdviceSupport;
     }
 
-    /*
-        预处理所有已知切面类，收集切面表达式，创建AopAnnotationReader对象
+    /**
+     * 预处理所有已知切面类，收集切面表达式，创建AopAnnotationReader对象
      */
     private void postProcessAspects() {
 

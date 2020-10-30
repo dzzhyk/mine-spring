@@ -77,7 +77,7 @@ This requires that you need to add this archetype to your maven tool.
 
 **NEED YOUR HELP!**
 
-- [ ] The Controller's method cannot be accessed by the AOP aspect.
+- [x] The Controller's method cannot be accessed by the AOP aspect.
 
 
 ## Maintainer

@@ -74,7 +74,7 @@ $ cd mine-springframework
 
 ## 已知问题
 ~~太惨了~~
-- [ ] Controller方法不能被AOP切面切入问题
+- [x] Controller方法不能被AOP切面切入问题
 
 
 ## 持有者

@@ -6,6 +6,7 @@ import com.yankaizhang.springframework.aop.support.AdvisedSupport;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,7 +35,12 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
      */
     @Override
     public Object getProxy(ClassLoader classLoader) {
-        return Proxy.newProxyInstance(classLoader, this.config.getTargetClass().getInterfaces(), this);
+        int length = this.config.getTargetClass().getInterfaces().length;
+        Class<?>[] interfaces = this.config.getTargetClass().getInterfaces();
+        Class<?>[] classes = new Class<?>[length+1];    // 中间数组
+        System.arraycopy(interfaces, 0, classes, 0, length);
+        classes[length] = SpringProxy.class;
+        return Proxy.newProxyInstance(classLoader, classes, this);
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.yankaizhang.springframework.webmvc.servlet;
 
+import com.yankaizhang.springframework.aop.CglibAopProxy;
+import com.yankaizhang.springframework.aop.support.AopUtils;
 import com.yankaizhang.springframework.beans.BeanWrapper;
 import com.yankaizhang.springframework.context.ApplicationContext;
 import com.yankaizhang.springframework.webmvc.*;
@@ -91,8 +93,15 @@ public class DispatcherServlet extends HttpServlet {
                 Object beanInstance = beanWrapper.getWrappedInstance();
                 if (beanInstance == null) continue;   // 排除可能有的bean没有在容器中
 
-                Class<?> clazz = beanInstance.getClass();
-                if (!clazz.isAnnotationPresent(Controller.class)) continue;
+                Class<?> clazz = null;
+                // 如果是Aop代理bean对象
+                if (AopUtils.isAopProxy(beanInstance)){
+                    clazz = AopUtils.getAopTarget(beanInstance);    // 如果是代理对象，需要获取到代理对象的最终目标类
+                }else{
+                    clazz = beanInstance.getClass();
+                }
+
+                if (clazz==null || !clazz.isAnnotationPresent(Controller.class)) continue;
 
                 String baseUrl = "";
                 if (clazz.isAnnotationPresent(RequestMapping.class)){
@@ -109,7 +118,7 @@ public class DispatcherServlet extends HttpServlet {
                     // 这里生成的最终url应该是正则表达式形式
                     String url = ("/" + baseUrl + "/" + requestMapping.value()).replaceAll("/+", "/");
                     Pattern pattern = Pattern.compile(url);
-                    handlerMappings.add(new HandlerMapping(beanInstance, method, pattern));
+                    handlerMappings.add(new HandlerMapping(beanInstance, method, pattern)); // 最后加入的都应该是代理对象
                     logger.debug("Mapped: " + url + " ===> " + method);
                 }
             }
