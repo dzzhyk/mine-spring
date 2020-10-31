@@ -8,10 +8,14 @@ package com.yankaizhang.springframework.beans.factory.support;
  * id是接口名字，但是对应的实例是相应实现类的bean
  */
 public class BeanDefinition {
-    private String beanClassName;   // 用于实例化该bean定义的真正ClassName
+    private String beanClassName;   // 用于实例化该bean定义的全类名
     private boolean lazyInit = false;   // 默认关闭懒加载
     private String factoryBeanName; // IoC容器中该Bean对象的id
 
+    /**
+     * @param beanClassName com.yankaizhang.test.service.impl.TestServiceImpl
+     * @param factoryBeanName testService
+     */
     public BeanDefinition(String beanClassName, String factoryBeanName) {
         this.beanClassName = beanClassName;
         this.factoryBeanName = factoryBeanName;

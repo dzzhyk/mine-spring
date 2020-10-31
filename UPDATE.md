@@ -1,5 +1,9 @@
 # 更新日志
 
+- 2020年11月01日01:59:35
+
+1. 简化了原有的IoC容器，现在只有两个：singletonIoc和commonsIoc，其中commonsIoc是经常被使用的IoC容器
+
 - 2020年10月30日14:49:35
 
 1. 加了一个一键分模块打包脚本package.sh

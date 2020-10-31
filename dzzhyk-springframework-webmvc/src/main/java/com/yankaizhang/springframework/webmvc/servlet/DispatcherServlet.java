@@ -1,9 +1,8 @@
 package com.yankaizhang.springframework.webmvc.servlet;
 
-import com.yankaizhang.springframework.aop.CglibAopProxy;
 import com.yankaizhang.springframework.aop.support.AopUtils;
 import com.yankaizhang.springframework.beans.BeanWrapper;
-import com.yankaizhang.springframework.context.ApplicationContext;
+import com.yankaizhang.springframework.context.ClassPathXmlApplicationContext;
 import com.yankaizhang.springframework.webmvc.*;
 import com.yankaizhang.springframework.context.annotation.Controller;
 import com.yankaizhang.springframework.webmvc.annotation.RequestMapping;
@@ -43,16 +42,16 @@ public class DispatcherServlet extends HttpServlet {
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
     private Map<HandlerMapping, HandlerAdapter> handlerAdapterMap = new HashMap<>();
     private List<ViewResolver> viewResolvers = new ArrayList<>();
-    private ApplicationContext context;
+    private ClassPathXmlApplicationContext context;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         // 初始化IoC容器
-        context = new ApplicationContext(config.getInitParameter(LOCATION));
+        context = new ClassPathXmlApplicationContext(config.getInitParameter(LOCATION));
         initStrategies(context);
     }
 
-    private void initStrategies(ApplicationContext context){
+    private void initStrategies(ClassPathXmlApplicationContext context){
         logger.debug("**********Dispatcher Servlet 初始化开始**********");
         initMultipartResolver(context); // 多部分文件上传解析multipart
         initLocaleResolver(context);    // 本地化解析
@@ -66,28 +65,27 @@ public class DispatcherServlet extends HttpServlet {
         initViewResolvers(context);     // 通过viewResolver将逻辑视图解析为具体视图实现
         initFlashMapManager(context);   // 初始化Flash映射管理器
 
-        logger.debug("IoC容器中 name实例个数 ===> " + String.valueOf(context.getFactoryBeanInstanceCacheByName().size()) + " 个");
-        logger.debug("IoC容器中 type实例个数 ===> " + String.valueOf(context.getFactoryBeanInstanceCacheByType().size()) + " 个");
+        logger.debug("singletonIoC容器实例个数 ===> " + String.valueOf(context.getSingletonIoc().size()) + " 个");
+        logger.debug("commonsIoC容器实例个数 ===> " + String.valueOf(context.getCommonIoc().size()) + " 个");
         logger.debug("**********Dispatcher Servlet 初始化完成**********");
     }
 
     /*
       这些暂时不实现
      */
-    private void initFlashMapManager(ApplicationContext context){}
-    private void initRequestToViewNameTranslator(ApplicationContext context){}
-    private void initHandlerExceptionResolvers(ApplicationContext context){}
-    private void initThemeResolver(ApplicationContext context){}
-    private void initLocaleResolver(ApplicationContext context){}
-    private void initMultipartResolver(ApplicationContext context){}
+    private void initFlashMapManager(ClassPathXmlApplicationContext context){}
+    private void initRequestToViewNameTranslator(ClassPathXmlApplicationContext context){}
+    private void initHandlerExceptionResolvers(ClassPathXmlApplicationContext context){}
+    private void initThemeResolver(ClassPathXmlApplicationContext context){}
+    private void initLocaleResolver(ClassPathXmlApplicationContext context){}
+    private void initMultipartResolver(ClassPathXmlApplicationContext context){}
 
 
     /**
      * 初始化HandlerMapping
      */
-    private void initHandlerMappings(ApplicationContext context){
-        // TODO: 只加载name空间的ioc
-        Map<String, BeanWrapper> ioc = context.getFactoryBeanInstanceCacheByName();   // 获取已经存在的实例化好的对象
+    private void initHandlerMappings(ClassPathXmlApplicationContext context){
+        Map<String, BeanWrapper> ioc = context.getCommonIoc();   // 获取已经存在的实例化好的对象
         try {
             for (BeanWrapper beanWrapper : ioc.values()) {
                 Object beanInstance = beanWrapper.getWrappedInstance();
@@ -131,7 +129,7 @@ public class DispatcherServlet extends HttpServlet {
      * 注册每个handler的参数适配器
      * 注意HandlerMapping是所说的handler的包装类
      */
-    private void initHandlerAdapters(ApplicationContext context){
+    private void initHandlerAdapters(ClassPathXmlApplicationContext context){
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerAdapterMap.put(handlerMapping, new HandlerAdapter());
         }
@@ -141,7 +139,7 @@ public class DispatcherServlet extends HttpServlet {
     /**
      * 注册模板解析器
      */
-    private void initViewResolvers(ApplicationContext context){
+    private void initViewResolvers(ClassPathXmlApplicationContext context){
         String templateRoot = context.getConfig().getProperty("templateRoot");
         String templateRootPath = this.getClass().getClassLoader().getResource(templateRoot).getFile();
 

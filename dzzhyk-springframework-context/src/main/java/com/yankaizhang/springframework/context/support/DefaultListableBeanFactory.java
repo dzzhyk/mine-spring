@@ -15,7 +15,6 @@ public class DefaultListableBeanFactory extends AbstractApplicationContext {
     /**
      * beanDefinitionMap，用来存储注册信息，当做bean定义的缓存
      */
-    protected final Map<String, BeanDefinition> beanDefinitionMapByName = new ConcurrentHashMap<>();
-    protected final Map<String, BeanDefinition> beanDefinitionMapByType = new ConcurrentHashMap<>();
+    protected final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
 
 }

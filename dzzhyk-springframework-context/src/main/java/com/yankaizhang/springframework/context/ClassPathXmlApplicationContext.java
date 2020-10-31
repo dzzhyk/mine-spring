@@ -18,6 +18,8 @@ import com.yankaizhang.springframework.beans.factory.support.BeanDefinition;
 import com.yankaizhang.springframework.context.annotation.Controller;
 import com.yankaizhang.springframework.context.annotation.Service;
 import com.yankaizhang.springframework.context.support.DefaultListableBeanFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -32,33 +34,35 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * 完成IoC、DI、AOP的衔接
  */
 @SuppressWarnings("all")
-public class ApplicationContext extends DefaultListableBeanFactory implements BeanFactory {
+public class ClassPathXmlApplicationContext extends DefaultListableBeanFactory implements BeanFactory {
 
-    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ApplicationContext.class);
+    public static final Logger log = LoggerFactory.getLogger(ClassPathXmlApplicationContext.class);
 
     private String[] configLocations;
     private BeanDefinitionReader reader;
     private AopAnnotationReader aopAnnotationReader;    // aop注解reader
 
     /**
-     * 单例的IoC容器
+     * 单例IoC容器
+     * 这个容器一般存放扫描到的Bean单例类对象
      */
-    private Map<String, Object> factoryBeanObjectCacheByName = new ConcurrentHashMap<>();
-    private Map<String, Object> factoryBeanObjectCacheByType = new ConcurrentHashMap<>();
+    private Map<String, Object> singletonIoc = new ConcurrentHashMap<>();
 
     /**
      * 通用的IoC容器
+     * 我们最终使用的一般是这个通用的IoC容器
+     * 这个容器中的所有Bean对象应该都是经过增强的包装Bean
      */
-    private Map<String, BeanWrapper> factoryBeanInstanceCacheByName = new ConcurrentHashMap<>();    // id容器
-    private Map<String, BeanWrapper> factoryBeanInstanceCacheByType = new ConcurrentHashMap<>();    // type容器
+    private Map<String, BeanWrapper> commonIoc = new ConcurrentHashMap<>();
 
     /**
      * 通用的AOP切面容器
+     * TODO: 这个容器不应该存在，但是还没有想出很好的办法
      */
     private List<Class<?>> aspectBeanInstanceCache = new CopyOnWriteArrayList<>();
 
 
-    public ApplicationContext(String... configLocations){
+    public ClassPathXmlApplicationContext(String... configLocations){
         this.configLocations = configLocations;
         try {
             refresh();  // 调用自己重写的refresh，多态
@@ -89,7 +93,6 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
     public void doAop() throws Exception {
 
         postProcessAspects();
-
         List<AdvisedSupport> aopConfigs = aopAnnotationReader.parseAspect();    // 解析所有已知切面类，获取包装类的config
 
         if (aopConfigs != null){
@@ -101,9 +104,9 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
             for (AdvisedSupport aopConfig : aopConfigs) {
                 List<String> targetClassList = aopConfig.parseClasses();    // 获取这个切面可以切到的目标类
                 for (String clazzName : targetClassList) {
-                    if (factoryBeanInstanceCacheByType.containsKey(clazzName)){
+                    if (commonIoc.containsKey(clazzName)){
                         // 只处理容器中有的组件
-                        BeanWrapper beanWrapper = factoryBeanInstanceCacheByType.get(clazzName);
+                        BeanWrapper beanWrapper = commonIoc.get(clazzName);
                         Object wrappedInstance = beanWrapper.getWrappedInstance();
                         Class<?> wrappedClass = beanWrapper.getWrappedClass();  // 虽然可能是代理类，但是Class一定是代理类的最终目标类
 
@@ -117,15 +120,15 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
                             beanWrapper.setWrappedInstance(proxy);  // 将这个二次代理对象包装起来
 
                             log.debug("创建代理对象 ==> " + proxy.getClass());
-                            factoryBeanInstanceCacheByType.replace(clazzName, beanWrapper);       // 重新设置对象
+                            commonIoc.replace(clazzName, beanWrapper);       // 重新设置commonIoC中的对象为代理对象
                             String beanName = BeanDefinitionReader.toLowerCase(clazzName.substring(clazzName.lastIndexOf(".") + 1));
-                            factoryBeanInstanceCacheByName.replace(beanName, beanWrapper);    // 同时更新Name空间
+                            commonIoc.replace(beanName, beanWrapper);    // 同时更新beanName对应的实例
 
                             // 如果这个类有接口，同时更新这些接口的实现类对象
                             for (Class<?> anInterface : wrappedClass.getInterfaces()) {
                                 String interfaceName = anInterface.getName();
                                 String iocBeanInterfaceName = BeanDefinitionReader.toLowerCase(interfaceName.substring(interfaceName.lastIndexOf(".") + 1));
-                                factoryBeanInstanceCacheByName.replace(iocBeanInterfaceName, beanWrapper);
+                                commonIoc.replace(iocBeanInterfaceName, beanWrapper);   // 对于接口，只需要更新其beanName对应的实例，因为beanClass对应的实例已经更新过了
                             }
                         }
                     }
@@ -180,11 +183,10 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
      */
     private void doRegisterBeanDefinition(List<BeanDefinition> beanDefinitions) throws Exception{
         for (BeanDefinition beanDefinition : beanDefinitions) {
-            if (super.beanDefinitionMapByName.containsKey(beanDefinition.getFactoryBeanName())){
+            if (super.beanDefinitionMap.containsKey(beanDefinition.getFactoryBeanName())){
                 throw new Exception("IoC容器已经存在：" + beanDefinition.getFactoryBeanName() + "类的bean定义了！不要重复加载bean定义");
             }
-            super.beanDefinitionMapByName.put(beanDefinition.getFactoryBeanName(), beanDefinition);
-            super.beanDefinitionMapByType.put(beanDefinition.getBeanClassName(), beanDefinition);
+            super.beanDefinitionMap.put(beanDefinition.getFactoryBeanName(), beanDefinition);
         }
     }
 
@@ -192,14 +194,14 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
      * 把非懒加载的类提前初始化
      */
     private void doInstance() {
-        for (Map.Entry<String, BeanDefinition> beanDefinitionEntry : super.beanDefinitionMapByName.entrySet()) {
-            String beanName = beanDefinitionEntry.getKey();
+        for (Map.Entry<String, BeanDefinition> beanDefinitionEntry : super.beanDefinitionMap.entrySet()) {
+            String beanName = beanDefinitionEntry.getKey(); // 首字母小写的类名
             BeanDefinition beanDefinition = beanDefinitionEntry.getValue();
             // 如果不是懒加载，初始化bean
             if (!beanDefinition.isLazyInit()){
                 try {
                     getBean(beanName);  // name
-                    getBean(beanDefinition.getBeanClassName()); // type
+//                    getBean(beanDefinition.getBeanClassName()); // type
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -212,7 +214,7 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
      */
     private void doAutowired() throws Exception {
 
-        for (Map.Entry<String, BeanWrapper> entry : factoryBeanInstanceCacheByName.entrySet()) {
+        for (Map.Entry<String, BeanWrapper> entry : commonIoc.entrySet()) {
             Object instance = entry.getValue().getWrappedInstance();
             // 依赖注入
             populateBean(entry.getKey(), instance);
@@ -228,22 +230,13 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
     public Object getBean(String beanName) throws Exception {
 
         // 检查是否已经有了实例化好的bean
-        if (factoryBeanInstanceCacheByName.containsKey(beanName)){
-            return factoryBeanInstanceCacheByName.get(beanName).getWrappedInstance();
+        if (commonIoc.containsKey(beanName)){
+            return commonIoc.get(beanName).getWrappedInstance();
         }
 
-        if (factoryBeanInstanceCacheByType.containsKey(beanName)){
-            return factoryBeanInstanceCacheByType.get(beanName).getWrappedInstance();
-        }
-
-        boolean flag = false;   // 判断是通过名字找到的还是通过类型找到的
-        BeanDefinition beanDefinition = super.beanDefinitionMapByName.get(beanName);
+        BeanDefinition beanDefinition = super.beanDefinitionMap.get(beanName);
         if (null == beanDefinition){
-            beanDefinition = super.beanDefinitionMapByType.get(beanName);
-            flag = true;
-        }
-        if (null == beanDefinition){
-            throw new Exception("bean定义在Map中未找到 ==> " + beanName);
+            throw new Exception("bean定义在Map中未找到，检查beanName是否有误 ==> " + beanName);
         }
 
 
@@ -257,10 +250,9 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
 
             // 生成BeanWrapper增强对象
             BeanWrapper beanWrapper = new BeanWrapper(instance);
-            if (!flag)
-                this.factoryBeanInstanceCacheByName.put(beanName, beanWrapper);
-            else
-                this.factoryBeanInstanceCacheByType.put(beanName, beanWrapper);
+
+            this.commonIoc.put(beanName, beanWrapper);  // beanName可以找到这个实例
+            this.commonIoc.putIfAbsent(beanDefinition.getBeanClassName(), beanWrapper); // 全类名也可以找到这个实例
 
             // 后置处理
             beanPostProcessor.postProcessAfterInitialization(instance, beanName);
@@ -276,12 +268,18 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
 
     @Override
     public Object getBean(Class<?> beanClass) throws Exception {
-        return getBean(beanClass.getName());
+        return getBean(reader.toLowerCase(beanClass.getSimpleName()));
+    }
+
+    @Override
+    public Object getBean(String beanName, Class<?> beanClass) throws Exception {
+        return null;
     }
 
 
     /**
      * 对bean实例属性进行依赖注入
+     * 目前只支持注入Service和Controller类型
      */
     private void populateBean(String beanName, Object instance) throws Exception{
         Class<?> clazz = instance.getClass();
@@ -300,30 +298,28 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
             if ("".equals(autowiredBeanName)){
                 // 如果没有，找到这个注解标记的属性的全类名，注入全类名
                 Class<?> type = field.getType();
-                if (type.isInterface()){
-                    // 如果是接口类型，注入其实现类，通过ByName在nameCache里面找他的实现类
-                    autowiredBeanName = BeanDefinitionReader.toLowerCase(type.getSimpleName());
-                }else{
-                    autowiredBeanName = type.getName();
-                }
+                autowiredBeanName = BeanDefinitionReader.toLowerCase(type.getSimpleName());
             }
 
             field.setAccessible(true);
             BeanWrapper toAutowiredInstanceWrapper = null;
             // 默认使用name进行自动装配
-            toAutowiredInstanceWrapper = this.factoryBeanInstanceCacheByName.get(autowiredBeanName);
+            toAutowiredInstanceWrapper = this.commonIoc.get(autowiredBeanName);
 
             if (null == toAutowiredInstanceWrapper){
                 // 如果没有找到按照name装配的bean，寻找按照type装配的bean
-                toAutowiredInstanceWrapper = this.factoryBeanInstanceCacheByType.get(autowiredBeanName);
+                autowiredBeanName = field.getName();
+                toAutowiredInstanceWrapper = this.commonIoc.get(autowiredBeanName);
             }
             if (null == toAutowiredInstanceWrapper){
-                throw new Exception("IoC容器未找到相应的bean对象 ==> " + autowiredBeanName);
+                throw new Exception("commonsIoC容器未找到相应的bean对象 ==> " + autowiredBeanName);
             }
             Object wrappedInstance = toAutowiredInstanceWrapper.getWrappedInstance();
             if (null == wrappedInstance){
                 throw new Exception("BeanWrapper代理instance对象不存在 ==> " + autowiredBeanName);
             }
+
+            // 将获取的包装类对象装配上去
             field.set(instance, wrappedInstance);
         }
     }
@@ -331,17 +327,17 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
 
     /**
      * 实例化Bean定义
-     * 传入bean定义，返回bean实例
+     * 实例化的结果是单例IoC中的Bean对象
+     * com.yankaizhang.test.service.impl.TestServiceImpl -> TestServiceImpl@1024
      */
     private Object instantiateBean(BeanDefinition beanDefinition) throws Exception {
         Object instance = null;
 
         String beanClassName = beanDefinition.getBeanClassName();   // 使用beanClassName实例化对象
-        String factoryBeanName = beanDefinition.getFactoryBeanName();   // 实际id
         try {
-            if (this.factoryBeanObjectCacheByType.containsKey(beanClassName)){
+            if (this.singletonIoc.containsKey(beanClassName)){
                 // 如果已经有了该beanDefinition的单例实例缓存，直接获取
-                instance = this.factoryBeanObjectCacheByType.get(beanClassName);
+                instance = this.singletonIoc.get(beanClassName);
             } else {
                 Class<?> clazz = Class.forName(beanClassName);
                 instance = clazz.newInstance();
@@ -350,8 +346,7 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
                     // 如果是切面类，加入切面容器
                     aspectBeanInstanceCache.add(clazz);
                 }
-                this.factoryBeanObjectCacheByType.put(beanClassName, instance);
-                this.factoryBeanObjectCacheByName.put(factoryBeanName, instance);
+                this.singletonIoc.put(beanClassName, instance); // 加入singletonIoc
             }
             return instance;
         }catch (InstantiationException e){
@@ -375,14 +370,6 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
     }
 
     /**
-     * 加载基于注解的aop配置，返回包装类
-     */
-//    private List<AdvisedSupport> instantiateAopAnnotationConfig(Class<?> clazz){
-//        AopConfig aopConfig = aopAnnotationReader.parseAspect(clazz);
-//        return new AdvisedSupport(aopConfig);
-//    }
-
-    /**
      * 创建代理对象
      */
     private AopProxy createProxy(AdvisedSupport config){
@@ -397,21 +384,14 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
      * 获取容器中bean定义名称列表
      */
     public String[] getBeanDefinitionNames(){
-        return this.beanDefinitionMapByName.keySet().toArray(new String[0]);
+        return this.beanDefinitionMap.keySet().toArray(new String[0]);
     }
 
     /**
      * 获取容器中按照name对应的bean定义数量
      */
     public int getBeanDefinitionCountByName(){
-        return this.beanDefinitionMapByName.size();
-    }
-
-    /**
-     * 获取容器中按照type对应的bean定义数量
-     */
-    public int getBeanDefinitionCountByType(){
-        return this.beanDefinitionMapByType.size();
+        return this.beanDefinitionMap.size();
     }
 
     /**
@@ -421,19 +401,12 @@ public class ApplicationContext extends DefaultListableBeanFactory implements Be
         return this.reader.getConfig();
     }
 
-    public Map<String, Object> getFactoryBeanObjectCacheByName() {
-        return factoryBeanObjectCacheByName;
+
+    public Map<String, Object> getSingletonIoc() {
+        return singletonIoc;
     }
 
-    public Map<String, Object> getFactoryBeanObjectCacheByType() {
-        return factoryBeanObjectCacheByType;
-    }
-
-    public Map<String, BeanWrapper> getFactoryBeanInstanceCacheByName() {
-        return factoryBeanInstanceCacheByName;
-    }
-
-    public Map<String, BeanWrapper> getFactoryBeanInstanceCacheByType() {
-        return factoryBeanInstanceCacheByType;
+    public Map<String, BeanWrapper> getCommonIoc() {
+        return commonIoc;
     }
 }

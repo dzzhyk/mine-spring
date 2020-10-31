@@ -1,6 +1,8 @@
 package com.yankaizhang.springframework.beans.factory.config;
 
 import com.yankaizhang.springframework.beans.factory.support.BeanDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,9 +17,9 @@ import java.util.Properties;
  */
 public class BeanDefinitionReader {
 
-    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BeanDefinitionReader.class);
+    public static final Logger log = LoggerFactory.getLogger(BeanDefinitionReader.class);
 
-    private List<String> registryBeanClasses = new ArrayList<>();
+    private List<String> registryBeanClasses = new ArrayList<>(4);
     private Properties config = new Properties();
     private final String SCAN_PACKAGE = "scanPackage";  // 设置配置文件Key
 

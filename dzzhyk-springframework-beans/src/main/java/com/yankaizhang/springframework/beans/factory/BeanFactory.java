@@ -13,5 +13,10 @@ public interface BeanFactory {
     /**
      * 根据beanClass从IOC中获取实例bean
      */
-    public Object getBean(Class<?> beanClass) throws Exception;
+    Object getBean(Class<?> beanClass) throws Exception;
+
+    /**
+     * 根据名称和类名获取
+     */
+    Object getBean(String beanName, Class<?> beanClass) throws Exception;
 }
