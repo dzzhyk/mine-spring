@@ -66,7 +66,7 @@ public class BeanDefinitionReader {
      * 将扫描到的位置信息转换为BeanDefinition对象，便于之后的IoC操作
      */
     public List<BeanDefinition> loadBeanDefinitions(){
-        List<BeanDefinition> result = new ArrayList<>();
+        List<BeanDefinition> result = new ArrayList<>(4);
         try {
             for (String className : registryBeanClasses) {
                 Class<?> clazz = Class.forName(className);

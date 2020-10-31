@@ -7,7 +7,7 @@
     <groupId>com.yankaizhang</groupId>
     <artifactId>dzzhyk-springframework</artifactId>
     <!--总版本1.0-->
-    <version>1.0</version>
+    <version>0.0.1-SNAPSHOT</version>
     <modules>
         <module>dzzhyk-springframework-core</module>
         <module>dzzhyk-springframework-beans</module>
@@ -161,5 +161,16 @@
             </plugin>
         </plugins>
     </build>
-
+    <distributionManagement>
+        <repository>
+            <id>dzzhyk-releases</id>
+            <name>Nexus Release Repository</name>
+            <url>http://maven.yankaizhang.com/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>dzzhyk-snapshots</id>
+            <name>Nexus Snapshot Repository</name>
+            <url>http://maven.yankaizhang.com/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

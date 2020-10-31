@@ -7,7 +7,7 @@
         <groupId>com.yankaizhang</groupId>
         <version>1.0</version>
     </parent>
-    <version>1.0.2</version>
+    <version>0.0.1-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
     <artifactId>dzzhyk-springframework-test</artifactId>
