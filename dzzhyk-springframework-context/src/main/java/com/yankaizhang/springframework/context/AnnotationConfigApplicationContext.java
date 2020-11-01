@@ -32,11 +32,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * 继承了DefaultListableBeanFactory，并且把里面的refresh方法实现了
  * 实现了BeanFactory接口，实现了getBean()方法
  * 完成IoC、DI、AOP的衔接
+ * AnnotationConfigApplicationContext是用来解析注解配置类的容器对象
  */
 @SuppressWarnings("all")
-public class ClassPathXmlApplicationContext extends DefaultListableBeanFactory implements BeanFactory {
+public class AnnotationConfigApplicationContext extends DefaultListableBeanFactory implements BeanFactory {
 
-    public static final Logger log = LoggerFactory.getLogger(ClassPathXmlApplicationContext.class);
+    public static final Logger log = LoggerFactory.getLogger(AnnotationConfigApplicationContext.class);
 
     private String[] configLocations;
     private BeanDefinitionReader reader;
@@ -62,7 +63,7 @@ public class ClassPathXmlApplicationContext extends DefaultListableBeanFactory i
     private List<Class<?>> aspectBeanInstanceCache = new CopyOnWriteArrayList<>();
 
 
-    public ClassPathXmlApplicationContext(String... configLocations){
+    public AnnotationConfigApplicationContext(String... configLocations){
         this.configLocations = configLocations;
         try {
             refresh();  // 调用自己重写的refresh，多态
@@ -81,7 +82,7 @@ public class ClassPathXmlApplicationContext extends DefaultListableBeanFactory i
         doRegisterBeanDefinition(beanDefinitions);
         // 4. 将所有bean定义实例化
         doInstance();
-        // 5. 处理AOP对象
+        // 5. 处理AOP对象x
         doAop();
         // 6. 处理依赖注入
         doAutowired();
@@ -200,8 +201,7 @@ public class ClassPathXmlApplicationContext extends DefaultListableBeanFactory i
             // 如果不是懒加载，初始化bean
             if (!beanDefinition.isLazyInit()){
                 try {
-                    getBean(beanName);  // name
-//                    getBean(beanDefinition.getBeanClassName()); // type
+                    getBean(beanName);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -1,11 +1,11 @@
 package com.yankaizhang.springframework.test;
 
-import com.yankaizhang.springframework.context.ClassPathXmlApplicationContext;
+import com.yankaizhang.springframework.context.AnnotationConfigApplicationContext;
 import com.yankaizhang.springframework.test.controller.TestController;
 
 public class Test {
     public static void main(String[] args) {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("application.properties");
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("application.properties");
         try {
             TestController testController = (TestController) context.getBean("testController");
             testController.hi();

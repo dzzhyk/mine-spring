@@ -2,7 +2,7 @@ package com.yankaizhang.springframework.webmvc.servlet;
 
 import com.yankaizhang.springframework.aop.support.AopUtils;
 import com.yankaizhang.springframework.beans.BeanWrapper;
-import com.yankaizhang.springframework.context.ClassPathXmlApplicationContext;
+import com.yankaizhang.springframework.context.AnnotationConfigApplicationContext;
 import com.yankaizhang.springframework.webmvc.*;
 import com.yankaizhang.springframework.context.annotation.Controller;
 import com.yankaizhang.springframework.webmvc.annotation.RequestMapping;
@@ -42,16 +42,16 @@ public class DispatcherServlet extends HttpServlet {
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
     private Map<HandlerMapping, HandlerAdapter> handlerAdapterMap = new HashMap<>();
     private List<ViewResolver> viewResolvers = new ArrayList<>();
-    private ClassPathXmlApplicationContext context;
+    private AnnotationConfigApplicationContext context;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         // 初始化IoC容器
-        context = new ClassPathXmlApplicationContext(config.getInitParameter(LOCATION));
+        context = new AnnotationConfigApplicationContext(config.getInitParameter(LOCATION));
         initStrategies(context);
     }
 
-    private void initStrategies(ClassPathXmlApplicationContext context){
+    private void initStrategies(AnnotationConfigApplicationContext context){
         logger.debug("**********Dispatcher Servlet 初始化开始**********");
         initMultipartResolver(context); // 多部分文件上传解析multipart
         initLocaleResolver(context);    // 本地化解析
@@ -73,18 +73,18 @@ public class DispatcherServlet extends HttpServlet {
     /*
       这些暂时不实现
      */
-    private void initFlashMapManager(ClassPathXmlApplicationContext context){}
-    private void initRequestToViewNameTranslator(ClassPathXmlApplicationContext context){}
-    private void initHandlerExceptionResolvers(ClassPathXmlApplicationContext context){}
-    private void initThemeResolver(ClassPathXmlApplicationContext context){}
-    private void initLocaleResolver(ClassPathXmlApplicationContext context){}
-    private void initMultipartResolver(ClassPathXmlApplicationContext context){}
+    private void initFlashMapManager(AnnotationConfigApplicationContext context){}
+    private void initRequestToViewNameTranslator(AnnotationConfigApplicationContext context){}
+    private void initHandlerExceptionResolvers(AnnotationConfigApplicationContext context){}
+    private void initThemeResolver(AnnotationConfigApplicationContext context){}
+    private void initLocaleResolver(AnnotationConfigApplicationContext context){}
+    private void initMultipartResolver(AnnotationConfigApplicationContext context){}
 
 
     /**
      * 初始化HandlerMapping
      */
-    private void initHandlerMappings(ClassPathXmlApplicationContext context){
+    private void initHandlerMappings(AnnotationConfigApplicationContext context){
         Map<String, BeanWrapper> ioc = context.getCommonIoc();   // 获取已经存在的实例化好的对象
         try {
             for (BeanWrapper beanWrapper : ioc.values()) {
@@ -129,7 +129,7 @@ public class DispatcherServlet extends HttpServlet {
      * 注册每个handler的参数适配器
      * 注意HandlerMapping是所说的handler的包装类
      */
-    private void initHandlerAdapters(ClassPathXmlApplicationContext context){
+    private void initHandlerAdapters(AnnotationConfigApplicationContext context){
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerAdapterMap.put(handlerMapping, new HandlerAdapter());
         }
@@ -139,7 +139,7 @@ public class DispatcherServlet extends HttpServlet {
     /**
      * 注册模板解析器
      */
-    private void initViewResolvers(ClassPathXmlApplicationContext context){
+    private void initViewResolvers(AnnotationConfigApplicationContext context){
         String templateRoot = context.getConfig().getProperty("templateRoot");
         String templateRootPath = this.getClass().getClassLoader().getResource(templateRoot).getFile();
 

@@ -6,8 +6,7 @@
 
     <groupId>com.yankaizhang</groupId>
     <artifactId>dzzhyk-springframework</artifactId>
-    <!--总版本1.0-->
-    <version>1.0</version>
+    <version>0.0.1-SNAPSHOT</version>
     <modules>
         <module>dzzhyk-springframework-core</module>
         <module>dzzhyk-springframework-beans</module>
@@ -67,32 +66,32 @@
             <dependency>
                 <groupId>com.yankaizhang</groupId>
                 <artifactId>dzzhyk-springframework-core</artifactId>
-                <version>1.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yankaizhang</groupId>
                 <artifactId>dzzhyk-springframework-beans</artifactId>
-                <version>1.0.2</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yankaizhang</groupId>
                 <artifactId>dzzhyk-springframework-context</artifactId>
-                <version>1.0.2</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yankaizhang</groupId>
                 <artifactId>dzzhyk-springframework-aop</artifactId>
-                <version>1.0.2</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yankaizhang</groupId>
                 <artifactId>dzzhyk-springframework-webmvc</artifactId>
-                <version>1.0.2</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yankaizhang</groupId>
                 <artifactId>dzzhyk-springframework-pom</artifactId>
-                <version>1.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

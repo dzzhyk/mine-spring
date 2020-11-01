@@ -1,6 +1,7 @@
 package com.yankaizhang.springframework.beans.factory.config;
 
 import com.yankaizhang.springframework.beans.factory.support.BeanDefinition;
+import com.yankaizhang.springframework.context.annotation.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +75,12 @@ public class BeanDefinitionReader {
                 Class<?> clazz = Class.forName(className);
 
                 if (clazz.isInterface()) continue;  // 如果clazz是接口就撤
+
+                // 如果这个类是配置类，解析这个配置类，并且加载这个配置类里定义的bean的BeanDefinition
+                if (clazz.isAnnotationPresent(Configuration.class)){
+                    parseAnnotationConfig();
+                    continue;
+                }
 
                 result.add(doCreateBeanDefinition(toLowerCase(clazz.getSimpleName()), clazz.getName()));
 
