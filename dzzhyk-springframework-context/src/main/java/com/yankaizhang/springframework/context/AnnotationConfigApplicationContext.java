@@ -242,6 +242,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
 
         try {
             BeanPostProcessor beanPostProcessor = new BeanPostProcessor();
+
             Object instance = instantiateBean(beanDefinition);
             if (null == instance) return null;
 
@@ -352,21 +353,6 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
         }catch (InstantiationException e){
             throw new Exception("bean实例化错误：" + beanClassName);
         }
-    }
-
-
-    /**
-     * 加载aop配置，返回包装类
-     */
-    private AdvisedSupport instantiateAopConfig() throws Exception{
-        AopConfig aopConfig = new AopConfig();
-        aopConfig.setPointCut(reader.getConfig().getProperty("pointCut"));
-        aopConfig.setAspectClass(reader.getConfig().getProperty("aspectClass"));
-        aopConfig.setAspectBefore(reader.getConfig().getProperty("aspectBefore"));
-        aopConfig.setAspectAfter(reader.getConfig().getProperty("aspectAfter"));
-        aopConfig.setAspectAfterThrow(reader.getConfig().getProperty("aspectAfterThrow"));
-        aopConfig.setAspectAfterThrowingName(reader.getConfig().getProperty("aspectAfterThrowingName"));
-        return new AdvisedSupport(aopConfig);
     }
 
     /**

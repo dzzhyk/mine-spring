@@ -1,13 +1,17 @@
 package com.yankaizhang.springframework.beans.factory.config;
 
+import com.yankaizhang.springframework.beans.MutablePropertyValues;
 import com.yankaizhang.springframework.beans.factory.support.BeanDefinition;
+import com.yankaizhang.springframework.context.annotation.Bean;
 import com.yankaizhang.springframework.context.annotation.Configuration;
+import com.yankaizhang.springframework.context.annotation.Lazy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,15 +82,17 @@ public class BeanDefinitionReader {
 
                 // 如果这个类是配置类，解析这个配置类，并且加载这个配置类里定义的bean的BeanDefinition
                 if (clazz.isAnnotationPresent(Configuration.class)){
-                    parseAnnotationConfig();
+                     List<BeanDefinition> AnnotationBeanDefinitions = parseAnnotationConfig(clazz);
+                     result.addAll(AnnotationBeanDefinitions);
                     continue;
                 }
 
-                result.add(doCreateBeanDefinition(toLowerCase(clazz.getSimpleName()), clazz.getName()));
+                // 默认关闭懒加载
+                result.add(doCreateBeanDefinition(toLowerCase(clazz.getSimpleName()), clazz.getName(), false));
 
                 // 接口的bean定义
                 for (Class<?> i : clazz.getInterfaces()) {
-                    result.add(doCreateBeanDefinition(toLowerCase(i.getSimpleName()), clazz.getName()));
+                    result.add(doCreateBeanDefinition(toLowerCase(i.getSimpleName()), clazz.getName(), false));
                 }
             }
         } catch (ClassNotFoundException e) {
@@ -96,11 +102,55 @@ public class BeanDefinitionReader {
     }
 
     /**
+     * 解析配置类，注册配置类中的Bean对象
+     */
+    private List<BeanDefinition> parseAnnotationConfig(Class<?> clazz) {
+        List<BeanDefinition> definitions = new ArrayList<>(doParseAnnotationConfig(clazz));
+        // 获取内部类
+        Class<?>[] declaredClasses = clazz.getDeclaredClasses();
+        for (Class<?> declaredClass : declaredClasses) {
+            List<BeanDefinition> beanDefinitions = doParseAnnotationConfig(declaredClass);
+            definitions.addAll(beanDefinitions);
+        }
+        return definitions;
+    }
+
+    private List<BeanDefinition> doParseAnnotationConfig(Class<?> clazz) {
+        Method[] declaredMethods = clazz.getDeclaredMethods();
+        ArrayList<BeanDefinition> definitions  = new ArrayList<>(declaredMethods.length);
+        for (Method declaredMethod : declaredMethods) {
+            if (declaredMethod.isAnnotationPresent(Bean.class)){
+                definitions.add(parseBeanMethod(declaredMethod));
+            }
+        }
+        return definitions;
+    }
+
+    /**
+     * 解析@Bean方法
+     */
+    private BeanDefinition parseBeanMethod(Method method){
+        Class<?> returnType = method.getReturnType();
+        String beanName = method.getAnnotation(Bean.class).value();
+        String factoryBeanName = method.getName();  // 默认beanName是方法名
+        if (!"".equals(beanName.trim())){
+            factoryBeanName = beanName;
+        }
+        BeanDefinition beanDefinition =
+                doCreateBeanDefinition(factoryBeanName, returnType.getName(), method.isAnnotationPresent(Lazy.class));
+        MutablePropertyValues mutablePropertyValues = new MutablePropertyValues();
+        // 一开始的属性是空的
+        beanDefinition.setPropertyValues(mutablePropertyValues);
+        return beanDefinition;
+    }
+
+
+    /**
      * 将某个beanName创建为BeanDefinition对象
      */
-    private BeanDefinition doCreateBeanDefinition(String factoryBeanName, String beanClassName){
+    private BeanDefinition doCreateBeanDefinition(String factoryBeanName, String beanClassName, boolean lazy){
         log.debug("创建bean定义: [factoryBeanName ==> "+ factoryBeanName + "] [beanClassName ==> " + beanClassName + "]");
-        return new BeanDefinition(beanClassName, factoryBeanName);
+        return new BeanDefinition(beanClassName, factoryBeanName, lazy);
     }
 
     /**
