@@ -35,7 +35,6 @@ public class ClazzUtils {
             // 如果是类名不是包名
             Class<?> clazz = Class.forName(packageName);
             result.add(clazz.getName());
-            log.debug("表达式为"+ packageName +"具体类名");
             return result;
         } catch (ClassNotFoundException e) {
 

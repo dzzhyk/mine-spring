@@ -3,14 +3,10 @@ package com.yankaizhang.springframework.context.annotation;
 import java.lang.annotation.*;
 
 /**
- * 配置类注解
+ * Bean懒加载
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
-public @interface Configuration {
-
-    String value() default "";
-
+public @interface Lazy {
 }

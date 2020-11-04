@@ -1,14 +1,14 @@
 package com.yankaizhang.springframework.test;
 
-import com.yankaizhang.springframework.context.ApplicationContext;
-import com.yankaizhang.springframework.test.controller.TestController;
+import com.yankaizhang.springframework.context.AnnotationConfigApplicationContext;
+import com.yankaizhang.springframework.test.entity.User;
 
 public class Test {
     public static void main(String[] args) {
-        ApplicationContext context = new ApplicationContext("application.properties");
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("application.properties");
         try {
-            TestController testController = (TestController) context.getBean("testController");
-            testController.hi();
+            User user = (User) context.getBean("getUser");
+            System.out.println(user);
         } catch (Exception e) {
             e.printStackTrace();
         }
