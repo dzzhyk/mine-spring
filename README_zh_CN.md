@@ -73,11 +73,12 @@ $ cd mine-springframework
 - [ ] @ResponseBody注解和json解析支持
 - [ ] Controller参数简化
 - [x] @Configuration配置类和@Bean注解配置
+- [ ] mvc多文件上传支持
 
 ## 已知问题
 ~~太惨了~~
 - [x] Controller方法不能被AOP切面切入问题
-
+- [ ] 对于多层Aop的包装对象不能获取其最终代理目标类
 
 ## 持有者
 

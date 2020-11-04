@@ -75,12 +75,14 @@ This requires that you need to add this archetype to your maven tool.
 - [ ] @ResponseBody and JSON parser.
 - [ ] Simplify to Controller params.
 - [x] @Configuration ConfigClass support
+- [ ] MultiPart File update support
 
 ## Known Bugs
 
 **NEED YOUR HELP!**
 
 - [x] The Controller's method cannot be accessed by the AOP aspect.
+- [ ] Could not get AopTargetSource correctly.
 
 
 ## Maintainer
