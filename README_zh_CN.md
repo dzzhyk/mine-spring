@@ -15,7 +15,8 @@ mine-springframework是本人学习spring框架原理和学习spring源码的练
 2. 简单又不失功能的springMVC功能
 3. AOP编程
 4. 几乎和Spring相同的注解用法
-5. 还有更多...
+5. 支持使用Java注解配置类配置Bean对象
+6. 还有更多...
 
 ## 下载源码
 
@@ -71,6 +72,7 @@ $ cd mine-springframework
 - [ ] 类似JPA的简易orm框架实现
 - [ ] @ResponseBody注解和json解析支持
 - [ ] Controller参数简化
+- [x] @Configuration配置类和@Bean注解配置
 
 ## 已知问题
 ~~太惨了~~

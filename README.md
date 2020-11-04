@@ -14,7 +14,8 @@ Through this project, you can understand the simple implementation ways of sprin
 2. Simple yet functional springMVC function.
 3. Annotation based AOP programming support.
 4. Almost the same annotation usage as Spring-Framework.
-5. coming soon...
+5. @Configuration and @Bean to register beans.
+6. coming soon...
 
 ## Install
 
@@ -73,6 +74,7 @@ This requires that you need to add this archetype to your maven tool.
 - [ ] Simple ORM like Spring Data JPA.
 - [ ] @ResponseBody and JSON parser.
 - [ ] Simplify to Controller params.
+- [x] @Configuration ConfigClass support
 
 ## Known Bugs
 
