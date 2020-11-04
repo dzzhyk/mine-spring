@@ -5,11 +5,11 @@ import com.yankaizhang.springframework.context.annotation.Configuration;
 import com.yankaizhang.springframework.test.entity.User;
 
 @Configuration
-public class MvcConfig {
+public class MyJavaConfig {
 
     @Bean
     public User getUser(){
-        return new User("dzzhyk", "123");
+        return new User("dzzhyk", "1123");
     }
 
 }
