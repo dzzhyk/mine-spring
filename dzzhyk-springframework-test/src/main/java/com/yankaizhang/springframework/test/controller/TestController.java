@@ -1,7 +1,6 @@
 package com.yankaizhang.springframework.test.controller;
 
 
-
 import com.yankaizhang.springframework.beans.factory.annotation.Autowired;
 import com.yankaizhang.springframework.context.annotation.Controller;
 import com.yankaizhang.springframework.test.service.TestService;
