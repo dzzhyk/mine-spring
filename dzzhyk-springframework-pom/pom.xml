@@ -23,8 +23,8 @@
             <artifactId>dzzhyk-springframework-aop</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.yankaizhang</groupId>
-            <artifactId>dzzhyk-springframework-core</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.yankaizhang</groupId>
