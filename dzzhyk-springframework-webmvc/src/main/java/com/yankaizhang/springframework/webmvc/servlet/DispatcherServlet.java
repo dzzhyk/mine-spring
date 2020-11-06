@@ -6,6 +6,9 @@ import com.yankaizhang.springframework.context.AnnotationConfigApplicationContex
 import com.yankaizhang.springframework.webmvc.*;
 import com.yankaizhang.springframework.context.annotation.Controller;
 import com.yankaizhang.springframework.webmvc.annotation.RequestMapping;
+import com.yankaizhang.springframework.webmvc.multipart.MultipartRequest;
+import com.yankaizhang.springframework.webmvc.multipart.MultipartResolver;
+import com.yankaizhang.springframework.webmvc.multipart.commons.CommonsMultipartResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,10 +42,11 @@ public class DispatcherServlet extends HttpServlet {
 
     public static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private final String LOCATION = "contextConfigLocation";
+    private MultipartResolver multipartResolver;    // 文件请求解析器
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
     private Map<HandlerMapping, HandlerAdapter> handlerAdapterMap = new HashMap<>();
     private List<ViewResolver> viewResolvers = new ArrayList<>();
-    private AnnotationConfigApplicationContext context;
+    private AnnotationConfigApplicationContext context; // 内置容器
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -53,7 +57,9 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initStrategies(AnnotationConfigApplicationContext context){
         logger.debug("**********Dispatcher Servlet 初始化开始**********");
+
         initMultipartResolver(context); // 多部分文件上传解析multipart
+
         initLocaleResolver(context);    // 本地化解析
         initThemeResolver(context);     // 主题解析
 
@@ -70,6 +76,28 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("**********Dispatcher Servlet 初始化完成**********");
     }
 
+
+    /**
+     * 初始化文件解析器
+     */
+    private void initMultipartResolver(AnnotationConfigApplicationContext context){
+        MultipartResolver multipartResolver = null;
+        try {
+            // 从容器中获取
+            multipartResolver = (MultipartResolver) context.getBean("multipartResolver");
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if (multipartResolver != null){
+            this.multipartResolver = multipartResolver;
+            logger.debug("获取了已配置MultipartResolver对象 => " + multipartResolver.getClass());
+        }else{
+            this.multipartResolver = new CommonsMultipartResolver();
+            logger.debug("未定义MultipartResolver对象，创建默认MultipartResolver => " + this.multipartResolver.getClass());
+        }
+    }
+
     /*
       这些暂时不实现
      */
@@ -78,7 +106,6 @@ public class DispatcherServlet extends HttpServlet {
     private void initHandlerExceptionResolvers(AnnotationConfigApplicationContext context){}
     private void initThemeResolver(AnnotationConfigApplicationContext context){}
     private void initLocaleResolver(AnnotationConfigApplicationContext context){}
-    private void initMultipartResolver(AnnotationConfigApplicationContext context){}
 
 
     /**
@@ -176,7 +203,13 @@ public class DispatcherServlet extends HttpServlet {
 
     private void doDispatch(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         logger.debug("收到请求 ===> " + req.getRequestURI());
-        HandlerMapping handlerMapping = getHandlerMapping(req);
+
+        HttpServletRequest processedRequest = req;
+        boolean multipartRequestParsed = false;
+        processedRequest = checkMultipart(req);
+        multipartRequestParsed = (processedRequest != req); // 如果两次解析出来的请求不是一个，说明是文件上传请求
+
+        HandlerMapping handlerMapping = getHandlerMapping(processedRequest);
         if (null == handlerMapping){
             // 如果没有这个controller，返回404页面
             processDispatchResult(req, resp, new ModelAndView("404"));
@@ -185,10 +218,39 @@ public class DispatcherServlet extends HttpServlet {
 
         HandlerAdapter handlerAdapter = getHandlerAdapter(handlerMapping);
         if (handlerAdapter == null){
-            throw new Exception("There is no HandlerAdapter corresponding to the request \"" + req.getRequestURI() + "\"");
+            throw new Exception("没有该请求对应的 HandlerAdapter 实现 => \"" + req.getRequestURI() + "\"");
         }
-        ModelAndView model = handlerAdapter.handle(req, resp, handlerMapping);
+        ModelAndView model = handlerAdapter.handle(processedRequest, resp, handlerMapping);
         processDispatchResult(req, resp, model);
+
+        // 清理上传产生的资源文件
+        if (multipartRequestParsed) {
+            if (this.multipartResolver != null){
+                this.multipartResolver.cleanupMultipart((MultipartRequest) processedRequest);
+            }
+        }
+    }
+
+    /**
+     * 检查请求是否为文件上传请求
+     */
+    protected HttpServletRequest checkMultipart(HttpServletRequest request) throws Exception {
+        if (this.multipartResolver != null && this.multipartResolver.isMultipart(request)) {
+            try {
+                return this.multipartResolver.resolveMultipart(request);
+            }
+            catch (Exception ex) {
+                if (request.getAttribute("javax.servlet.error.exception") != null) {
+                    logger.debug("上传文件解析失败", ex);
+                    // Keep processing error dispatch with regular request handle below
+                }
+                else {
+                    throw ex;
+                }
+            }
+        }
+        // 默认返回原请求
+        return request;
     }
 
     /**

@@ -25,7 +25,7 @@
             <artifactId>commons-fileupload</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
+            <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
@@ -52,9 +52,10 @@
             <groupId>com.yankaizhang</groupId>
             <artifactId>dzzhyk-springframework-beans</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>com.yankaizhang</groupId>
-            <artifactId>dzzhyk-springframework-core</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
         </dependency>
     </dependencies>
 </project>
