@@ -104,7 +104,7 @@ public class CommonsMultipartFile implements MultipartFile {
 		}
 		catch (Exception ex) {
 			logger.error("Could not transfer to file", ex);
-			throw new IOException("Could not transfer to file: " + ex.getMessage());
+			throw new IOException("文件转写失败: " + ex.getMessage());
 		}
 	}
 

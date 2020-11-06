@@ -1,17 +1,14 @@
 package com.yankaizhang.springframework.webmvc.multipart.support;
 
-import com.yankaizhang.springframework.webmvc.http.HttpHeaders;
-import com.yankaizhang.springframework.webmvc.http.HttpMethod;
+import com.yankaizhang.springframework.util.LinkedMultiValueMap;
+import com.yankaizhang.springframework.util.MultiValueMap;
 import com.yankaizhang.springframework.webmvc.multipart.MultipartFile;
 import com.yankaizhang.springframework.webmvc.multipart.MultipartRequest;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Iterator;
 
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -35,19 +32,6 @@ public abstract class AbstractMultipartRequest extends HttpServletRequestWrapper
         return (HttpServletRequest) super.getRequest();
     }
 
-    public HttpMethod getRequestMethod() {
-        return HttpMethod.resolve(getRequest().getMethod());
-    }
-
-    public HttpHeaders getRequestHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        Enumeration<String> headerNames = getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            headers.put(headerName, Collections.list(getHeaders(headerName)));
-        }
-        return headers;
-    }
 
     @Override
     public Iterator<String> getFileNames() {

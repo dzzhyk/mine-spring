@@ -14,6 +14,7 @@
         <module>dzzhyk-springframework-webmvc</module>
         <module>dzzhyk-springframework-test</module>
         <module>dzzhyk-springframework-pom</module>
+        <module>dzzhyk-springframework-core</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -73,9 +74,9 @@
                 <version>8.0</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>5.2.10.RELEASE</version>
+                <groupId>com.yankaizhang</groupId>
+                <artifactId>dzzhyk-springframework-core</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yankaizhang</groupId>

@@ -1,5 +1,8 @@
 package com.yankaizhang.springframework.webmvc.multipart.commons;
 
+import com.yankaizhang.springframework.util.LinkedMultiValueMap;
+import com.yankaizhang.springframework.util.MultiValueMap;
+import com.yankaizhang.springframework.util.StringUtils;
 import com.yankaizhang.springframework.webmvc.multipart.MultipartFile;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -7,14 +10,12 @@ import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * 这个Support类定义了使用apache-commons解析上传文件的基本操作
@@ -187,8 +188,8 @@ public abstract class CommonsFileUploadSupport {
     /**
      * 内置包装类MultipartParsingResult
      * multipartFiles 是文件名称对应的文件对象
-     * multipartParameters
-     * multipartParameterContentTypes
+     * multipartParameters 随着文件上传请求传来的参数map
+     * multipartParameterContentTypes 附加请求参数的ContentMap
      */
     protected static class MultipartParsingResult {
 

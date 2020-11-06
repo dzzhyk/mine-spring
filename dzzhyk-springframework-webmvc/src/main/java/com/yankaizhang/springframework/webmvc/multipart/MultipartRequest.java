@@ -16,11 +16,10 @@
 
 package com.yankaizhang.springframework.webmvc.multipart;
 
-import org.springframework.util.MultiValueMap;
+import com.yankaizhang.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * 实现这个接口代表是一个文件上传请求request

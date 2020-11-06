@@ -22,12 +22,12 @@
             <artifactId>dzzhyk-springframework-beans</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
+            <groupId>com.yankaizhang</groupId>
+            <artifactId>dzzhyk-springframework-aop</artifactId>
         </dependency>
         <dependency>
             <groupId>com.yankaizhang</groupId>
-            <artifactId>dzzhyk-springframework-aop</artifactId>
+            <artifactId>dzzhyk-springframework-core</artifactId>
         </dependency>
     </dependencies>
 </project>

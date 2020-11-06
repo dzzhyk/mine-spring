@@ -1,23 +1,18 @@
 package com.yankaizhang.springframework.webmvc.multipart.support;
 
-import com.yankaizhang.springframework.webmvc.http.HttpHeaders;
+import com.yankaizhang.springframework.util.MultiValueMap;
 import com.yankaizhang.springframework.webmvc.multipart.MultipartFile;
-import org.springframework.lang.Nullable;
-import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
- * MultipartHttpServletRequest接口的默认实现
+ * MultipartRequest接口的默认实现
  */
 public class DefaultMultipartRequest extends AbstractMultipartRequest {
-    private static final String CONTENT_TYPE = "Content-Type";
 
-    @Nullable
     private Map<String, String[]> multipartParameters;
 
-    @Nullable
     private Map<String, String> multipartParameterContentTypes;
 
 
@@ -47,7 +42,6 @@ public class DefaultMultipartRequest extends AbstractMultipartRequest {
 
 
     @Override
-    @Nullable
     public String getParameter(String name) {
         String[] values = getMultipartParameters().get(name);
         if (values != null) {
@@ -105,18 +99,6 @@ public class DefaultMultipartRequest extends AbstractMultipartRequest {
         }
         else {
             return getMultipartParameterContentTypes().get(paramOrFileName);
-        }
-    }
-
-    public HttpHeaders getMultipartHeaders(String paramOrFileName) {
-        String contentType = getMultipartContentType(paramOrFileName);
-        if (contentType != null) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(CONTENT_TYPE, contentType);
-            return headers;
-        }
-        else {
-            return null;
         }
     }
 

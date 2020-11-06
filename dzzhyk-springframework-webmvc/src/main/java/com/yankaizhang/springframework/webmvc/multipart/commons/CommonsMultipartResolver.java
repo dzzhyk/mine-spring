@@ -25,7 +25,6 @@ import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +60,9 @@ public class CommonsMultipartResolver extends CommonsFileUploadSupport
 
 	@Override
 	public MultipartRequest resolveMultipart(HttpServletRequest request) throws Exception {
-		Assert.notNull(request, "请求request不能为null");
+		if (null == request){
+			throw new Exception("请求request不能为null");
+		}
 		MultipartParsingResult parsingResult = parseRequest(request);
 		return new DefaultMultipartRequest(request, parsingResult.getMultipartFiles(),
 				parsingResult.getMultipartParameters(), parsingResult.getMultipartParameterContentTypes());
@@ -105,7 +106,7 @@ public class CommonsMultipartResolver extends CommonsFileUploadSupport
 				cleanupFileItems(request.getMultiFileMap());
 			}
 			catch (Throwable ex) {
-				logger.warn("Failed to perform multipart cleanup for servlet request", ex);
+				logger.warn("清除文件信息失败！", ex);
 			}
 		}
 	}
