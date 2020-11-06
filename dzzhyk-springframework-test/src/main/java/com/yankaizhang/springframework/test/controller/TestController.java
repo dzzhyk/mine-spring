@@ -10,8 +10,7 @@ import com.yankaizhang.springframework.webmvc.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.UUID;
 
 @Controller
@@ -31,8 +30,11 @@ public class TestController {
         System.out.println("执行了hi方法...");
     }
 
+    /**
+     * 文件上传示例
+     */
     @RequestMapping("/upload")
-    public String index(HttpServletRequest request, HttpServletResponse response, @RequestParam("file") MultipartFile file){
+    public String index(HttpServletRequest request, @RequestParam("file") MultipartFile file){
         //获取文件的真实文件名
         String trueName = file.getOriginalFilename();
         if (null == trueName){
@@ -64,6 +66,41 @@ public class TestController {
         }
         request.setAttribute("msg", "上传成功");
         return "index";
+    }
+
+    /**
+     * 文件下载示例
+     */
+    @RequestMapping("/download")
+    public void download(HttpServletRequest request,
+                           HttpServletResponse response,
+                           @RequestParam("filename") String filename) throws IOException {
+        File file = new File("/Users/dzzhyk/Desktop/openSource/springframework/dzzhyk-springframework-test/upload"
+                + File.separator + filename);
+
+        if (!file.exists()) {
+            return;
+        }
+        response.setContentType("application/force-download");
+        response.addHeader("Content-Disposition", "attachment;fileName=" + filename);
+
+        byte[] buffer = new byte[1024];
+
+        try (FileInputStream fis = new FileInputStream(file);
+             BufferedInputStream bis = new BufferedInputStream(fis);
+             OutputStream os = response.getOutputStream()
+        ) {
+            // 文件下载
+            int i = bis.read(buffer);
+            while (i != -1) {
+                os.write(buffer, 0, i);
+                i = bis.read(buffer);
+            }
+            os.flush();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }
