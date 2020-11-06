@@ -51,15 +51,14 @@ $ cd mine-springframework
 ```
 这里覆盖了所有仓库，你可以根据你自己调整，当然直接使用也是没关系的，我的私有主仓库也代理了aliyun国内仓库，只是受限于云服务器下载限制
 
-因为这个项目学习spring进行了分模块开发，同时使用到了spring-core包作为基础依赖包（不想自己实现）
 所以接下来需要使用maven坐标导入spring-core和本项目的jar包：
 
 ```xml
 <dependencies>
     <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-core</artifactId>
-        <version>5.2.10.RELEASE</version>
+        <groupId>com.yankaizhang</groupId>
+        <artifactId>dzzhyk-springframework-core</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>com.yankaizhang</groupId>

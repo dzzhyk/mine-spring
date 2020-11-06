@@ -52,16 +52,14 @@ First, you need to add my Nexus Repository in your maven's `setting.xml`, so tha
 All the Repository are override here. You can adjust it according to your own. Of course, it doesn’t matter if you use it directly. 
 My private Nexus Repository also acts as an proxy for the central Repository, but it is limited by the download limit of the server.
 
-
-Because this project developed in sub-modules, and used the `spring-core` as the basic dependency package (I don’t want to implement it myself)
-So next, you need to use maven coordinates to import `spring-core` and other useful jar of this project:
+Next, you need to use maven coordinates to import dependencies of this project:
 
 ```xml
 <dependencies>
     <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-core</artifactId>
-        <version>5.2.10.RELEASE</version>
+        <groupId>com.yankaizhang</groupId>
+        <artifactId>dzzhyk-springframework-core</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>com.yankaizhang</groupId>
