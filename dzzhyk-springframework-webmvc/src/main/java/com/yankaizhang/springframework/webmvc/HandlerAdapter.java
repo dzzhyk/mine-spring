@@ -2,14 +2,15 @@ package com.yankaizhang.springframework.webmvc;
 
 
 import com.yankaizhang.springframework.webmvc.annotation.RequestParam;
+import com.yankaizhang.springframework.webmvc.multipart.MultipartFile;
+import com.yankaizhang.springframework.webmvc.multipart.MultipartRequest;
+import com.yankaizhang.springframework.webmvc.multipart.support.DefaultMultipartRequest;
+import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 处理请求传递的参数和controller中方法参数的对应
@@ -52,10 +53,11 @@ public class HandlerAdapter {
             }
         }
 
-        // 请求参数映射
-        Map<String, String[]> params = req.getParameterMap();
         Object[] paramValues = new Object[parameterTypes.length];   // 最后传递给invoke方法执行的参数
 
+
+        // 请求参数映射
+        Map<String, String[]> params = req.getParameterMap();
         for (Map.Entry<String, String[]> entry : params.entrySet()) {
             String value = Arrays.toString(entry.getValue()).replaceAll("[\\[\\]]", "")
                     .replaceAll("\\s", ",");
@@ -77,6 +79,21 @@ public class HandlerAdapter {
             paramValues[respIndex] = resp;
         }
 
+        // 处理文件请求
+        if (req instanceof MultipartRequest) {
+            // 如果是文件上传类型
+            MultiValueMap<String, MultipartFile> multiFileMap = ((MultipartRequest) req).getMultiFileMap();
+            for (Map.Entry<String, List<MultipartFile>> entry : multiFileMap.entrySet()) {
+                for (MultipartFile file : entry.getValue()) {
+                    if (!paramMapping.containsKey(entry.getKey())) continue;   // 如果没有注解标记这个参数，略过
+                    int index = paramMapping.get(entry.getKey());
+                    paramValues[index] = file;
+                }
+            }
+        }
+
+
+        // 执行方法
         Object returnValue = handlerMapping.getMethod().invoke(handlerMapping.getController(), paramValues);
         if (returnValue == null) return null;
 

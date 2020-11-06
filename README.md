@@ -15,7 +15,8 @@ Through this project, you can understand the simple implementation ways of sprin
 3. Annotation based AOP programming support.
 4. Almost the same annotation usage as Spring-Framework.
 5. @Configuration and @Bean to register beans.
-6. coming soon...
+6. MultipartFile upload and download
+7. coming soon...
 
 ## Install
 
@@ -36,17 +37,57 @@ $ cd mine-springframework
 ### 2. Create a new project in the way of a classical Spring project.
 The usage is basically the same as creating a Spring project, you only need to create a Spring-web project and import maven dependencies.  
 
-Use [maven coordinates](https://en.wikipedia.org/wiki/Apache_Maven) to import the following dependencies:
+First, you need to add my Nexus Repository in your maven's `setting.xml`, so that you can use the snapshot-jar of this project.
 
 ```xml
-<dependency>
-  <groupId>com.yankaizhang</groupId>
-  <artifactId>dzzhyk-springframework-${module}</artifactId>
-  <version>${version}</version>
-</dependency>
+<mirrors>
+<mirror>
+  <id>dzzhyk-nexus</id>
+  <mirrorOf>*</mirrorOf>
+  <name>dzzhyk-nexus</name>
+  <url>http://maven.yankaizhang.com/repository/public/</url>
+</mirror>
+</mirrors>
+```
+All the Repository are override here. You can adjust it according to your own. Of course, it doesn’t matter if you use it directly. 
+My private Nexus Repository also acts as an proxy for the central Repository, but it is limited by the download limit of the server.
+
+
+Because this project developed in sub-modules, and used the `spring-core` as the basic dependency package (I don’t want to implement it myself)
+So next, you need to use maven coordinates to import `spring-core` and other useful jar of this project:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>5.2.10.RELEASE</version>
+    </dependency>
+    <dependency>
+        <groupId>com.yankaizhang</groupId>
+        <artifactId>dzzhyk-springframework-beans</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>com.yankaizhang</groupId>
+        <artifactId>dzzhyk-springframework-context</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>com.yankaizhang</groupId>
+        <artifactId>dzzhyk-springframework-aop</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>com.yankaizhang</groupId>
+        <artifactId>dzzhyk-springframework-webmvc</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+</dependencies>
 ```
 
-### 3. Create your project through a maven-archetype.
+
+### 3. Create your project through a maven-archetype. (NOTE: NOT available NOW)
 Directly use the following provided maven-archetype to quickly create a web project using mine-springframework.  
 
 This requires that you need to add this archetype to your maven tool.
@@ -68,6 +109,7 @@ This requires that you need to add this archetype to your maven tool.
 [logs](./UPDATE.md)
 
 ## TODO
+fork and do it yourself!
 
 - [ ] Simple Spring JDBC.
 - [x] Multi-Aspect AOP support.
@@ -75,6 +117,7 @@ This requires that you need to add this archetype to your maven tool.
 - [ ] @ResponseBody and JSON parser.
 - [ ] Simplify to Controller params.
 - [x] @Configuration ConfigClass support
+- [x] MultipartFile upload and download
 
 ## Known Bugs
 
