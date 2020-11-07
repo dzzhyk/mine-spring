@@ -14,9 +14,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.yankaizhang</groupId>
             <artifactId>dzzhyk-springframework-pom</artifactId>
-
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

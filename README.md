@@ -114,8 +114,10 @@ fork and do it yourself!
 - [ ] Simple ORM like Spring Data JPA.
 - [ ] @ResponseBody and JSON parser.
 - [ ] Simplify to Controller params.
-- [x] @Configuration ConfigClass support
+- [x] @Configuration based Java ConfigClass support
 - [x] MultipartFile upload and download
+- [ ] a tiny AnnotationConfigClassApplicationContext impl
+- [ ] beanPostProcessor and beanFactoryPostProcessor
 
 ## Known Bugs
 

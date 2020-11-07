@@ -45,10 +45,16 @@ public class AopUtils {
         // TODO：存在代理嵌套的情况，所以需要加循环
         if (isJdkDynamicProxy(object)){
             result = getSpringJdkProxyTarget(object);
-
+            if (isAopProxy(result)){
+                return getAopTarget(result);
+            }
+            return result;
         }else if (isCglibProxy(object)){
             result = getSpringCglibProxyTarget(object);
-
+            if (isAopProxy(result)){
+                return getAopTarget(result);
+            }
+            return result;
         }
         return result;
     }

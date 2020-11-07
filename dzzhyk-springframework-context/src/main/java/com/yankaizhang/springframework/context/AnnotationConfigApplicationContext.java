@@ -13,6 +13,7 @@ import com.yankaizhang.springframework.aop.support.AopUtils;
 import com.yankaizhang.springframework.beans.BeanWrapper;
 import com.yankaizhang.springframework.beans.factory.BeanFactory;
 import com.yankaizhang.springframework.beans.factory.annotation.Autowired;
+import com.yankaizhang.springframework.context.annotation.ComponentScan;
 import com.yankaizhang.springframework.context.annotation.Configuration;
 import com.yankaizhang.springframework.context.config.AnnotatedBeanDefinitionReader;
 import com.yankaizhang.springframework.beans.factory.config.BeanPostProcessor;
@@ -21,6 +22,7 @@ import com.yankaizhang.springframework.context.annotation.Controller;
 import com.yankaizhang.springframework.context.annotation.Service;
 import com.yankaizhang.springframework.context.support.ConfigClassReader;
 import com.yankaizhang.springframework.context.support.DefaultListableBeanFactory;
+import com.yankaizhang.springframework.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,9 +68,46 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
      */
     private List<Class<?>> aspectBeanInstanceCache = new CopyOnWriteArrayList<>();
 
+    /**
+     * 直接使用一个String数组创建容器
+     * @param basePackages 扫描路径
+     */
+    public AnnotationConfigApplicationContext(String... basePackages){
+        this.configLocations = basePackages;
+        try {
+            refresh();  // 调用自己重写的refresh，多态
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
-    public AnnotationConfigApplicationContext(String... configLocations){
-        this.configLocations = configLocations;
+    /**
+     * 使用配置类创建容器
+     * @param configClass 配置类
+     */
+    public AnnotationConfigApplicationContext(Class<?>... configClass){
+        ArrayList<String> basePackages = new ArrayList<>(16);
+        for (Class<?> aConfigClass : configClass) {
+            // 首先检验这个配置类是否为配置类
+            if (!aConfigClass.isAnnotationPresent(Configuration.class)){
+                log.warn(aConfigClass.getName() + " => 类不是Java配置类");
+                continue;
+            }
+            // 获取configLocation信息
+            ComponentScan componentScan = aConfigClass.getAnnotation(ComponentScan.class);
+            if (null == componentScan){
+                log.warn(aConfigClass.getName() + " => 未配置包扫描路径，使用@ComponentScan注解配置扫描路径");
+                continue;
+            }
+            String configLocation = componentScan.value();
+            if (null == configLocation || "".equals(configLocation.trim())){
+                log.warn(aConfigClass.getName() + " => componenntScan包扫描路径不存在或为空");
+                continue;
+            }
+            basePackages.add(configLocation);
+        }
+        // 收集到的所有扫描路径
+        this.configLocations = StringUtils.convertListToArray(basePackages);
         try {
             refresh();  // 调用自己重写的refresh，多态
         }catch (Exception e){

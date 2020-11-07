@@ -21,7 +21,7 @@ public class AnnotatedBeanDefinitionReader {
 
     public static final Logger log = LoggerFactory.getLogger(AnnotatedBeanDefinitionReader.class);
 
-    private List<String> registryBeanClasses = new ArrayList<>(4);
+    private List<String> registryBeanClasses = new ArrayList<>(16);
     private Properties config = new Properties();
     private final String SCAN_PACKAGE = "scanPackage";  // 设置配置文件Key
     private Set<BeanDefinition> alreadyRegistered = new CopyOnWriteArraySet<>();  // 已经注册的BeanDefinition

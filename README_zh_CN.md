@@ -114,6 +114,8 @@ fork and do it yourself!
 - [ ] Controller参数简化
 - [x] @Configuration配置类和@Bean注解配置
 - [x] 文件上传和文件下载支持
+- [ ] 更加完整正规的AnnotationConfigClassApplicationContext容器
+- [ ] beanPostProcessor 和 beanFactoryPostProcessor实现，以及其容器实现
 
 ## 已知问题
 ~~太惨了~~
