@@ -1,13 +1,14 @@
 # mine-springframework
 
-> 简洁的Spring框架实现
+> 一个用于学习的简洁Spring框架实现
 
-[Chinese](./README_zh_CN.md)
+[English](./README.md)
 
 ## 背景
 
-mine-springframework是本人学习spring框架原理和学习spring源码的练习产物。  
-通过本项目，可以了解spring的简易原理，以及spring主要功能的底层实现，学习spring更加清晰明白！
+mine-springframework是本人学习spring框架原理和学习spring源码的练习产物，免费分享给大家！ 
+通过本项目，可以了解Spring的主要模块如IoC、AOP、webmvc、JDBC的实现原理，同时在学习的过程中会进一步提升阅读Spring源码的能力。
+本项目正在持续更新中...生命不息，折腾不止...
 
 ## 现有功能
 
@@ -26,7 +27,7 @@ $ git clone https://github.com/dzzhyk/mine-springframework.git
 $ cd mine-springframework
 ```
 
-## 如何直接使用mine-springframework
+## 使用mine-springframework构建应用
 
 ### 1. 在项目中添加lib依赖
 
@@ -128,7 +129,7 @@ fork and do it yourself!
 - [ ] 更加完整正规的AnnotationConfigClassApplicationContext容器
 - [ ] beanPostProcessor 和 beanFactoryPostProcessor实现，以及其容器实现
 - [ ] 事务支持
-- [ ] @Around Aop环切
+- [ ] @Around Aop环切实现
 
 ## 已知问题
 ~~太惨了~~

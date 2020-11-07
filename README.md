@@ -1,7 +1,7 @@
 # mine-springframework
 > A Simple Spring-Framework implementation for learning.
 
-[README_zh_CN](./README_zh_CN.md)
+[中文README](./README_zh_CN.md)
 
 ## Background
 
@@ -14,7 +14,7 @@ Through this project, you can understand the simple implementation ways of sprin
 2. Simple yet functional springMVC function.
 3. Annotation based AOP programming support.
 4. Almost the same annotation usage as Spring-Framework.
-5. @Configuration and @Bean to register beans.
+5. JavaConfig Class support
 6. MultipartFile upload and download
 7. coming soon...
 
