@@ -20,9 +20,9 @@ public class TestController {
     TestService testService;
 
     @RequestMapping("/index")
-    public String index(HttpServletRequest request, HttpServletResponse response){
-        request.setAttribute("username", "haha");
-        request.setAttribute("msg", testService.sayHello("haha"));
+    public String index(){
+//        request.setAttribute("username", "haha");
+//        request.setAttribute("msg", testService.sayHello("haha"));
         return "index";
     }
 
@@ -34,7 +34,7 @@ public class TestController {
      * 文件上传示例
      */
     @RequestMapping("/upload")
-    public String index(HttpServletRequest request, @RequestParam("file") MultipartFile file){
+    public String upload(HttpServletRequest request, @RequestParam("file") MultipartFile file){
         //获取文件的真实文件名
         String trueName = file.getOriginalFilename();
         if (null == trueName){

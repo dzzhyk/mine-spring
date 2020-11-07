@@ -37,22 +37,26 @@ $ cd mine-springframework
 ### 2. Create a new project in the way of a classical Spring project.
 The usage is basically the same as creating a Spring project, you only need to create a Spring-web project and import maven dependencies.  
 
-First, you need to add my Nexus Repository in your maven's `setting.xml`, so that you can use the snapshot-jar of this project.
+First, you need to add my Nexus Repository in your `pom.xml`, so that you can use the released or snapshot jar of this project.
 
 ```xml
-<mirrors>
-<mirror>
-  <id>dzzhyk-nexus</id>
-  <mirrorOf>*</mirrorOf>
-  <name>dzzhyk-nexus</name>
-  <url>http://maven.yankaizhang.com/repository/public/</url>
-</mirror>
-</mirrors>
+<repositories>
+    <!-- https://github.com/dzzhyk/mine-springframework -->
+    <repository>
+        <id>dzzhyk-nexus</id>
+        <name>dzzhyk-nexus</name>
+        <url>http://maven.yankaizhang.com/repository/github/</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
 ```
-All the Repository are override here. You can adjust it according to your own. Of course, it doesn’t matter if you use it directly. 
-My private Nexus Repository also acts as an proxy for the central Repository, but it is limited by the download limit of the server.
 
-Next, you need to use maven coordinates to import dependencies of this project:
+Next, you need to use maven coordinates to import all dependencies you need of this project with specified version.
 
 ```xml
 <dependencies>
@@ -85,10 +89,15 @@ Next, you need to use maven coordinates to import dependencies of this project:
 ```
 
 
-### 3. Create your project through a maven-archetype. (NOTE: NOT available NOW)
-Directly use the following provided maven-archetype to quickly create a web project using mine-springframework.  
+### 3. Create your project through a maven-archetype. (Attention: NOT available NOW)
 
-This requires that you need to add this archetype to your maven tool.
+In order to make it easier for everyone to try this project, 
+
+I made a maven archetype `dzzhyk-springframework-archetype` based on this project for you.
+
+Everyone can use this maven-archetype to quickly get started with this project.
+
+This requires that you first need to add this archetype to your `maven` tool:
 
 ```xml
 <dependency>
@@ -97,6 +106,8 @@ This requires that you need to add this archetype to your maven tool.
   <version>${version}</version>
 </dependency>
 ```
+
+Then create a new project by selecting `create from maven-archetype` in your `IDE`
 
 ## Related Efforts
 
@@ -118,6 +129,8 @@ fork and do it yourself!
 - [x] MultipartFile upload and download
 - [ ] a tiny AnnotationConfigClassApplicationContext impl
 - [ ] beanPostProcessor and beanFactoryPostProcessor
+- [ ] transaction support
+- [ ] @Around Aop
 
 ## Known Bugs
 

@@ -35,23 +35,29 @@ $ cd mine-springframework
 3. 在项目目录下新建lib目录，将本项目jar包放置于lib目录下，然后添加该lib目录为External Library
 
 ### 2. 用Spring项目的方式创建项目
+
 使用方式基本和创建一个Spring项目完全相同，只需要创建一个Spring-web项目并且导入maven依赖即可
 
-首先你需要在maven的setting.xml中添加我的Nexus仓库，这样就可以使用到本项目的发布jar包了
+首先你需要在pom.xml中添加我的Nexus仓库，这样就可以使用到本项目的发布的所有jar包了
 
 ```xml
-<mirrors>
-<mirror>
-  <id>dzzhyk-nexus</id>
-  <mirrorOf>*</mirrorOf>
-  <name>dzzhyk-nexus</name>
-  <url>http://maven.yankaizhang.com/repository/public/</url>
-</mirror>
-</mirrors>
+<repositories>
+    <!-- https://github.com/dzzhyk/mine-springframework -->
+    <repository>
+        <id>dzzhyk-nexus</id>
+        <name>dzzhyk-nexus</name>
+        <url>http://maven.yankaizhang.com/repository/github/</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
 ```
-这里覆盖了所有仓库，你可以根据你自己调整，当然直接使用也是没关系的，我的私有主仓库也代理了aliyun国内仓库，只是受限于云服务器下载限制
 
-所以接下来需要使用maven坐标导入spring-core和本项目的jar包：
+所以接下来需要使用maven坐标导入本项目的各模块jar包
 
 ```xml
 <dependencies>
@@ -85,17 +91,22 @@ $ cd mine-springframework
 
 
 ### 3. 用maven-archetype方式创建项目 (还不完善，暂时不要用)
-或者直接使用以下提供好的maven archetype工程文件来快速创建一个使用了mine-springframework的web工程
 
-这要求你首先需要添加这个archetype到你的maven工具
+我为了更方便大家体验到本项目的成果，特意为大家制作了一个基于本项目的maven骨架模板`dzzhyk-springframework-archetype`
+
+大家使用这个maven骨架工程可以快速上手使用本项目
+
+这要求你首先需要添加我的archetype到你的`maven`工具：
 
 ```xml
 <dependency>
   <groupId>com.yankaizhang</groupId>
-  <artifactId>dzzhyk-archetype-springframework</artifactId>
+  <artifactId>dzzhyk-springframework-archetype</artifactId>
   <version>${version}</version>
 </dependency>
 ```
+
+紧接着在你的`IDE`中选择从maven archetype创建即可
 
 ## 相关项目
 
@@ -116,6 +127,8 @@ fork and do it yourself!
 - [x] 文件上传和文件下载支持
 - [ ] 更加完整正规的AnnotationConfigClassApplicationContext容器
 - [ ] beanPostProcessor 和 beanFactoryPostProcessor实现，以及其容器实现
+- [ ] 事务支持
+- [ ] @Around Aop环切
 
 ## 已知问题
 ~~太惨了~~
