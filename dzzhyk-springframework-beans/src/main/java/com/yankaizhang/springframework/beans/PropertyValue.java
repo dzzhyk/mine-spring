@@ -3,7 +3,7 @@ package com.yankaizhang.springframework.beans;
 import java.util.Objects;
 
 /**
- * Bean属性包装类
+ * Bean实例化后的属性包装类
  */
 public class PropertyValue {
     private String name;

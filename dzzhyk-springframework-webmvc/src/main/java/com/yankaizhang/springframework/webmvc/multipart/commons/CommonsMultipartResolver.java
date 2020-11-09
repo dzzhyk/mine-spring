@@ -41,7 +41,7 @@ import java.util.List;
 public class CommonsMultipartResolver extends CommonsFileUploadSupport
 		implements MultipartResolver, ServletContextAware {
 
-	public static final Logger log = LoggerFactory.getLogger(CommonsMultipartResolver.class);
+	private static final Logger log = LoggerFactory.getLogger(CommonsMultipartResolver.class);
 
 	public CommonsMultipartResolver() {
 		super();
@@ -70,7 +70,6 @@ public class CommonsMultipartResolver extends CommonsFileUploadSupport
 
 	/**
 	 * 解析request
-	 *
 	 */
 	protected MultipartParsingResult parseRequest(HttpServletRequest request) throws Exception {
 		String encoding = determineEncoding(request);

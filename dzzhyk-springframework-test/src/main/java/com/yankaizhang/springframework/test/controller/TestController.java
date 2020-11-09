@@ -72,8 +72,7 @@ public class TestController {
      * 文件下载示例
      */
     @RequestMapping("/download")
-    public void download(HttpServletRequest request,
-                           HttpServletResponse response,
+    public void download(HttpServletResponse response,
                            @RequestParam("filename") String filename) throws IOException {
         File file = new File("/Users/dzzhyk/Desktop/openSource/springframework/dzzhyk-springframework-test/upload"
                 + File.separator + filename);

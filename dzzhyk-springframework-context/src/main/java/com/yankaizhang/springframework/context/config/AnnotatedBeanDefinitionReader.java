@@ -1,7 +1,7 @@
 package com.yankaizhang.springframework.context.config;
 
 import com.yankaizhang.springframework.aop.support.AopUtils;
-import com.yankaizhang.springframework.beans.factory.support.BeanDefinition;
+import com.yankaizhang.springframework.beans.factory.support.RootBeanDefinition;
 import com.yankaizhang.springframework.context.annotation.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ public class AnnotatedBeanDefinitionReader {
     private List<String> registryBeanClasses = new ArrayList<>(16);
     private Properties config = new Properties();
     private final String SCAN_PACKAGE = "scanPackage";  // 设置配置文件Key
-    private Set<BeanDefinition> alreadyRegistered = new CopyOnWriteArraySet<>();  // 已经注册的BeanDefinition
+    private Set<RootBeanDefinition> alreadyRegistered = new CopyOnWriteArraySet<>();  // 已经注册的BeanDefinition
 
     /**
      * 通过构造方法获取从ApplicationContext传入的locations路径，然后解析扫描和保存相关所有的类并且提供统一的访问入口
@@ -70,8 +70,8 @@ public class AnnotatedBeanDefinitionReader {
     /**
      * 将扫描到的位置信息转换为BeanDefinition对象，便于之后的IoC操作
      */
-    public List<BeanDefinition> loadBeanDefinitions(){
-        List<BeanDefinition> result = new ArrayList<>();
+    public List<RootBeanDefinition> loadBeanDefinitions(){
+        List<RootBeanDefinition> result = new ArrayList<>();
         try {
             for (String className : registryBeanClasses) {
                 Class<?> clazz = Class.forName(className);
@@ -110,9 +110,9 @@ public class AnnotatedBeanDefinitionReader {
     /**
      * 创建BeanDefinition对象
      */
-    private BeanDefinition doCreateBeanDefinition(String factoryBeanName, String beanClassName, boolean lazy){
+    private RootBeanDefinition doCreateBeanDefinition(String factoryBeanName, String beanClassName, boolean lazy){
         log.debug("创建bean定义:[普通反射] [factoryBeanName ==> "+ factoryBeanName + "] [beanClassName ==> " + beanClassName + "]");
-        BeanDefinition definition = new BeanDefinition(beanClassName, factoryBeanName, lazy);
+        RootBeanDefinition definition = new RootBeanDefinition(beanClassName, factoryBeanName, lazy);
         return definition;
     }
 
@@ -120,10 +120,10 @@ public class AnnotatedBeanDefinitionReader {
     /**
      * 创建BeanDefinition对象
      */
-    public BeanDefinition doCreateConfigClassBeanDefinition(String factoryBeanName, String factoryBeanClassName,
-                                                            String factoryMethodName, boolean lazy){
+    public RootBeanDefinition doCreateConfigClassBeanDefinition(String factoryBeanName, String factoryBeanClassName,
+                                                                String factoryMethodName, boolean lazy){
         log.debug("创建bean定义:[工厂方式] [factoryBeanName ==> "+ factoryBeanName + "] [factoryMethodName ==> " + factoryMethodName + "]");
-        BeanDefinition beanDefinition = new BeanDefinition(factoryBeanName, factoryMethodName);
+        RootBeanDefinition beanDefinition = new RootBeanDefinition(factoryBeanName, factoryMethodName);
         beanDefinition.setFactoryBeanClassName(factoryBeanClassName);
         beanDefinition.setLazyInit(lazy);
         return beanDefinition;
@@ -142,11 +142,11 @@ public class AnnotatedBeanDefinitionReader {
         return config;
     }
 
-    public boolean checkAlreadyRegistered(BeanDefinition definition){
+    public boolean checkAlreadyRegistered(RootBeanDefinition definition){
         return alreadyRegistered.contains(definition);
     }
 
-    public void markRegistered(BeanDefinition beanDefinition){
+    public void markRegistered(RootBeanDefinition beanDefinition){
         this.alreadyRegistered.add(beanDefinition);
     }
 }

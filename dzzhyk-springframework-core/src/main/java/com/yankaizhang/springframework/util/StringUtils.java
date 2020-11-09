@@ -1,6 +1,10 @@
 package com.yankaizhang.springframework.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 自制String工具类
@@ -23,12 +27,23 @@ public class StringUtils {
         res[target.length] = value;
         return res;
     }
+//
+//    public static String[] convertListToArray(List<String> list){
+//        String[] strings = new String[list.size()];
+//        for (int i = 0; i < list.size(); ++i) {
+//            strings[i] = list.get(i);
+//        }
+//        return strings;
+//    }
 
-    public static String[] convertListToArray(List<String> list){
-        String[] strings = new String[list.size()];
-        for (int i = 0; i < list.size(); ++i) {
-            strings[i] = list.get(i);
+    /**
+     * 将集合中的元素转换为数组形式
+     */
+    public static String[] toStringArray(Collection<String> collections) {
+        if (collections.isEmpty()){
+            return new String[]{};
+        }else{
+            return collections.toArray(new String[0]);
         }
-        return strings;
     }
 }

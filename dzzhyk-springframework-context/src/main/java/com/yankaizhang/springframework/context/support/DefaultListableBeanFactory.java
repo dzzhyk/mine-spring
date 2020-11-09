@@ -1,7 +1,7 @@
 package com.yankaizhang.springframework.context.support;
 
 
-import com.yankaizhang.springframework.beans.factory.support.BeanDefinition;
+import com.yankaizhang.springframework.beans.factory.support.RootBeanDefinition;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,6 +15,6 @@ public class DefaultListableBeanFactory extends AbstractApplicationContext {
     /**
      * beanDefinitionMap，用来存储注册信息，当做bean定义的缓存
      */
-    protected final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
+    protected final Map<String, RootBeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
 
 }

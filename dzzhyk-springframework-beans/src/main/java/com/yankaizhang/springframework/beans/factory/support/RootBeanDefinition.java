@@ -2,7 +2,6 @@ package com.yankaizhang.springframework.beans.factory.support;
 
 import com.yankaizhang.springframework.beans.MutablePropertyValues;
 
-import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
@@ -12,7 +11,7 @@ import java.util.Objects;
  * factoryBeanName：@Autowired接口就等于接口名字
  * id是接口名字，但是对应的实例是相应实现类的bean
  */
-public class BeanDefinition {
+public class RootBeanDefinition {
 
     private String beanClassName = null;   // 用于实例化该bean定义的全类名
     private boolean lazyInit = false;   // 默认关闭懒加载
@@ -26,7 +25,7 @@ public class BeanDefinition {
      * @param beanClassName com.yankaizhang.test.service.impl.TestServiceImpl
      * @param factoryBeanName testService
      */
-    public BeanDefinition(String beanClassName, String factoryBeanName, boolean lazyInit) {
+    public RootBeanDefinition(String beanClassName, String factoryBeanName, boolean lazyInit) {
         this.beanClassName = beanClassName;
         this.factoryBeanName = factoryBeanName;
         this.lazyInit = lazyInit;
@@ -37,7 +36,7 @@ public class BeanDefinition {
      * @param factoryBeanName 创建bean实例用的工厂beanName
      * @param factoryMethodName 创建bean实例用的工厂方法name
      */
-    public BeanDefinition(String factoryBeanName, String factoryMethodName) {
+    public RootBeanDefinition(String factoryBeanName, String factoryMethodName) {
         this.factoryBeanName = factoryBeanName;
         this.factoryMethodName = factoryMethodName;
     }
@@ -106,7 +105,7 @@ public class BeanDefinition {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BeanDefinition that = (BeanDefinition) o;
+        RootBeanDefinition that = (RootBeanDefinition) o;
         return lazyInit == that.lazyInit &&
                 Objects.equals(beanClassName, that.beanClassName) &&
                 Objects.equals(factoryBeanName, that.factoryBeanName) &&

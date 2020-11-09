@@ -17,7 +17,7 @@ import com.yankaizhang.springframework.context.annotation.ComponentScan;
 import com.yankaizhang.springframework.context.annotation.Configuration;
 import com.yankaizhang.springframework.context.config.AnnotatedBeanDefinitionReader;
 import com.yankaizhang.springframework.beans.factory.config.BeanPostProcessor;
-import com.yankaizhang.springframework.beans.factory.support.BeanDefinition;
+import com.yankaizhang.springframework.beans.factory.support.RootBeanDefinition;
 import com.yankaizhang.springframework.context.annotation.Controller;
 import com.yankaizhang.springframework.context.annotation.Service;
 import com.yankaizhang.springframework.context.support.ConfigClassReader;
@@ -107,7 +107,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
             basePackages.add(configLocation);
         }
         // 收集到的所有扫描路径
-        this.configLocations = StringUtils.convertListToArray(basePackages);
+        this.configLocations = StringUtils.toStringArray(basePackages);
         try {
             refresh();  // 调用自己重写的refresh，多态
         }catch (Exception e){
@@ -120,7 +120,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
         // 1. 定位配置文件
         annotatedBeanDefinitionReader = new AnnotatedBeanDefinitionReader(this.configLocations);
         // 2. 加载配置文件，扫描类，把他们封装成BeanDefinition
-        List<BeanDefinition> beanDefinitions = annotatedBeanDefinitionReader.loadBeanDefinitions();
+        List<RootBeanDefinition> beanDefinitions = annotatedBeanDefinitionReader.loadBeanDefinitions();
         // 3. 注册已有bean定义
         doRegisterBeanDefinition(beanDefinitions);
         // 4. 先处理配置类的bean定义 - 相当于前置处理
@@ -141,13 +141,13 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
     private void doProcessAnnotationConfiguration() throws Exception {
         configClassReader = new ConfigClassReader(annotatedBeanDefinitionReader);
 
-        Set<BeanDefinition> definitionsToRegister = new HashSet<>();
+        Set<RootBeanDefinition> definitionsToRegister = new HashSet<>();
 
-        for (Map.Entry<String, BeanDefinition> entry : this.beanDefinitionMap.entrySet()) {
-            BeanDefinition definition = entry.getValue();
+        for (Map.Entry<String, RootBeanDefinition> entry : this.beanDefinitionMap.entrySet()) {
+            RootBeanDefinition definition = entry.getValue();
             Class<?> configClazz = Class.forName(definition.getBeanClassName());
             if (configClazz.isAnnotationPresent(Configuration.class)){
-                Set<BeanDefinition> definitions = configClassReader.parseAnnotationConfigClass(configClazz);
+                Set<RootBeanDefinition> definitions = configClassReader.parseAnnotationConfigClass(configClazz);
                 definitionsToRegister.addAll(definitions);
             }
         }
@@ -248,8 +248,8 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
     /**
      * 注册BeanDefinition
      */
-    private void doRegisterBeanDefinition(List<BeanDefinition> beanDefinitions) throws Exception{
-        for (BeanDefinition beanDefinition : beanDefinitions) {
+    private void doRegisterBeanDefinition(List<RootBeanDefinition> beanDefinitions) throws Exception{
+        for (RootBeanDefinition beanDefinition : beanDefinitions) {
             if (annotatedBeanDefinitionReader.checkAlreadyRegistered(beanDefinition)) {
                 log.debug("发现重复bean定义：" + beanDefinition + " 跳过注册");
                 continue;
@@ -272,9 +272,9 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
      * 把非懒加载的类提前初始化
      */
     private void doInstance() {
-        for (Map.Entry<String, BeanDefinition> beanDefinitionEntry : super.beanDefinitionMap.entrySet()) {
+        for (Map.Entry<String, RootBeanDefinition> beanDefinitionEntry : super.beanDefinitionMap.entrySet()) {
             String beanName = beanDefinitionEntry.getKey(); // 首字母小写的类名
-            BeanDefinition beanDefinition = beanDefinitionEntry.getValue();
+            RootBeanDefinition beanDefinition = beanDefinitionEntry.getValue();
             // 如果不是懒加载，初始化bean
             if (!beanDefinition.isLazyInit()){
                 try {
@@ -311,7 +311,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
             return commonIoc.get(beanName).getWrappedInstance();
         }
 
-        BeanDefinition beanDefinition = super.beanDefinitionMap.get(beanName);
+        RootBeanDefinition beanDefinition = super.beanDefinitionMap.get(beanName);
         if (null == beanDefinition){
             throw new Exception("bean定义在Map中未找到，检查beanName是否有误 ==> " + beanName);
         }
@@ -407,7 +407,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
      * 实例化的结果是单例IoC中的Bean对象
      * com.yankaizhang.test.service.impl.TestServiceImpl -> TestServiceImpl@1024
      */
-    private Object instantiateBean(BeanDefinition beanDefinition) throws Exception {
+    private Object instantiateBean(RootBeanDefinition beanDefinition) throws Exception {
         Object instance = null;
 
         String factoryMethodName = beanDefinition.getFactoryMethodName();

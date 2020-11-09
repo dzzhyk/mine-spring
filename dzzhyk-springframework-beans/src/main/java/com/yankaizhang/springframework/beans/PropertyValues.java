@@ -11,4 +11,5 @@ public interface PropertyValues {
 
     PropertyValue getPropertyValue(String propertyName);
 
+    boolean isEmpty();
 }
