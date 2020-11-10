@@ -1,4 +1,4 @@
-package com.yankaizhang.springframework.beans.factory.annotation;
+package com.yankaizhang.springframework.beans.factory;
 
 /**
  * Aware接口是一个顶层接口

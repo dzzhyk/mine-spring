@@ -9,11 +9,12 @@ import java.util.Objects;
  * 进一步通用的BeanDefinition
  * 实现了{@link com.yankaizhang.springframework.beans.factory.support.AbstractBeanDefinition}抽象类
  * 其实就是在抽象类上添加更多属性和基础实现
+ *
+ * 一般定义的BeanDefinition对象都是这个实现类
  */
 public class GenericBeanDefinition extends AbstractBeanDefinition {
 
     private String parentName;
-
 
     public GenericBeanDefinition() {
         super();

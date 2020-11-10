@@ -1,6 +1,6 @@
 package com.yankaizhang.springframework.webmvc.context;
 
-import com.yankaizhang.springframework.beans.factory.annotation.Aware;
+import com.yankaizhang.springframework.beans.factory.Aware;
 
 import javax.servlet.ServletContext;
 

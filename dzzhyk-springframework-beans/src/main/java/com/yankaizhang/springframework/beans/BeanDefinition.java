@@ -57,7 +57,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
     /**
      * 父类名称
      */
-    void setParentName(String parentName);
+    void setParentName(String parentName) throws Exception;
     String getParentName();
 
     /**

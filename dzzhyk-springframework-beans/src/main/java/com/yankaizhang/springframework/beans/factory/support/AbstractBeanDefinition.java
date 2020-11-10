@@ -38,9 +38,9 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     public static final int DEPENDENCY_CHECK_SIMPLE = 2;    // 只检查简单的属性依赖
     public static final int DEPENDENCY_CHECK_ALL = 3;   // 检查所有属性依赖
 
-    /**
-     * 简化后的BeanDefinition具有的属性
-     */
+
+     // 简化后的BeanDefinition具有的一堆属性
+
     /**
      *  本类的beanClass，实例化的结果就是这个类
      *  这个beanClass可以是Class，也可以是String类型（全类名）

@@ -1,121 +1,85 @@
 package com.yankaizhang.springframework.beans.factory.support;
 
+import com.yankaizhang.springframework.beans.BeanDefinition;
 import com.yankaizhang.springframework.beans.MutablePropertyValues;
+import com.yankaizhang.springframework.beans.factory.config.ConstructorArgumentValues;
 
 import java.util.Objects;
 
 /**
- * Bean定义
- * 相当于保存在内存中的配置
- * beanClassName：接口的ClassName是他的实现类
- * factoryBeanName：@Autowired接口就等于接口名字
- * id是接口名字，但是对应的实例是相应实现类的bean
+ * RootBeanDefinition是一个实现了AbstractBeanDefinition的实例类
+ * Spring内部的Bean一般都使用这个类对象
  */
-public class RootBeanDefinition {
 
-    private String beanClassName = null;   // 用于实例化该bean定义的全类名
-    private boolean lazyInit = false;   // 默认关闭懒加载
-    private String factoryBeanName; // IoC容器中该Bean对象的name
-    private String factoryBeanClassName;    // 工厂beanClassName全类名
-    private String factoryMethodName = null;   // 创建该BeanDefinition的工厂方法name
+public class RootBeanDefinition extends AbstractBeanDefinition {
 
-    MutablePropertyValues propertyValues = null;   // 该bean定义传入的配置好的属性值
 
-    /**
-     * @param beanClassName com.yankaizhang.test.service.impl.TestServiceImpl
-     * @param factoryBeanName testService
-     */
-    public RootBeanDefinition(String beanClassName, String factoryBeanName, boolean lazyInit) {
-        this.beanClassName = beanClassName;
-        this.factoryBeanName = factoryBeanName;
-        this.lazyInit = lazyInit;
+    public RootBeanDefinition() {
+        super();
+    }
+
+    public RootBeanDefinition(Class<?> beanClass) {
+        super();
+        setBeanClass(beanClass);
+    }
+
+    public RootBeanDefinition(Class<?> beanClass, int autowireMode, boolean dependencyCheck){
+        super();
+        setBeanClass(beanClass);
+        setAutowireMode(autowireMode);
+        if (dependencyCheck  && getAutowireMode()!=AUTOWIRE_CONSTRUCTOR){
+            setDependencyCheck(DEPENDENCY_CHECK_OBJECTS);
+        }
+    }
+
+    public RootBeanDefinition(Class<?> beanClass,
+                              ConstructorArgumentValues constructorArgumentValues,
+                              MutablePropertyValues propertyValues) {
+        super(constructorArgumentValues, propertyValues);
+        setBeanClass(beanClass);
     }
 
     /**
-     * 工厂方法创建类型
-     * @param factoryBeanName 创建bean实例用的工厂beanName
-     * @param factoryMethodName 创建bean实例用的工厂方法name
+     * 也可以用全类名来初始化RootBeanDefinition
+     * 这里不使用类对象而是使用类名，可以避免类class文件总是提前装载
      */
-    public RootBeanDefinition(String factoryBeanName, String factoryMethodName) {
-        this.factoryBeanName = factoryBeanName;
-        this.factoryMethodName = factoryMethodName;
+    public RootBeanDefinition (String beanClassName){
+        setBeanClass(beanClassName);
     }
 
-    public String getBeanClassName() {
-        return beanClassName;
+    public RootBeanDefinition(String beanClassName,
+                              ConstructorArgumentValues constructorArgumentValues,
+                              MutablePropertyValues propertyValues) {
+        super(constructorArgumentValues, propertyValues);
+        setBeanClass(beanClassName);
     }
 
-    public void setBeanClassName(String beanClassName) {
-        this.beanClassName = beanClassName;
+    /**
+     * 从另一个RootBeanDefinition对象创建
+     */
+    public RootBeanDefinition(RootBeanDefinition other){
+        super(other);
+        // 另外赋值RootBeanDefinition特有的一些属性
+
     }
 
-    public boolean isLazyInit() {
-        return lazyInit;
-    }
-
-    public void setLazyInit(boolean lazyInit) {
-        this.lazyInit = lazyInit;
-    }
-
-    public String getFactoryBeanName() {
-        return factoryBeanName;
-    }
-
-    public void setFactoryBeanName(String factoryBeanName) {
-        this.factoryBeanName = factoryBeanName;
-    }
-
-    public MutablePropertyValues getPropertyValues() {
-        return propertyValues;
-    }
-
-    public void setPropertyValues(MutablePropertyValues propertyValues) {
-        this.propertyValues = propertyValues;
-    }
-
-    public String getFactoryMethodName() {
-        return factoryMethodName;
-    }
-
-    public void setFactoryMethodName(String factoryMethodName) {
-        this.factoryMethodName = factoryMethodName;
-    }
-
-    public String getFactoryBeanClassName() {
-        return factoryBeanClassName;
-    }
-
-    public void setFactoryBeanClassName(String factoryBeanClassName) {
-        this.factoryBeanClassName = factoryBeanClassName;
+    /**
+     * 从另一个BeanDefinition对象创建
+     */
+    public RootBeanDefinition(BeanDefinition definition){
+        super(definition);
     }
 
     @Override
-    public String toString() {
-        return "BeanDefinition{" +
-                "beanClassName='" + beanClassName + '\'' +
-                ", lazyInit=" + lazyInit +
-                ", factoryBeanName='" + factoryBeanName + '\'' +
-                ", factoryBeanClassName='" + factoryBeanClassName + '\'' +
-                ", factoryMethodName='" + factoryMethodName + '\'' +
-                ", propertyValues=" + propertyValues +
-                '}';
+    public void setParentName(String parentName) throws Exception {
+        throw new Exception("系统级别bean定义不能被设置parent");
     }
 
+    /**
+     * 系统bean默认返回null
+     */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RootBeanDefinition that = (RootBeanDefinition) o;
-        return lazyInit == that.lazyInit &&
-                Objects.equals(beanClassName, that.beanClassName) &&
-                Objects.equals(factoryBeanName, that.factoryBeanName) &&
-                Objects.equals(factoryBeanClassName, that.factoryBeanClassName) &&
-                Objects.equals(factoryMethodName, that.factoryMethodName) &&
-                Objects.equals(propertyValues, that.propertyValues);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(beanClassName, lazyInit, factoryBeanName, factoryBeanClassName, factoryMethodName, propertyValues);
+    public String getParentName() {
+        return null;
     }
 }
