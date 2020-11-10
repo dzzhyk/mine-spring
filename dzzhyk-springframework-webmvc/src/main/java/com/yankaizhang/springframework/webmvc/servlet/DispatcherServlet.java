@@ -47,6 +47,7 @@ public class DispatcherServlet extends HttpServlet {
     private Map<HandlerMapping, HandlerAdapter> handlerAdapterMap = new HashMap<>();
     private List<ViewResolver> viewResolvers = new ArrayList<>();
     private AnnotationConfigApplicationContext context; // 内置容器
+    private String TEMPLATE_ROOT = "templates"; // 模板文件路径
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -167,7 +168,7 @@ public class DispatcherServlet extends HttpServlet {
      * 注册模板解析器
      */
     private void initViewResolvers(AnnotationConfigApplicationContext context){
-        String templateRoot = context.getConfig().getProperty("templateRoot");
+        String templateRoot = TEMPLATE_ROOT;    //TODO: 先写死，后面可以通过配置文件修改
         String templateRootPath = this.getClass().getClassLoader().getResource(templateRoot).getFile();
 
         File templateRootDir = new File(templateRootPath);

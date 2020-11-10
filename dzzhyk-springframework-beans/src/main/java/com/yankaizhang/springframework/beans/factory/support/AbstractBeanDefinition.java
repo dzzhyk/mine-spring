@@ -49,7 +49,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     private String scope = SCOPE_DEFAULT;
     private boolean abstractFlag = false;
-    private Boolean lazyInit;
+    private Boolean lazyInit = false;   // 默认不是懒加载
     private int autowireMode = AUTOWIRE_NO;
     private int dependencyCheck = DEPENDENCY_CHECK_NONE;
     private String[] dependsOn;
@@ -193,10 +193,6 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     public Boolean getLazyInit() {
         return lazyInit;
-    }
-
-    public void setLazyInit(Boolean lazyInit) {
-        this.lazyInit = lazyInit;
     }
 
     public int getAutowireMode() {

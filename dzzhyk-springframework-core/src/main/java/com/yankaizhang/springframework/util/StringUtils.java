@@ -27,14 +27,7 @@ public class StringUtils {
         res[target.length] = value;
         return res;
     }
-//
-//    public static String[] convertListToArray(List<String> list){
-//        String[] strings = new String[list.size()];
-//        for (int i = 0; i < list.size(); ++i) {
-//            strings[i] = list.get(i);
-//        }
-//        return strings;
-//    }
+
 
     /**
      * 将集合中的元素转换为数组形式
@@ -45,5 +38,14 @@ public class StringUtils {
         }else{
             return collections.toArray(new String[0]);
         }
+    }
+
+    /**
+     * 将首字母小写
+     */
+    public static String toLowerCase(String string){
+        char[] chars = string.toCharArray();
+        chars[0] += 32;
+        return String.valueOf(chars);
     }
 }

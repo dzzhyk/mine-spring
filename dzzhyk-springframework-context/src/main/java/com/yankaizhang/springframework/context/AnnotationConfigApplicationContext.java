@@ -10,17 +10,15 @@ import com.yankaizhang.springframework.aop.support.AdviceSupportComparator;
 import com.yankaizhang.springframework.aop.support.AdvisedSupport;
 import com.yankaizhang.springframework.aop.support.AopAnnotationReader;
 import com.yankaizhang.springframework.aop.support.AopUtils;
+import com.yankaizhang.springframework.beans.BeanDefinition;
 import com.yankaizhang.springframework.beans.BeanWrapper;
 import com.yankaizhang.springframework.beans.factory.BeanFactory;
 import com.yankaizhang.springframework.beans.factory.annotation.Autowired;
-import com.yankaizhang.springframework.context.annotation.ComponentScan;
-import com.yankaizhang.springframework.context.annotation.Configuration;
+import com.yankaizhang.springframework.context.annotation.*;
 import com.yankaizhang.springframework.context.config.AnnotatedBeanDefinitionReader;
 import com.yankaizhang.springframework.beans.factory.config.BeanPostProcessor;
-import com.yankaizhang.springframework.beans.factory.support.RootBeanDefinition;
-import com.yankaizhang.springframework.context.annotation.Controller;
-import com.yankaizhang.springframework.context.annotation.Service;
-import com.yankaizhang.springframework.context.support.ConfigClassReader;
+import com.yankaizhang.springframework.context.config.ClassPathBeanDefinitionScanner;
+import com.yankaizhang.springframework.context.config.ConfigClassReader;
 import com.yankaizhang.springframework.context.support.DefaultListableBeanFactory;
 import com.yankaizhang.springframework.util.StringUtils;
 import org.slf4j.Logger;
@@ -32,20 +30,28 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static com.yankaizhang.springframework.util.StringUtils.toLowerCase;
+
 /**
  * 真正使用到的IOC容器，直接接触用户
  * 继承了DefaultListableBeanFactory，并且把里面的refresh方法实现了
  * 实现了BeanFactory接口，实现了getBean()方法
  * 完成IoC、DI、AOP的衔接
- * AnnotationConfigApplicationContext是用来解析注解配置类的容器对象
+ * AnnotationConfigApplicationContext是专门用来解析注解配置类的容器对象
+ *
+ * 实现了AnnotationConfigRegistry接口，说明拥有基本的两个方法scan和register
+ *
+ * TODO: 这里其实对于AnnotationConfigApplicationContext而言，在这一层实现了多个功能，其实是简化过后的
  */
 @SuppressWarnings("all")
-public class AnnotationConfigApplicationContext extends DefaultListableBeanFactory implements BeanFactory {
+public class AnnotationConfigApplicationContext extends DefaultListableBeanFactory
+        implements BeanFactory, AnnotationConfigRegistry, BeanDefinitionRegistry {
 
     public static final Logger log = LoggerFactory.getLogger(AnnotationConfigApplicationContext.class);
 
-    private String[] configLocations;
-    private AnnotatedBeanDefinitionReader annotatedBeanDefinitionReader;
+    private AnnotatedBeanDefinitionReader reader;
+    private ClassPathBeanDefinitionScanner scanner;
+
     private ConfigClassReader configClassReader;
     private AopAnnotationReader aopAnnotationReader;    // aop注解reader
 
@@ -68,69 +74,51 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
      */
     private List<Class<?>> aspectBeanInstanceCache = new CopyOnWriteArrayList<>();
 
-    /**
-     * 直接使用一个String数组创建容器
-     * @param basePackages 扫描路径
-     */
-    public AnnotationConfigApplicationContext(String... basePackages){
-        this.configLocations = basePackages;
-        try {
-            refresh();  // 调用自己重写的refresh，多态
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+
+
+    public AnnotationConfigApplicationContext() {
+        this.reader = new AnnotatedBeanDefinitionReader(this);
+        this.scanner = new ClassPathBeanDefinitionScanner(this);
     }
 
     /**
-     * 使用配置类创建容器
-     * @param configClass 配置类
+     * 从其他容器创建容器
+     * @param context
+     */
+    public AnnotationConfigApplicationContext(AnnotationConfigApplicationContext context){
+        this();
+        this.commonIoc = context.getCommonIoc();
+        this.singletonIoc = context.getSingletonIoc();
+    }
+
+    /**
+     * 传入配置类初始化容器
      */
     public AnnotationConfigApplicationContext(Class<?>... configClass){
-        ArrayList<String> basePackages = new ArrayList<>(16);
-        for (Class<?> aConfigClass : configClass) {
-            // 首先检验这个配置类是否为配置类
-            if (!aConfigClass.isAnnotationPresent(Configuration.class)){
-                log.warn(aConfigClass.getName() + " => 类不是Java配置类");
-                continue;
-            }
-            // 获取configLocation信息
-            ComponentScan componentScan = aConfigClass.getAnnotation(ComponentScan.class);
-            if (null == componentScan){
-                log.warn(aConfigClass.getName() + " => 未配置包扫描路径，使用@ComponentScan注解配置扫描路径");
-                continue;
-            }
-            String configLocation = componentScan.value();
-            if (null == configLocation || "".equals(configLocation.trim())){
-                log.warn(aConfigClass.getName() + " => componenntScan包扫描路径不存在或为空");
-                continue;
-            }
-            basePackages.add(configLocation);
-        }
-        // 收集到的所有扫描路径
-        this.configLocations = StringUtils.toStringArray(basePackages);
-        try {
-            refresh();  // 调用自己重写的refresh，多态
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        this();
+        register(configClass);
+        refresh();
+    }
+
+    /**
+     * 传入待扫描路径初始化容器
+     */
+    public AnnotationConfigApplicationContext(String... basePackages){
+        this();
+        scan(basePackages);
+        refresh();
     }
 
     @Override
-    public void refresh() throws Exception {
-        // 1. 定位配置文件
-        annotatedBeanDefinitionReader = new AnnotatedBeanDefinitionReader(this.configLocations);
-        // 2. 加载配置文件，扫描类，把他们封装成BeanDefinition
-        List<RootBeanDefinition> beanDefinitions = annotatedBeanDefinitionReader.loadBeanDefinitions();
-        // 3. 注册已有bean定义
-        doRegisterBeanDefinition(beanDefinitions);
-        // 4. 先处理配置类的bean定义 - 相当于前置处理
+    public void refresh() {
+        // 1. 先处理配置类的bean定义 - 相当于前置处理
         // TODO: 改为前置处理器实现
         doProcessAnnotationConfiguration();
-        // 5. 将剩余bean定义实例化
+        // 2. 将剩余bean定义实例化
         doInstance();
-        // 6. 处理AOP对象
+        // 3. 处理AOP对象
         doAop();
-        // 7. 处理依赖注入
+        // 4. 处理依赖注入
         doAutowired();
     }
 
@@ -138,28 +126,28 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
      * 预先处理配置类的bean定义
      * Spring中这里使用的是一个BeanDefinitionRegisterPostProcessor来完成的
      */
-    private void doProcessAnnotationConfiguration() throws Exception {
-        configClassReader = new ConfigClassReader(annotatedBeanDefinitionReader);
+    private void doProcessAnnotationConfiguration() {
 
-        Set<RootBeanDefinition> definitionsToRegister = new HashSet<>();
+        configClassReader = new ConfigClassReader(this, scanner);
 
-        for (Map.Entry<String, RootBeanDefinition> entry : this.beanDefinitionMap.entrySet()) {
-            RootBeanDefinition definition = entry.getValue();
-            Class<?> configClazz = Class.forName(definition.getBeanClassName());
-            if (configClazz.isAnnotationPresent(Configuration.class)){
-                Set<RootBeanDefinition> definitions = configClassReader.parseAnnotationConfigClass(configClazz);
-                definitionsToRegister.addAll(definitions);
+        try {
+            for (Map.Entry<String, BeanDefinition> entry : this.beanDefinitionMap.entrySet()) {
+                BeanDefinition definition = entry.getValue();
+                Class<?> configClazz = Class.forName(definition.getBeanClassName());
+                if (configClazz.isAnnotationPresent(Configuration.class)){
+                    configClassReader.parseAnnotationConfigClass(configClazz);
+                }
             }
-        }
 
-        // 把解析配置类得到的bean定义添加到beanDefinitionMap
-        doRegisterBeanDefinition(new ArrayList<>(definitionsToRegister));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
      * 处理Aop切面
      */
-    public void doAop() throws Exception {
+    public void doAop(){
 
         postProcessAspects();
         List<AdvisedSupport> aopConfigs = aopAnnotationReader.parseAspect();    // 解析所有已知切面类，获取包装类的config
@@ -179,8 +167,13 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
                         Object wrappedInstance = beanWrapper.getWrappedInstance();
                         Class<?> wrappedClass = beanWrapper.getWrappedClass();  // 虽然可能是代理类，但是Class一定是代理类的最终目标类
 
-                        // 这里将原有的aopConfig为每个代理类扩增，防止java内存赋值
-                        AdvisedSupport myConfig = getProxyAopConfig(aopConfig, wrappedInstance, wrappedClass);
+                        AdvisedSupport myConfig = null;
+                        try {
+                            // 这里将原有的aopConfig为每个代理类扩增，防止java内存赋值
+                            myConfig = getProxyAopConfig(aopConfig, wrappedInstance, wrappedClass);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
 
                         if (myConfig.pointCutMatch()){
                             Object proxy = createProxy(myConfig).getProxy();
@@ -188,13 +181,13 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
 
                             log.debug("为"+ AopUtils.getAopTarget(proxy).getSimpleName() +"创建代理对象 ==> " + proxy.getClass());
                             commonIoc.replace(clazzName, beanWrapper);       // 重新设置commonIoC中的对象为代理对象
-                            String beanName = AnnotatedBeanDefinitionReader.toLowerCase(clazzName.substring(clazzName.lastIndexOf(".") + 1));
+                            String beanName = toLowerCase(clazzName.substring(clazzName.lastIndexOf(".") + 1));
                             commonIoc.replace(beanName, beanWrapper);    // 同时更新beanName对应的实例
 
                             // 如果这个类有接口，同时更新这些接口的实现类对象
                             for (Class<?> anInterface : wrappedClass.getInterfaces()) {
                                 String interfaceName = anInterface.getName();
-                                String iocBeanInterfaceName = AnnotatedBeanDefinitionReader.toLowerCase(interfaceName.substring(interfaceName.lastIndexOf(".") + 1));
+                                String iocBeanInterfaceName = toLowerCase(interfaceName.substring(interfaceName.lastIndexOf(".") + 1));
                                 commonIoc.replace(iocBeanInterfaceName, beanWrapper);   // 对于接口，只需要更新其beanName对应的实例，因为beanClass对应的实例已经更新过了
                             }
                         }
@@ -244,41 +237,20 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
         aopAnnotationReader.setPointCutMap(map);
     }
 
-
-    /**
-     * 注册BeanDefinition
-     */
-    private void doRegisterBeanDefinition(List<RootBeanDefinition> beanDefinitions) throws Exception{
-        for (RootBeanDefinition beanDefinition : beanDefinitions) {
-            if (annotatedBeanDefinitionReader.checkAlreadyRegistered(beanDefinition)) {
-                log.debug("发现重复bean定义：" + beanDefinition + " 跳过注册");
-                continue;
-            }
-            // 判断是工厂方式实例化还是普通反射实例化
-            if (null != beanDefinition.getFactoryMethodName()){
-                // 工厂方式
-                super.beanDefinitionMap.put(beanDefinition.getFactoryMethodName(), beanDefinition);
-            }else{
-                // 反射方式
-                super.beanDefinitionMap.put(beanDefinition.getFactoryBeanName(), beanDefinition);
-            }
-
-            // 标记为已注册
-            annotatedBeanDefinitionReader.markRegistered(beanDefinition);
-        }
-    }
-
     /**
      * 把非懒加载的类提前初始化
      */
     private void doInstance() {
-        for (Map.Entry<String, RootBeanDefinition> beanDefinitionEntry : super.beanDefinitionMap.entrySet()) {
+        for (Map.Entry<String, BeanDefinition> beanDefinitionEntry : super.beanDefinitionMap.entrySet()) {
             String beanName = beanDefinitionEntry.getKey(); // 首字母小写的类名
-            RootBeanDefinition beanDefinition = beanDefinitionEntry.getValue();
+            BeanDefinition beanDefinition = beanDefinitionEntry.getValue();
             // 如果不是懒加载，初始化bean
             if (!beanDefinition.isLazyInit()){
                 try {
                     getBean(beanName);
+                    if (log.isDebugEnabled()){
+                        log.debug("初始化bean对象 : " + beanName);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -289,12 +261,15 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
     /**
      * 依赖注入
      */
-    private void doAutowired() throws Exception {
-
-        for (Map.Entry<String, BeanWrapper> entry : commonIoc.entrySet()) {
-            Object instance = entry.getValue().getWrappedInstance();
-            // 依赖注入
-            populateBean(entry.getKey(), instance);
+    private void doAutowired() {
+        try {
+            for (Map.Entry<String, BeanWrapper> entry : commonIoc.entrySet()) {
+                Object instance = entry.getValue().getWrappedInstance();
+                // 依赖注入
+                populateBean(entry.getKey(), instance);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -311,7 +286,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
             return commonIoc.get(beanName).getWrappedInstance();
         }
 
-        RootBeanDefinition beanDefinition = super.beanDefinitionMap.get(beanName);
+        BeanDefinition beanDefinition = super.beanDefinitionMap.get(beanName);
         if (null == beanDefinition){
             throw new Exception("bean定义在Map中未找到，检查beanName是否有误 ==> " + beanName);
         }
@@ -345,7 +320,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
 
     @Override
     public Object getBean(Class<?> beanClass) throws Exception {
-        return getBean(annotatedBeanDefinitionReader.toLowerCase(beanClass.getSimpleName()));
+        return getBean(toLowerCase(beanClass.getSimpleName()));
     }
 
     @Override
@@ -375,7 +350,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
             if ("".equals(autowiredBeanName)){
                 // 如果没有，找到这个注解标记的属性的全类名，注入全类名
                 Class<?> type = field.getType();
-                autowiredBeanName = AnnotatedBeanDefinitionReader.toLowerCase(type.getSimpleName());
+                autowiredBeanName = toLowerCase(type.getSimpleName());
             }
 
             field.setAccessible(true);
@@ -407,7 +382,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
      * 实例化的结果是单例IoC中的Bean对象
      * com.yankaizhang.test.service.impl.TestServiceImpl -> TestServiceImpl@1024
      */
-    private Object instantiateBean(RootBeanDefinition beanDefinition) throws Exception {
+    private Object instantiateBean(BeanDefinition beanDefinition) throws Exception {
         Object instance = null;
 
         String factoryMethodName = beanDefinition.getFactoryMethodName();
@@ -444,7 +419,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
 
 
             // 获取工厂类全类名
-            String factoryBeanClassName = beanDefinition.getFactoryBeanClassName();
+            String factoryBeanClassName = beanDefinition.getFactoryBeanName();
             if (null != factoryBeanClassName && !"".equals(factoryBeanClassName.trim())){
                 // 这个beanDefinition拥有factoryBeanClassName信息
                 // 说明应该是使用工厂方法实例化的（@Bean方式）
@@ -491,34 +466,55 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
         return new CglibAopProxy(config);       // 如果对象没有接口，使用CGLib动态代理
     }
 
-
-    /**
-     * 获取容器中bean定义名称列表
-     */
-    public String[] getBeanDefinitionNames(){
-        return this.beanDefinitionMap.keySet().toArray(new String[0]);
-    }
-
-    /**
-     * 获取容器中按照name对应的bean定义数量
-     */
-    public int getBeanDefinitionCountByName(){
-        return this.beanDefinitionMap.size();
-    }
-
-    /**
-     * 获取配置信息
-     */
-    public Properties getConfig(){
-        return this.annotatedBeanDefinitionReader.getConfig();
-    }
-
-
     public Map<String, Object> getSingletonIoc() {
         return singletonIoc;
     }
-
     public Map<String, BeanWrapper> getCommonIoc() {
         return commonIoc;
+    }
+
+    @Override
+    public void register(Class<?>... componentClasses) {
+        this.reader.register(componentClasses);
+    }
+
+    @Override
+    public void scan(String... basePackages) {
+        this.scanner.scan(basePackages);
+    }
+
+    @Override
+    public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) throws Exception {
+        super.beanDefinitionMap.put(beanName, beanDefinition);
+    }
+
+    @Override
+    public void removeBeanDefinition(String beanName) throws Exception {
+        super.beanDefinitionMap.remove(beanName);
+    }
+
+    @Override
+    public BeanDefinition getBeanDefinition(String beanName) throws Exception {
+        return super.beanDefinitionMap.get(beanName);
+    }
+
+    @Override
+    public boolean containsBeanDefinition(String beanName) {
+        return super.beanDefinitionMap.containsKey(beanName);
+    }
+
+    @Override
+    public String[] getBeanDefinitionNames() {
+        return StringUtils.toStringArray(super.beanDefinitionMap.keySet());
+    }
+
+    @Override
+    public int getBeanDefinitionCount() {
+        return super.beanDefinitionMap.size();
+    }
+
+    @Override
+    public boolean isBeanNameInUse(String beanName) {
+        return super.beanDefinitionMap.get(beanName) != null;
     }
 }

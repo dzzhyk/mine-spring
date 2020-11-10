@@ -53,7 +53,7 @@ public class GenericBeanDefinition extends AbstractBeanDefinition {
     @Override
     public String toString() {
         return "GenericBeanDefinition{" +
-                "parentName='" + parentName + '\'' +
-                '}';
+                "beanClass='" + getBeanClassName() + '\'' +
+                "} ";
     }
 }

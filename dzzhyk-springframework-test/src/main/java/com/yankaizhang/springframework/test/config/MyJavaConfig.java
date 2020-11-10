@@ -5,6 +5,8 @@ import com.yankaizhang.springframework.context.annotation.ComponentScan;
 import com.yankaizhang.springframework.context.annotation.Configuration;
 import com.yankaizhang.springframework.test.controller.TestController;
 import com.yankaizhang.springframework.test.entity.User;
+import com.yankaizhang.springframework.test.service.TestService;
+import com.yankaizhang.springframework.test.service.impl.TestServiceImpl;
 import com.yankaizhang.springframework.webmvc.multipart.commons.CommonsMultipartResolver;
 
 @Configuration
@@ -27,5 +29,10 @@ public class MyJavaConfig {
     @Bean
     public TestController testController(){
         return new TestController();
+    }
+
+    @Bean
+    public TestService testService(){
+        return new TestServiceImpl();
     }
 }

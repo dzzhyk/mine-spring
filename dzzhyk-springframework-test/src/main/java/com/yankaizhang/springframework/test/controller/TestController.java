@@ -28,6 +28,7 @@ public class TestController {
 
     public void hi(){
         System.out.println("执行了hi方法...");
+        System.out.println(testService.sayHello("dzzhyk"));
     }
 
     /**
