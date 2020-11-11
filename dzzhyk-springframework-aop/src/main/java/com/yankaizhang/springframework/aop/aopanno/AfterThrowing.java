@@ -2,6 +2,10 @@ package com.yankaizhang.springframework.aop.aopanno;
 
 import java.lang.annotation.*;
 
+/**
+ * 异常通知
+ * @author dzzhyk
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

@@ -7,6 +7,7 @@ import com.yankaizhang.springframework.beans.BeanDefinition;
  * 这个接口被容器实现，可以使容器具有操作BeanDefinitionMap的能力
  *
  * 当然，目前是简化的版本，而且IoC容器没有进行分层，还不太复杂
+ * @author dzzhyk
  */
 
 public interface BeanDefinitionRegistry {

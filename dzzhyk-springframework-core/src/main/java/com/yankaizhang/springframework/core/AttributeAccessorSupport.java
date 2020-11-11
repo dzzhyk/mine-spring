@@ -28,11 +28,16 @@ import java.util.Map;
  * a base implementation of all methods. To be extended by subclasses.
  *
  * <p>{@link Serializable} if subclasses and all attribute values are {@link Serializable}.
+ * @author dzzhyk
  */
+
 @SuppressWarnings("serial")
 public abstract class AttributeAccessorSupport implements AttributeAccessor, Serializable {
 
-	/** Map with String keys and Object values. */
+
+	/**
+	 * 属性名称-属性值 映射Map
+	 */
 	private final Map<String, Object> attributes = new LinkedHashMap<>();
 
 	@Override

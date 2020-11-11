@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 /**
  * 自制String工具类
+ *
+ * @author dzzhyk
  */
 public class StringUtils {
 

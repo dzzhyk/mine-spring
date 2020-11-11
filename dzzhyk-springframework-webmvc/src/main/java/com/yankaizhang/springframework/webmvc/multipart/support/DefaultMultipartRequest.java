@@ -8,6 +8,7 @@ import java.util.*;
 
 /**
  * MultipartRequest接口的默认实现
+ * @author dzzhyk
  */
 public class DefaultMultipartRequest extends AbstractMultipartRequest {
 

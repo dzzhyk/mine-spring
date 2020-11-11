@@ -7,6 +7,7 @@ import java.lang.reflect.Modifier;
  * 类的元数据接口的一个标准实现
  *
  * 创建这个对象需要制定某个类Class，然后使用标准反射创建StandardClassMetadata
+ * @author dzzhyk
  */
 
 public class StandardClassMetadata implements ClassMetadata {

@@ -30,12 +30,16 @@ import java.io.InputStream;
 /**
  * 使用了apache-fileupload包
  * MultipartFile具体实现
+ * @author dzzhyk
  */
 public class CommonsMultipartFile implements MultipartFile {
 
 	protected final Logger logger = LoggerFactory.getLogger(CommonsMultipartFile.class);
 
-	private final FileItem fileItem;	// 真正的文件对象
+	/**
+	 * 真正的文件对象
+	 */
+	private final FileItem fileItem;
 
 	/**
 	 * 根据获取的apache fileItem对象创建本类
@@ -51,34 +55,42 @@ public class CommonsMultipartFile implements MultipartFile {
 		return fileItem;
 	}
 
+	@Override
 	public String getName() {
 		return this.fileItem.getFieldName();
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return (this.fileItem.getName() == null || this.fileItem.getName().length() == 0);
 	}
 
+	@Override
 	public String getOriginalFilename() {
 		return (!isEmpty() ? new File(this.fileItem.getName()).getName() : null);
 	}
 
+	@Override
 	public String getContentType() {
 		return (!isEmpty() ? this.fileItem.getContentType() : null);
 	}
 
+	@Override
 	public long getSize() {
 		return this.fileItem.getSize();
 	}
 
+	@Override
 	public byte[] getBytes() {
 		return this.fileItem.get();
 	}
 
+	@Override
 	public InputStream getInputStream() throws IOException {
 		return this.fileItem.getInputStream();
 	}
 
+	@Override
 	public void transferTo(File dest) throws IOException, IllegalStateException {
 		if (dest.exists() && !dest.delete()) {
 			throw new IOException("Destination file [" + dest.getAbsolutePath() +

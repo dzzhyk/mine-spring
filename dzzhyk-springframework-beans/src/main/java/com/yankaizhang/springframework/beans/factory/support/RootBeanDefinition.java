@@ -9,6 +9,7 @@ import java.util.Objects;
 /**
  * RootBeanDefinition是一个实现了AbstractBeanDefinition的实例类
  * Spring内部的Bean一般都使用这个类对象
+ * @author dzzhyk
  */
 
 public class RootBeanDefinition extends AbstractBeanDefinition {

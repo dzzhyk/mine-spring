@@ -42,6 +42,8 @@ import static com.yankaizhang.springframework.util.StringUtils.toLowerCase;
  * 实现了AnnotationConfigRegistry接口，说明拥有基本的两个方法scan和register
  *
  * TODO: 这里其实对于AnnotationConfigApplicationContext而言，在这一层实现了多个功能，其实是简化过后的
+ *
+ * @author dzzhyk
  */
 @SuppressWarnings("all")
 public class AnnotationConfigApplicationContext extends DefaultListableBeanFactory
@@ -52,8 +54,16 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
     private AnnotatedBeanDefinitionReader reader;
     private ClassPathBeanDefinitionScanner scanner;
 
+    /**
+     * 配置类解析器
+     * TODO: 这个应该使用前置处理器机制替代
+     */
     private ConfigClassReader configClassReader;
-    private AopAnnotationReader aopAnnotationReader;    // aop注解reader
+    /**
+     * aop注解reader
+     * TODO: 目前还没有更好的替代方案
+     */
+    private AopAnnotationReader aopAnnotationReader;
 
     /**
      * 单例IoC容器

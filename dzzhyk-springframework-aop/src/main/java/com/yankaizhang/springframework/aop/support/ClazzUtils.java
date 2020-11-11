@@ -12,7 +12,9 @@ import java.util.jar.JarFile;
 
 /**
  * 包名工具类
+ * @author dzzhyk
  */
+@SuppressWarnings("unused")
 public class ClazzUtils {
     private static final String CLASS_SUFFIX = ".class";
     private static final String CLASS_FILE_PREFIX = File.separator + "classes"  + File.separator;
@@ -93,7 +95,7 @@ public class ClazzUtils {
                 // 从"/classes/"后面开始截取
                 String clazzName = path.substring(path.indexOf(CLASS_FILE_PREFIX) + CLASS_FILE_PREFIX.length())
                         .replace(File.separator, PACKAGE_SEPARATOR);
-                if(-1 == clazzName.indexOf("$")) {
+                if(!clazzName.contains("$")) {
                     result.add(clazzName);
                 }
             }
@@ -113,7 +115,7 @@ public class ClazzUtils {
                                 // 从"/classes/"后面开始截取
                                 String clazzName = path.substring(path.indexOf(CLASS_FILE_PREFIX) + CLASS_FILE_PREFIX.length())
                                         .replace(File.separator, PACKAGE_SEPARATOR);
-                                if(-1 == clazzName.indexOf("$")) {
+                                if(!clazzName.contains("$")) {
                                     result.add(clazzName);
                                 }
                             }
@@ -144,12 +146,12 @@ public class ClazzUtils {
                 name = name.replace(CLASS_SUFFIX, "").replace("/", ".");
                 if(flag) {
                     // 如果要子包的文件,那么就只要开头相同且不是内部类就ok
-                    if(name.startsWith(packageName) && -1 == name.indexOf("$")) {
+                    if(name.startsWith(packageName) && !name.contains("$")) {
                         result.add(name);
                     }
                 } else {
                     // 如果不要子包的文件,那么就必须保证最后一个"."之前的字符串和包名一样且不是内部类
-                    if(packageName.equals(name.substring(0, name.lastIndexOf("."))) && -1 == name.indexOf("$")) {
+                    if(packageName.equals(name.substring(0, name.lastIndexOf("."))) && !name.contains("$")) {
                         result.add(name);
                     }
                 }

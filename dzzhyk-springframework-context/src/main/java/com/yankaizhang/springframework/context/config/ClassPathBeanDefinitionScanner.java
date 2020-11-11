@@ -19,14 +19,21 @@ import java.util.*;
  *
  * 这个类在原有的Spring里面也存在继承关系，比较复杂
  * 因为我们目前只向实现Java配置类的容器和解析实现，这里我将简化实现这个扫描类，所以后面还可以继续改进和拓展
+ * @author dzzhyk
  */
 
 public class ClassPathBeanDefinitionScanner {
 
     public static final Logger log = LoggerFactory.getLogger(ClassPathBeanDefinitionScanner.class);
 
-    private BeanDefinitionRegistry registry;    // 这里的registry其实就是IoC容器对象
-    private Set<String> registryBeanClasses = new HashSet<>(16);    // 扫描到的类名结果
+    /**
+     * 这里的registry其实就是IoC容器对象
+     */
+    private BeanDefinitionRegistry registry;
+    /**
+     * 扫描到的类名结果
+     */
+    private Set<String> registryBeanClasses = new HashSet<>(16);
 
     public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry) {
         this.registry = registry;
@@ -70,7 +77,10 @@ public class ClassPathBeanDefinitionScanner {
 
         for (String registryBeanClass : registryBeanClasses) {
             GenericBeanDefinition beanDef = new GenericBeanDefinition();
-            beanDef.setBeanClass(registryBeanClass);    // 这里放入的就是一个String对象
+
+            // 这里放入的就是一个String对象
+            beanDef.setBeanClass(registryBeanClass);
+
             // 扫描到的类的默认的名称是 开头小写开头小写的类名
             String beanName = StringUtils.toLowerCase(registryBeanClass.substring(registryBeanClass.lastIndexOf(".")+1));
 

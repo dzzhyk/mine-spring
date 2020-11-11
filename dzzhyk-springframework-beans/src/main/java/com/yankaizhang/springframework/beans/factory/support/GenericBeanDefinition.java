@@ -11,6 +11,7 @@ import java.util.Objects;
  * 其实就是在抽象类上添加更多属性和基础实现
  *
  * 一般定义的BeanDefinition对象都是这个实现类
+ * @author dzzhyk
  */
 public class GenericBeanDefinition extends AbstractBeanDefinition {
 
@@ -27,9 +28,15 @@ public class GenericBeanDefinition extends AbstractBeanDefinition {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
         GenericBeanDefinition that = (GenericBeanDefinition) o;
         return ObjectUtils.nullSafeEquals(parentName, that.parentName) && super.equals(o);
     }

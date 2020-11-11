@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 /**
  * 前置通知
  */
-public class MethodBeforeAdvice extends AbstractAspectJAdvice implements Advice, MethodInterceptor {
+public class MethodBeforeAdvice extends AbstractAspectjAdvice implements Advice, MethodInterceptor {
 
     private JoinPoint joinPoint;
 

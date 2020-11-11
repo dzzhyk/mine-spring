@@ -37,6 +37,7 @@ import java.util.List;
  * 提供bean属性的maximumFileSize，maximumInMemorySize和headerEncoding设置
  * 上传中的临时文件保存在服务器的临时目录下
  * 需要使用web IoC容器创建它，这里简化为不能独立存在
+ * @author dzzhyk
  */
 public class CommonsMultipartResolver extends CommonsFileUploadSupport
 		implements MultipartResolver, ServletContextAware {

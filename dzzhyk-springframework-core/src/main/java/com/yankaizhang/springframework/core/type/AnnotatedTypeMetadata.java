@@ -30,14 +30,21 @@ import java.lang.annotation.Annotation;
  * 这样在元数据中就直接加入了获取注解信息的功能
  *
  * 当然，为了方便，这个类我简化过了，去掉了复杂的包装类，所以使用起来还不是"太方便"
+ * @author dzzhyk
  */
 public interface AnnotatedTypeMetadata {
 
 	/**
 	 * 获取所有注解
+	 * @return 注解列表
 	 */
 	Annotation[] getAnnotations();
 
+	/**
+	 * 根据指定的注解类获取某个注解对象
+	 * @param annotationClass 注解类
+	 * @return 注解对象
+	 */
 	default Annotation getAnnotation(Class<? extends Annotation> annotationClass){
 		for (Annotation annotation : getAnnotations()) {
 			if (annotation.annotationType() == annotationClass){

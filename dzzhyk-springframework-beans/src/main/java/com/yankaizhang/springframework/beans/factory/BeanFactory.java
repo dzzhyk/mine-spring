@@ -2,6 +2,7 @@ package com.yankaizhang.springframework.beans.factory;
 
 /**
  * 单例工厂的顶层设计
+ * @author dzzhyk
  */
 public interface BeanFactory {
 

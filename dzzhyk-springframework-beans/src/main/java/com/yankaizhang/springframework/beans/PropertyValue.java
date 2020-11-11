@@ -4,6 +4,7 @@ import java.util.Objects;
 
 /**
  * Bean实例化后的属性包装类
+ * @author dzzhyk
  */
 public class PropertyValue {
     private String name;
@@ -32,8 +33,12 @@ public class PropertyValue {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PropertyValue that = (PropertyValue) o;
         return Objects.equals(name, that.name) &&
                 Objects.equals(value, that.value);

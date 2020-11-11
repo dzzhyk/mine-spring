@@ -18,6 +18,7 @@ package com.yankaizhang.springframework.beans;
 
 /**
  * bean定义的某个元数据属性的包装类
+ * @author dzzhyk
  */
 public class BeanMetadataAttribute implements BeanMetadataElement {
 

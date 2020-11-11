@@ -11,12 +11,16 @@ import java.util.*;
 
 /**
  * AopAnnotationReader主要完成对AOP切面类的解析
+ * @author dzzhyk
  */
 public class AopAnnotationReader {
 
     public AopAnnotationReader() {}
 
-    private Map<Class<?>, String> pointCutMap;  // 切面类和切点表达式的map
+    /**
+     * 切面类和切点表达式的map
+     */
+    private Map<Class<?>, String> pointCutMap;
 
     public void setPointCutMap(Map<Class<?>, String> pointCutMap) {
         this.pointCutMap = pointCutMap;
@@ -27,12 +31,16 @@ public class AopAnnotationReader {
      */
     public List<AdvisedSupport> parseAspect(){
 
-        if (pointCutMap.isEmpty()) return null;
+        if (pointCutMap.isEmpty()) {
+            return null;
+        }
         ArrayList<AdvisedSupport> aopConfigList = new ArrayList<>(pointCutMap.size());
 
         for (Map.Entry<Class<?>, String> entry : pointCutMap.entrySet()) {
-            String pointCutNow = entry.getValue();  // 当前切点表达式
-            Class<?> aspectClazz = entry.getKey();  // 当前切面类
+            // 当前切点表达式
+            String pointCutNow = entry.getValue();
+            // 当前切面类
+            Class<?> aspectClazz = entry.getKey();
 
             AopConfig aopConfig = new AopConfig();
             aopConfig.setPointCut(pointCutNow);
@@ -41,7 +49,9 @@ public class AopAnnotationReader {
             // 处理当前切面类的其他注解
             for (Method method : aspectMethods) {
                 adviceTypes adviceType = getAdvice(method);
-                if (adviceType == null) continue;
+                if (adviceType == null) {
+                    continue;
+                }
                 switch (adviceType){
                     case BEFORE:
                         aopConfig.setAspectBefore(method.getName());break;
@@ -80,8 +90,11 @@ public class AopAnnotationReader {
      * 通知类型
      */
     private enum adviceTypes{
+        // 前置通知
         BEFORE,
+        // 返回通知
         AFTER_RETURN,
+        // 异常通知
         AFTER_THROW
     }
 }

@@ -6,6 +6,7 @@ import java.io.InputStream;
 
 /**
  * 上传文件对象实现的接口
+ * @author dzzhyk
  */
 public interface MultipartFile {
 

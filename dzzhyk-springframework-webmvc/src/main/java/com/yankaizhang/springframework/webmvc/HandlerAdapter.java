@@ -14,6 +14,7 @@ import java.util.*;
 /**
  * 处理请求传递的参数和controller中方法参数的对应
  * 以及数值转换工作
+ * @author dzzhyk
  */
 public class HandlerAdapter {
 

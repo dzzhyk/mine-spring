@@ -13,6 +13,7 @@ import com.yankaizhang.springframework.beans.factory.config.ConstructorArgumentV
  * BeanDefinition包含了数据
  * BeanMetadataAttributeAccessor包含了操作
  * 另外在这个抽象类里面还定义了所有BeanDefinition都应该具有的属性，结合实现BeanDefinition里面的方法就可以把这些属性暴露出去
+ * @author dzzhyk
  */
 public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccessor
     implements BeanDefinition, Cloneable {
@@ -31,12 +32,25 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     public static final int AUTOWIRE_CONSTRUCTOR = 4;
 
     /**
-     * 不进行依赖检查
+     * 使用none模式
+     * none模式指的是不进行依赖检查
      */
     public static final int DEPENDENCY_CHECK_NONE = 0;
+    /**
+     * 使用object模式
+     * object模式指的是对依赖的对象进行依赖检查
+     */
     public static final int DEPENDENCY_CHECK_OBJECTS = 1;
-    public static final int DEPENDENCY_CHECK_SIMPLE = 2;    // 只检查简单的属性依赖
-    public static final int DEPENDENCY_CHECK_ALL = 3;   // 检查所有属性依赖
+    /**
+     * 使用simple模式
+     * simple模式是指对基本类型，字符串和集合进行依赖检查
+     */
+    public static final int DEPENDENCY_CHECK_SIMPLE = 2;
+    /**
+     * 使用all模式
+     * all模式指的是对全部属性进行依赖检查
+     */
+    public static final int DEPENDENCY_CHECK_ALL = 3;
 
 
      // 简化后的BeanDefinition具有的一堆属性
@@ -49,7 +63,10 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     private String scope = SCOPE_DEFAULT;
     private boolean abstractFlag = false;
-    private Boolean lazyInit = false;   // 默认不是懒加载
+    /**
+     * 默认不是懒加载
+     */
+    private Boolean lazyInit = false;
     private int autowireMode = AUTOWIRE_NO;
     private int dependencyCheck = DEPENDENCY_CHECK_NONE;
     private String[] dependsOn;

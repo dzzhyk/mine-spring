@@ -4,13 +4,14 @@ import java.lang.reflect.Method;
 
 /**
  * 封装拦截器回调的通用逻辑
+ * @author dzzhyk
  */
-public abstract class AbstractAspectJAdvice implements Advice {
+public abstract class AbstractAspectjAdvice implements Advice {
 
     private Method aspectMethod;
     private Object aspectTarget;
 
-    public AbstractAspectJAdvice(Method aspectMethod, Object aspectTarget) {
+    public AbstractAspectjAdvice(Method aspectMethod, Object aspectTarget) {
         this.aspectMethod = aspectMethod;
         this.aspectTarget = aspectTarget;
     }
@@ -22,6 +23,7 @@ public abstract class AbstractAspectJAdvice implements Advice {
             return this.aspectMethod.invoke(aspectTarget);
         }else{
             // 如果切入有参数
+            // TODO: 这里处理切面的参数
             Object[] arguments = new Object[parameterTypes.length];
             for (int i = 0; i < parameterTypes.length; i++) {
                 if (parameterTypes[i] == JoinPoint.class){

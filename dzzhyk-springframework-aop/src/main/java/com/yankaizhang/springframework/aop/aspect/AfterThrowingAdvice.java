@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 /**
  * 异常通知
  */
-public class AfterThrowingAdvice extends AbstractAspectJAdvice implements Advice, MethodInterceptor {
+public class AfterThrowingAdvice extends AbstractAspectjAdvice implements Advice, MethodInterceptor {
 
     private String throwingName;
     private JoinPoint joinPoint;

@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 /**
  * 模板解析引擎
+ * @author dzzhyk
  */
 public class View {
     public static final String DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8";

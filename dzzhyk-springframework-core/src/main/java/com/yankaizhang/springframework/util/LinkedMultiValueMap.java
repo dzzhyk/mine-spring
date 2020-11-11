@@ -7,6 +7,8 @@ import java.util.*;
 /**
  * 多值Map接口的链表结构实现
  * 不保证线程安全
+ *
+ * @author dzzhyk
  */
 public class LinkedMultiValueMap<K, V> implements MultiValueMap<K, V>, Serializable, Cloneable {
 

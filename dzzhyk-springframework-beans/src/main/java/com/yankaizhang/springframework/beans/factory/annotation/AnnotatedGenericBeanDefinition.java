@@ -24,9 +24,10 @@ import com.yankaizhang.springframework.core.type.MethodMetadata;
 /**
  * {@link com.yankaizhang.springframework.beans.factory.support.GenericBeanDefinition}的注解拓展对象
  * 通过实现AnnotatedBeanDefinition接口拥有了注解元数据访问的能力
+ *
+ * @author dzzhyk
  */
 
-@SuppressWarnings("serial")
 public class AnnotatedGenericBeanDefinition extends GenericBeanDefinition implements AnnotatedBeanDefinition {
 
 	/**

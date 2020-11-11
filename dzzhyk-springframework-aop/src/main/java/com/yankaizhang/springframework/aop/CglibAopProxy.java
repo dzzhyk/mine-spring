@@ -5,16 +5,22 @@ import com.yankaizhang.springframework.aop.support.AdvisedSupport;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
 /**
  * CGLib动态代理实现
+ * @author dzzhyk
  */
 public class CglibAopProxy implements AopProxy, MethodInterceptor {
-    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CglibAopProxy.class);
-    private AdvisedSupport config;  // 获取代理配置文件封装
+    public static Logger log = LoggerFactory.getLogger(CglibAopProxy.class);
+    /**
+     * 获取代理配置文件封装
+     */
+    private AdvisedSupport config;
 
     public CglibAopProxy(AdvisedSupport config) {
         this.config = config;
@@ -50,7 +56,7 @@ public class CglibAopProxy implements AopProxy, MethodInterceptor {
         MethodInvocation invocation =
                 new MethodInvocation(proxy, method, this.config.getTarget(), this.config.getTargetClass(), args, interceptorsAdvices);
 
-        if (!method.getName().equals("toString")){
+        if (!"toString".equals(method.getName())){
             log.debug(method.getName() + " 方法 获取拦截器链 ===>");
             for (int i = 0; i < interceptorsAdvices.size(); i++) {
                 log.debug(i + " ==> " + interceptorsAdvices.get(i).getClass());

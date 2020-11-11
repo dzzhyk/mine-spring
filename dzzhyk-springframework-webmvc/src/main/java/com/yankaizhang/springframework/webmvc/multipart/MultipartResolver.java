@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  * 文件上传解析器接口
  * CommonsMultipartResolver 是其实现类
  * 其实现使用了apache开源的 commons-fileupload 和 commons-io 包
+ * @author dzzhyk
  */
 public interface MultipartResolver {
 

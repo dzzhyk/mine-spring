@@ -13,13 +13,17 @@ import java.util.regex.Pattern;
 /**
  * 解析配置文件
  * 封装AopConfig
+ * @author dzzhyk
  */
 public class AdvisedSupport implements Cloneable {
 
     private Class<?> targetClass;
     private Object target;
     private Pattern pointCutClassPattern;
-    private transient Map<Method, List<Object>> methodCache;    // 存放方法和该方法对应的切面类列表，缓存形式
+    /**
+     * 存放方法和该方法对应的切面类列表，缓存形式
+     */
+    private transient Map<Method, List<Object>> methodCache;
     private String preProcessPointCut;
 
     private AopConfig aopConfig;
@@ -35,8 +39,9 @@ public class AdvisedSupport implements Cloneable {
 
     public void setTargetClass(Class<?> targetClass) throws Exception {
         this.targetClass = targetClass;
-        if (null != targetClass)
+        if (null != targetClass) {
             parseMethod();    // 设置了新的目标代理类之后需要执行解析切入方法操作
+        }
     }
 
     public Object getTarget() {

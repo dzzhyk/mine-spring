@@ -3,15 +3,23 @@ package com.yankaizhang.springframework.beans;
 /**
  * bean包装类
  * 用来封装创建后的bean对象实例，代理对象或者原生对象都由这个BeanWrapper来保存
+ * @author dzzhyk
  */
 public class BeanWrapper {
 
-    private Object wrappedInstance; // 包装对象
-    private Class<?> wrappedClass;  // 包装对象目标最终的实现类
+    /**
+     * 包装对象
+     */
+    private Object wrappedInstance;
+    /**
+     * 包装对象目标最终的实现类
+     */
+    private Class<?> wrappedClass;
 
     public BeanWrapper(Object wrappedInstance) {
         this.wrappedInstance = wrappedInstance;
-        this.wrappedClass = wrappedInstance.getClass(); // 只有在创建最初包装对象的时候，保存目标类
+        // 只有在创建最初包装对象的时候，保存目标类
+        this.wrappedClass = wrappedInstance.getClass();
     }
 
     public Object getWrappedInstance() {

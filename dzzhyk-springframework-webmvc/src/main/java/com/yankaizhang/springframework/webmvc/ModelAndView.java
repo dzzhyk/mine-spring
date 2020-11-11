@@ -4,6 +4,7 @@ import java.util.Map;
 
 /**
  * 封装要返回的模板和参数
+ * @author dzzhyk
  */
 public class ModelAndView {
     private String viewName;

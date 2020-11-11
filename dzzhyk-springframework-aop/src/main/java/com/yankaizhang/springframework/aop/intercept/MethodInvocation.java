@@ -10,19 +10,41 @@ import java.util.List;
 
 /**
  * 执行整个拦截器链
+ * @author dzzhyk
  */
 public class MethodInvocation implements JoinPoint {
 
     public static final Logger log = LoggerFactory.getLogger(MethodInvocation.class);
 
-    private Object proxy;   // 代理对象
-    private Method method;  // 代理的目标方法
-    private Object target;  // 代理的目标对象
-    private Class<?> targetClass;  // 代理的目标类
-    private Object[] arguments; // 方法实参列表
-    private List<Object> interceptors;  // 拦截方法列表
+    /**
+     * 代理对象
+     */
+    private Object proxy;
+    /**
+     * 代理的目标方法
+     */
+    private Method method;
+    /**
+     * 代理的目标对象
+     */
+    private Object target;
+    /**
+     * 代理的目标类
+     */
+    private Class<?> targetClass;
+    /**
+     * 方法实参列表
+     */
+    private Object[] arguments;
+    /**
+     * 拦截方法列表
+     */
+    private List<Object> interceptors;
 
-    private int currentInterceptorIndex = -1;   //当前执行拦截器的位置
+    /**
+     * 当前执行拦截器的位置
+     */
+    private int currentInterceptorIndex = -1;
 
     public MethodInvocation(Object proxy, Method method, Object target, Class<?> targetClass, Object[] arguments, List<Object> interceptors) {
         this.proxy = proxy;

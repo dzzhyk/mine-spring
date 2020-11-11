@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 
 /**
  * 方法元数据的一个标准实现
+ * @author dzzhyk
  */
 
 public class StandMethodMetadata implements MethodMetadata {

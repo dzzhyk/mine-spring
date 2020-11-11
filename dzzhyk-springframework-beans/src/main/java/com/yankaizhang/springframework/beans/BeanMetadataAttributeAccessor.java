@@ -27,16 +27,16 @@ import com.yankaizhang.springframework.core.AttributeAccessorSupport;
  *
  * 因此这个类既可以获取元数据，也可以提供属性访问
  * 这里的属性全部都是{@link com.yankaizhang.springframework.beans.BeanMetadataAttribute}类型
+ * @author dzzhyk
  */
 
-@SuppressWarnings("serial")
 public class BeanMetadataAttributeAccessor extends AttributeAccessorSupport implements BeanMetadataElement {
 
 	private Object source;
 
 	/**
-	 * Set the configuration source {@code Object} for this metadata element.
-	 * <p>The exact type of the object will depend on the configuration mechanism used.
+	 * 为这个元数据设置配置来源
+	 * @param source 配置来源
 	 */
 	public void setSource( Object source) {
 		this.source = source;
@@ -49,18 +49,17 @@ public class BeanMetadataAttributeAccessor extends AttributeAccessorSupport impl
 
 
 	/**
-	 * Add the given BeanMetadataAttribute to this accessor's set of attributes.
-	 * @param attribute the BeanMetadataAttribute object to register
+	 * 将给定的BeanMetadataAttribute属性设置到当前对象的元数据属性中
+	 * @param attribute Bean对象元属性
 	 */
 	public void addMetadataAttribute(BeanMetadataAttribute attribute) {
 		super.setAttribute(attribute.getName(), attribute);
 	}
 
 	/**
-	 * Look up the given BeanMetadataAttribute in this accessor's set of attributes.
-	 * @param name the name of the attribute
-	 * @return the corresponding BeanMetadataAttribute object,
-	 * or {@code null} if no such attribute defined
+	 * 在访问器中查找某一属性
+	 * @param name 属性名称
+	 * @return 属性对象
 	 */
 	public BeanMetadataAttribute getMetadataAttribute(String name) {
 		return (BeanMetadataAttribute) super.getAttribute(name);

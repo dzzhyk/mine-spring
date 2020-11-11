@@ -20,6 +20,7 @@ import java.util.Map;
 /**
  * 这个Support类定义了使用apache-commons解析上传文件的基本操作
  * 根据这个类，可以继续扩充功能，所以这个类是抽象类
+ * @author dzzhyk
  */
 public abstract class CommonsFileUploadSupport {
 
@@ -27,9 +28,15 @@ public abstract class CommonsFileUploadSupport {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final DiskFileItemFactory fileItemFactory;  // 上传文件对象工厂
+    /**
+     * 上传文件对象工厂
+     */
+    private final DiskFileItemFactory fileItemFactory;
 
-    private final FileUpload fileUpload;    // 上传文件对象
+    /**
+     * 上传文件对象
+     */
+    private final FileUpload fileUpload;
 
 
     /**
@@ -111,7 +118,7 @@ public abstract class CommonsFileUploadSupport {
         Map<String, String[]> multipartParameters = new HashMap<>();
         Map<String, String> multipartParameterContentTypes = new HashMap<>();
 
-        // Extract multipart files and multipart parameters.
+        // 解压FileItem对象
         for (FileItem fileItem : fileItems) {
             if (fileItem.isFormField()) {
                 String value;

@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 /**
  * MultipartRequest接口的抽象实现类
  * 提供对预生成的MultipartFile实例的管理
+ * @author dzzhyk
  */
 public abstract class AbstractMultipartRequest extends HttpServletRequestWrapper
         implements MultipartRequest {

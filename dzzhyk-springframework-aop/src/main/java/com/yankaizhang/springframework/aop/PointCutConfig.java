@@ -10,12 +10,19 @@ import static com.yankaizhang.springframework.aop.support.ClazzUtils.dividePacka
 
 /**
  * pointCut信息封装类
+ * @author dzzhyk
  */
+@SuppressWarnings("all")
 public class PointCutConfig {
 
     private int modifyType;
     private String returnType;
-    private int declareType = 0;    // 8 static 16 final 24 static final
+    /**
+     * 8 static
+     * 16 final
+     * 24 static final
+     */
+    private int declareType = 0;
     private String packageName;
     private String className;
     private String methodName;
@@ -177,7 +184,9 @@ public class PointCutConfig {
      * 检查参数类型是否匹配
      */
     private boolean checkParamsTypeMatches(String paramsString){
-        if ("*".equals(paramsString)) return true;
+        if ("*".equals(paramsString)) {
+            return true;
+        }
         String[] split = paramsString.split(",");
         List<String> tempStrings = new ArrayList<>();
         for (Class<?> paramType : paramTypes) {

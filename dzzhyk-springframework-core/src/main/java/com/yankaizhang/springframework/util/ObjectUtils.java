@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 /**
  * 对象操作的工具类
+ *
+ * @author dzzhyk
  */
 public class ObjectUtils {
 

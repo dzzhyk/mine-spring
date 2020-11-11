@@ -26,7 +26,8 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * 手写实现DispatcherServlet
+ * DispatcherServlet实现
+ * @author dzzhyk
  */
 @SuppressWarnings("all")
 @WebServlet(
@@ -42,12 +43,24 @@ public class DispatcherServlet extends HttpServlet {
 
     public static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private final String LOCATION = "contextConfigLocation";
-    private MultipartResolver multipartResolver;    // 文件请求解析器
+
+    /**
+     * 文件请求解析器
+     */
+    private MultipartResolver multipartResolver;
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
     private Map<HandlerMapping, HandlerAdapter> handlerAdapterMap = new HashMap<>();
     private List<ViewResolver> viewResolvers = new ArrayList<>();
-    private AnnotationConfigApplicationContext context; // 内置容器
-    private String TEMPLATE_ROOT = "templates"; // 模板文件路径
+
+    /**
+     * 内置IoC容器
+     */
+    private AnnotationConfigApplicationContext context;
+
+    /**
+     * 默认模板文件路径
+     */
+    private String TEMPLATE_ROOT = "templates";
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -59,18 +72,18 @@ public class DispatcherServlet extends HttpServlet {
     private void initStrategies(AnnotationConfigApplicationContext context){
         logger.debug("**********Dispatcher Servlet 初始化开始**********");
 
-        initMultipartResolver(context); // 多部分文件上传解析multipart
+        initMultipartResolver(context);         // 多部分文件上传解析multipart
 
-        initLocaleResolver(context);    // 本地化解析
-        initThemeResolver(context);     // 主题解析
+        initLocaleResolver(context);            // 本地化解析
+        initThemeResolver(context);             // 主题解析
 
-        initHandlerMappings(context);       // url映射到controller
-        initHandlerAdapters(context);       // 多类型参数动态匹配，获得ModelAndView对象
+        initHandlerMappings(context);           // url映射到controller
+        initHandlerAdapters(context);           // 多类型参数动态匹配，获得ModelAndView对象
 
         initHandlerExceptionResolvers(context);     // 运行异常处理
         initRequestToViewNameTranslator(context);   // 直接将请求解析到视图名
-        initViewResolvers(context);     // 通过viewResolver将逻辑视图解析为具体视图实现
-        initFlashMapManager(context);   // 初始化Flash映射管理器
+        initViewResolvers(context);             // 通过viewResolver将逻辑视图解析为具体视图实现
+        initFlashMapManager(context);           // 初始化Flash映射管理器
 
         logger.debug("singletonIoC容器实例个数 ===> " + String.valueOf(context.getSingletonIoc().size()) + " 个");
         logger.debug("commonsIoC容器实例个数 ===> " + String.valueOf(context.getCommonIoc().size()) + " 个");

@@ -11,12 +11,18 @@ import java.util.Map;
 
 /**
  * 构造函数的参数列表包装类
+ * @author dzzhyk
  */
 public class ConstructorArgumentValues {
 
-    private final Map<Integer, ValueHolder> indexedArgumentValues = new LinkedHashMap<>();  // 参数位置和参数对照
-    private final List<ValueHolder> genericArgumentValues = new ArrayList<>();  // 通用的参数列表
-
+    /**
+     * 参数位置和参数对照
+     */
+    private final Map<Integer, ValueHolder> indexedArgumentValues = new LinkedHashMap<>();
+    /**
+     * 通用的参数列表
+     */
+    private final List<ValueHolder> genericArgumentValues = new ArrayList<>();
 
     public ConstructorArgumentValues() {
     }

@@ -2,6 +2,8 @@ package com.yankaizhang.springframework.aop;
 
 import com.yankaizhang.springframework.aop.intercept.MethodInvocation;
 import com.yankaizhang.springframework.aop.support.AdvisedSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -13,8 +15,11 @@ import java.util.List;
  * Jdk动态代理实现
  */
 public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
-    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JdkDynamicAopProxy.class);
-    private AdvisedSupport config;  // 获取代理配置文件封装
+    public static final Logger log = LoggerFactory.getLogger(JdkDynamicAopProxy.class);
+    /**
+     * 获取代理配置文件封装
+     */
+    private AdvisedSupport config;
 
     public JdkDynamicAopProxy(AdvisedSupport config) {
         this.config = config;
@@ -56,7 +61,7 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
         MethodInvocation invocation =
                 new MethodInvocation(proxy, method, this.config.getTarget(), this.config.getTargetClass(), args, interceptorsAdvices);
 
-        if (!method.getName().equals("toString")){
+        if (!"toString".equals(method.getName())){
             log.debug(method.getName() + " 方法 获取拦截器链 ===>");
             for (int i = 0; i < interceptorsAdvices.size(); i++) {
                 log.debug(i + " ==> " + interceptorsAdvices.get(i).getClass());

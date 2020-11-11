@@ -23,6 +23,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * AnnotatedBeanDefinitionReader主要完成对注解配置类的解析
  *
  * 这里是源码的一个简化实现
+ * @author dzzhyk
  */
 public class AnnotatedBeanDefinitionReader {
 
