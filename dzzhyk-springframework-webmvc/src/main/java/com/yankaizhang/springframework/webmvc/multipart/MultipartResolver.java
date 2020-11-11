@@ -29,17 +29,23 @@ public interface MultipartResolver {
 	/**
 	 * 检查某个请求是否为文件上传请求
 	 * Will typically check for content type "multipart/form-data"
+	 * @param request HttpServletRequest请求
+	 * @return 检查结果
 	 */
 	boolean isMultipart(HttpServletRequest request);
 
 	/**
 	 * 将request包装为一个MultipartHttpServletRequest对象
 	 * 其实就是解析过程
+	 * @param request HttpServletRequest请求
+	 * @return MultipartHttpServletRequest对象
+	 * @throws Exception 抛出异常
 	 */
 	MultipartRequest resolveMultipart(HttpServletRequest request) throws Exception;
 
 	/**
 	 * 清理某文件请求的所有资源内容
+	 * @param request MultipartRequest请求
 	 */
 	void cleanupMultipart(MultipartRequest request);
 

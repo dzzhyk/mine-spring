@@ -33,6 +33,8 @@ public interface MultipartRequest extends HttpServletRequest {
 	 * 这个迭代器的迭代对象是当前请求上传文件的所有属性对应name
 	 * 比如：file1, file2, file3
 	 * 而不是具体的文件名称 1.jpg, 2.jpg, 3.jpg
+	 *
+	 * @return 所有上传文件name的迭代器
 	 */
 	Iterator getFileNames();
 
@@ -45,6 +47,7 @@ public interface MultipartRequest extends HttpServletRequest {
 
 	/**
 	 * 返回请求的所有文件Map
+	 * @return Multipart文件name和对象映射Map
 	 */
 	MultiValueMap<String, MultipartFile> getMultiFileMap();
 }

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
- * MultipartRequest接口的默认实现
+ * 真正用到的MultipartRequest接口的默认实现
  * @author dzzhyk
  */
 public class DefaultMultipartRequest extends AbstractMultipartRequest {
@@ -18,11 +18,7 @@ public class DefaultMultipartRequest extends AbstractMultipartRequest {
 
 
     /**
-     * Wrap the given HttpServletRequest in a MultipartHttpServletRequest.
-     * @param request the servlet request to wrap
-     * @param mpFiles a map of the multipart files
-     * @param mpParams a map of the parameters to expose,
-     * with Strings as keys and String arrays as values
+     * 将一个普通的HttpServletRequest包装为DefaultMultipartRequest对象
      */
     public DefaultMultipartRequest(HttpServletRequest request, MultiValueMap<String, MultipartFile> mpFiles,
                                    Map<String, String[]> mpParams, Map<String, String> mpParamContentTypes) {
@@ -34,8 +30,7 @@ public class DefaultMultipartRequest extends AbstractMultipartRequest {
     }
 
     /**
-     * Wrap the given HttpServletRequest in a MultipartHttpServletRequest.
-     * @param request the servlet request to wrap
+     * 将一个普通的HttpServletRequest包装为DefaultMultipartRequest对象
      */
     public DefaultMultipartRequest(HttpServletRequest request) {
         super(request);

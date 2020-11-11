@@ -39,18 +39,28 @@ import java.util.List;
  * 需要使用web IoC容器创建它，这里简化为不能独立存在
  * @author dzzhyk
  */
+
 public class CommonsMultipartResolver extends CommonsFileUploadSupport
 		implements MultipartResolver, ServletContextAware {
 
 	private static final Logger log = LoggerFactory.getLogger(CommonsMultipartResolver.class);
+	/**
+	 * web容器的临时文件暂存路径
+	 */
+	private static final String TEMPDIR = "javax.servlet.context.tempdir";
+
 
 	public CommonsMultipartResolver() {
 		super();
 	}
 
+	/**
+	 * 设置容器上下文，这里重写了原方法，设置了文件的暂存路径
+	 * @param context web容器上下文对象
+	 */
 	@Override
 	public void setServletContext(ServletContext context) {
-		File attribute = (File) context.getAttribute("javax.servlet.context.tempdir");
+		File attribute = (File) context.getAttribute(TEMPDIR);
 		getFileItemFactory().setRepository(attribute);
 	}
 
