@@ -21,8 +21,6 @@ public class TestController {
 
     @RequestMapping("/index")
     public String index(){
-//        request.setAttribute("username", "haha");
-//        request.setAttribute("msg", testService.sayHello("haha"));
         return "index";
     }
 

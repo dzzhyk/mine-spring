@@ -131,6 +131,7 @@ fork and do it yourself!
 - [ ] beanPostProcessor 和 beanFactoryPostProcessor实现，以及其容器实现
 - [ ] 事务支持
 - [ ] @Around Aop环切实现
+- [ ] webmvc实现完全JavaConfig配置，剔除配置文件
 
 ## 已知问题
 ~~太惨了~~

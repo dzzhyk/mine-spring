@@ -9,6 +9,9 @@ import com.yankaizhang.springframework.test.service.TestService;
 import com.yankaizhang.springframework.test.service.impl.TestServiceImpl;
 import com.yankaizhang.springframework.webmvc.multipart.commons.CommonsMultipartResolver;
 
+/**
+ * @author dzzhyk
+ */
 @Configuration
 @ComponentScan("com.yankaizhang.springframework.test")
 public class MyJavaConfig {
