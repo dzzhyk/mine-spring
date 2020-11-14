@@ -3,7 +3,7 @@
 
     <!-- 格式化输出：%date表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %msg：日志消息，%n是换行符-->
     <property name="LOG_PATTERN"
-              value="%5p [%5.15t] %-40.40logger{39} : %m%n"/>
+              value="[%5p] %-40.40logger{39} : %m%n"/>
     <!-- %d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:-} [%5.15t] %-40.40logger{39} : %m%n -->
     <!-- 控制台输出日志 -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">

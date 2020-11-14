@@ -2,7 +2,14 @@ package com.yankaizhang.springframework.context.config;
 
 import com.yankaizhang.springframework.beans.factory.support.GenericBeanDefinition;
 import com.yankaizhang.springframework.context.BeanDefinitionRegistry;
+import com.yankaizhang.springframework.context.annotation.Component;
+import com.yankaizhang.springframework.context.annotation.Configuration;
+import com.yankaizhang.springframework.context.annotation.Controller;
+import com.yankaizhang.springframework.context.annotation.Service;
 import com.yankaizhang.springframework.context.util.BeanDefinitionRegistryUtils;
+import com.yankaizhang.springframework.core.type.AnnotationMetadata;
+import com.yankaizhang.springframework.core.type.ClassMetadata;
+import com.yankaizhang.springframework.core.type.StandardAnnotationMetadata;
 import com.yankaizhang.springframework.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +40,7 @@ public class ClassPathBeanDefinitionScanner {
     /**
      * 扫描到的类名结果
      */
-    private Set<String> registryBeanClasses = new HashSet<>(16);
+    private Set<AnnotationMetadata> registryBeanClasses = new HashSet<>(16);
 
     public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry) {
         this.registry = registry;
@@ -46,8 +53,26 @@ public class ClassPathBeanDefinitionScanner {
         for (String basePackage : basePackages) {
             doScan(basePackage);
         }
+
+        // 当前包下的扫描到的所有内容中，存在不是组件的类，所以需要过滤，另外还需要过滤接口
+        // TODO: 此处可以考虑使用过滤器实现，现在只是简单实现
+        doFilter(this.registryBeanClasses);
+
         // 这里为了简化先不注册只生成BeanDefinition对象
         doRegisterBeanDefinition(this.registryBeanClasses);
+    }
+
+    /**
+     * 过滤非组件beanClass
+     * @param registryBeanClasses 待过滤的元数据集合
+     */
+    private void doFilter(Set<AnnotationMetadata> registryBeanClasses) {
+        // 不是组件，移除
+        registryBeanClasses.removeIf((beanMetadata) ->
+                !(beanMetadata.isAnnotated(Component.class) ||
+                  beanMetadata.isAnnotated(Configuration.class) ||
+                  beanMetadata.isAnnotated(Controller.class) ||
+                  beanMetadata.isAnnotated(Service.class)));
     }
 
     private void doScan(String basePackage){
@@ -61,9 +86,19 @@ public class ClassPathBeanDefinitionScanner {
             } else {
                 if (!file.getName().endsWith(".class")){continue;}
                 String className = (basePackage + "." + file.getName().replace(".class", ""));
-                registryBeanClasses.add(className);
-                if (log.isDebugEnabled()){
-                    log.debug("包扫描命中类 : " + className);
+
+                // 这里为该扫描到的类创建一个包含注解的元数据，方便后面的过滤处理
+                AnnotationMetadata metadata = null;
+                try {
+                    metadata = AnnotationMetadata.introspect(Class.forName(className));
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+                if (metadata != null){
+                    registryBeanClasses.add(metadata);
+                    if (log.isDebugEnabled()){
+                        log.debug("包扫描命中类 : " + className);
+                    }
                 }
             }
         }
@@ -73,18 +108,26 @@ public class ClassPathBeanDefinitionScanner {
      * 注册扫描到的BeanDefinition
      *
      */
-    public void doRegisterBeanDefinition(Set<String> registryBeanClasses) {
+    public void doRegisterBeanDefinition(Set<AnnotationMetadata> registryBeanClasses) {
 
-        for (String registryBeanClass : registryBeanClasses) {
+        for (AnnotationMetadata registryBeanClass : registryBeanClasses) {
             GenericBeanDefinition beanDef = new GenericBeanDefinition();
 
-            // 这里放入的就是一个String对象
-            beanDef.setBeanClass(registryBeanClass);
+            // 这里传入的就是一个String对象
+            String className = registryBeanClass.getClassName();
+            beanDef.setBeanClass(className);
 
             // 扫描到的类的默认的名称是 开头小写开头小写的类名
-            String beanName = StringUtils.toLowerCase(registryBeanClass.substring(registryBeanClass.lastIndexOf(".")+1));
+            String beanName = StringUtils.toLowerCase(className.substring(className.lastIndexOf(".")+1));
 
             BeanDefinitionRegistryUtils.registerBeanDefinition(registry, beanName, beanDef);
+
+            // 注册可能的接口对象
+            String[] interfaceNames = registryBeanClass.getInterfaceNames();
+            for (String interfaceName : interfaceNames) {
+                String interfaceBeanName = StringUtils.toLowerCase(interfaceName.substring(interfaceName.lastIndexOf(".")+1));
+                BeanDefinitionRegistryUtils.registerBeanDefinition(registry, interfaceBeanName, beanDef);
+            }
         }
 
     }

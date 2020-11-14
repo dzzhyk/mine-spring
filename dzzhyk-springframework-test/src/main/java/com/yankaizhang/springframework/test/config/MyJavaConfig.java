@@ -10,14 +10,15 @@ import com.yankaizhang.springframework.test.service.impl.TestServiceImpl;
 import com.yankaizhang.springframework.webmvc.multipart.commons.CommonsMultipartResolver;
 
 /**
+ * 支持使用@ComponentScan注解扫描额外包
  * @author dzzhyk
  */
 @Configuration
-@ComponentScan("com.yankaizhang.springframework.test")
+@ComponentScan("com.yankaizhang.springframework.another")
 public class MyJavaConfig {
 
     @Bean
-    public User getUser(){
+    public User user(){
         return new User("dzzhyk", "1123");
     }
 

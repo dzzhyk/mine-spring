@@ -95,7 +95,9 @@ public class HandlerAdapter {
 
         // 执行方法
         Object returnValue = handlerMapping.getMethod().invoke(handlerMapping.getController(), paramValues);
-        if (returnValue == null) return null;
+        if (returnValue == null) {
+            return null;
+        }
 
 
         // 判断返回类型

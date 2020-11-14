@@ -124,7 +124,7 @@ fork and do it yourself!
 - [x] Multi-Aspect AOP support.
 - [ ] Simple ORM like Spring Data JPA.
 - [ ] @ResponseBody and JSON parser.
-- [ ] Simplify to Controller params.
+- [x] Simplify to Controller params.
 - [x] @Configuration based Java ConfigClass support
 - [x] MultipartFile upload and download
 - [ ] a tiny AnnotationConfigClassApplicationContext impl
@@ -137,7 +137,7 @@ fork and do it yourself!
 **NEED YOUR HELP!**
 
 - [x] The ~~Controller's method cannot be accessed by the AOP aspect.~~
-
+- [ ] Repeated registration when registering HandlerMapping.
 
 ## Maintainer
 

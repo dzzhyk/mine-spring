@@ -124,18 +124,18 @@ fork and do it yourself!
 - [x] 多切面AOP支持
 - [ ] 类似JPA的简易orm框架实现
 - [ ] @ResponseBody注解和json解析支持
-- [ ] Controller参数简化
+- [x] Controller参数简化
 - [x] @Configuration配置类和@Bean注解配置
 - [x] 文件上传和文件下载支持
 - [ ] 更加完整正规的AnnotationConfigClassApplicationContext容器
 - [ ] beanPostProcessor 和 beanFactoryPostProcessor实现，以及其容器实现
 - [ ] 事务支持
 - [ ] @Around Aop环切实现
-- [ ] webmvc实现完全JavaConfig配置，剔除配置文件
 
 ## 已知问题
 ~~太惨了~~
 - [x] ~~Controller方法不能被AOP切面切入问题~~
+- [ ] 注解HandlerMapping的时候重复注册的问题
 
 ## 持有者
 

@@ -298,7 +298,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
 
         BeanDefinition beanDefinition = super.beanDefinitionMap.get(beanName);
         if (null == beanDefinition){
-            throw new Exception("bean定义在Map中未找到，检查beanName是否有误 ==> " + beanName);
+            return null;
         }
 
         try {

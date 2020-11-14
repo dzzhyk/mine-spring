@@ -40,6 +40,7 @@ public class TestController {
             request.setAttribute("msg", "上传失败");
             return "index";
         }
+        // 保存的位置（绝对路径）
         String DIR = "/Users/dzzhyk/Desktop/openSource/springframework/dzzhyk-springframework-test/upload/";
         String saveName = UUID.randomUUID().toString();
 

@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -43,6 +44,8 @@ public class DispatcherServlet extends HttpServlet {
 
     public static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private final String LOCATION = "contextConfigLocation";
+    private Properties configProperties = new Properties();   // 用来存储配置文件对象
+    private static final String BASE_PACKAGE = "basePackage";
 
     /**
      * 文件请求解析器
@@ -64,8 +67,26 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
+
+
+        String location = config.getInitParameter(LOCATION);
+        // 目前现在这里读取出basePackage
+        InputStream ins = this.getClass()
+                .getClassLoader().getResourceAsStream(location.replace("classpath:", ""));
+        try {
+            configProperties.load(ins);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if (null != ins){
+                try { ins.close(); } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         // 初始化IoC容器
-        context = new AnnotationConfigApplicationContext(config.getInitParameter(LOCATION));
+        context = new AnnotationConfigApplicationContext(configProperties.getProperty(BASE_PACKAGE));
         initStrategies(context);
     }
 
@@ -145,7 +166,7 @@ public class DispatcherServlet extends HttpServlet {
                 String baseUrl = "";
                 if (clazz.isAnnotationPresent(RequestMapping.class)){
                     RequestMapping requestMapping = clazz.getAnnotation(RequestMapping.class);
-                    baseUrl = requestMapping.value();   // 如果标注了@MyController注解的值
+                    baseUrl = requestMapping.value();   // 如果标注了@Controller注解的值
                 }
 
                 // 将controller标注@MyRequestMapping的方法加入handlerMapping
@@ -158,7 +179,6 @@ public class DispatcherServlet extends HttpServlet {
                     String url = ("/" + baseUrl + "/" + requestMapping.value()).replaceAll("/+", "/");
                     Pattern pattern = Pattern.compile(url);
                     handlerMappings.add(new HandlerMapping(beanInstance, method, pattern)); // 最后加入的都应该是代理对象
-                    logger.debug("Mapped: " + url + " ===> " + method);
                 }
             }
         }catch (Exception e){
@@ -173,6 +193,7 @@ public class DispatcherServlet extends HttpServlet {
     private void initHandlerAdapters(AnnotationConfigApplicationContext context){
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerAdapterMap.put(handlerMapping, new HandlerAdapter());
+            logger.debug("Mapped: " + handlerMapping.getPattern() + " ===> " + handlerMapping.getMethod());
         }
     }
 

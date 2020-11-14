@@ -26,7 +26,7 @@ public class BeanDefinitionRegistryUtils {
                 }
             }else{
                 // 存在重复beanName
-                log.warn("存在重复bean定义 : " + beanName);
+                log.debug("存在重复bean定义 : " + beanName + ", 跳过注册");
             }
         }catch (Exception e){
             e.printStackTrace();

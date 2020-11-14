@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.yankaizhang.springframework.aop.support.ClazzUtils.dividePackageClassMethodParamsString;
+import static com.yankaizhang.springframework.util.ClazzUtils.dividePackageClassMethodParamsString;
 
 /**
  * pointCut信息封装类

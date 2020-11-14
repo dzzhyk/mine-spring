@@ -2,6 +2,8 @@ package com.yankaizhang.springframework.aop;
 
 import com.yankaizhang.springframework.aop.intercept.MethodInvocation;
 import com.yankaizhang.springframework.aop.support.AdvisedSupport;
+import com.yankaizhang.springframework.aop.support.AopUtils;
+import com.yankaizhang.springframework.util.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,11 +42,11 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
      */
     @Override
     public Object getProxy(ClassLoader classLoader) {
+
         int length = this.config.getTargetClass().getInterfaces().length;
-        Class<?>[] interfaces = this.config.getTargetClass().getInterfaces();
-        Class<?>[] classes = new Class<?>[length+1];    // 中间数组
-        System.arraycopy(interfaces, 0, classes, 0, length);
-        classes[length] = SpringProxy.class;
+        Class<?>[] classes = new Class<?>[length+1];
+        // 为代理对象添加SpringProxy接口，以此识别Spring代理对象
+        ObjectUtils.addObjectToArray(classes, SpringProxy.class);
         return Proxy.newProxyInstance(classLoader, classes, this);
     }
 
@@ -54,6 +56,10 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
+        if (!AopUtils.isInvokeAble(method)){
+            return method.invoke(proxy, args);
+        }
+
         // 获取这个方法的拦截器链
         List<Object> interceptorsAdvices = config.getInterceptorsAdvice(method, this.config.getTargetClass());
 
@@ -61,13 +67,11 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
         MethodInvocation invocation =
                 new MethodInvocation(proxy, method, this.config.getTarget(), this.config.getTargetClass(), args, interceptorsAdvices);
 
-        if (!"toString".equals(method.getName())){
-            log.debug(method.getName() + " 方法 获取拦截器链 ===>");
-            for (int i = 0; i < interceptorsAdvices.size(); i++) {
-                log.debug(i + " ==> " + interceptorsAdvices.get(i).getClass());
-            }
-            log.debug("==> 执行以上拦截器链...");
+        log.debug(method.getName() + " 方法 获取拦截器链 ===>");
+        for (int i = 0; i < interceptorsAdvices.size(); i++) {
+            log.debug(i + " ==> " + interceptorsAdvices.get(i).getClass());
         }
+        log.debug("==> 执行以上拦截器链...");
 
         // 执行这个拦截器链
         return invocation.proceed();

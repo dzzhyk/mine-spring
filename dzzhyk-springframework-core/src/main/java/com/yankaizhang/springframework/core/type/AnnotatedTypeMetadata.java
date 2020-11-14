@@ -16,6 +16,8 @@
 
 package com.yankaizhang.springframework.core.type;
 
+import com.yankaizhang.springframework.util.AnnotationUtils;
+
 import java.lang.annotation.Annotation;
 
 /**
@@ -47,7 +49,9 @@ public interface AnnotatedTypeMetadata {
 	 */
 	default Annotation getAnnotation(Class<? extends Annotation> annotationClass){
 		for (Annotation annotation : getAnnotations()) {
-			if (annotation.annotationType() == annotationClass){
+			// 这里拿到的注解annotation是代理对象，所以需要获取代理对象的目标对象类
+			Class<?> annotationClazz = AnnotationUtils.getAnnotationJdkProxyTarget(annotation);
+			if (annotationClazz == annotationClass){
 				return annotation;
 			}
 		}

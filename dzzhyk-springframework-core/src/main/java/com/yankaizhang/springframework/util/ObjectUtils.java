@@ -62,4 +62,17 @@ public class ObjectUtils {
         return false;
     }
 
+    /**
+     * 把一个元素添加到一个Object数组中
+     */
+    public static Object[] addObjectToArray(Object[] target, Object value) {
+        if (null == target || target.length==0){
+            return new Object[]{value};
+        }
+        Object[] res = new Object[target.length + 1];
+        System.arraycopy(target, 0, res, 0, target.length);
+        res[target.length] = value;
+        return res;
+    }
+
 }

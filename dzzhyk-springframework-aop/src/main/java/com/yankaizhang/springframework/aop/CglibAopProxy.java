@@ -2,6 +2,7 @@ package com.yankaizhang.springframework.aop;
 
 import com.yankaizhang.springframework.aop.intercept.MethodInvocation;
 import com.yankaizhang.springframework.aop.support.AdvisedSupport;
+import com.yankaizhang.springframework.aop.support.AopUtils;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -38,7 +39,8 @@ public class CglibAopProxy implements AopProxy, MethodInterceptor {
         Enhancer en = new Enhancer();
         // 设置代理对象父类
         en.setSuperclass(config.getTargetClass());
-        en.setInterfaces(new Class[]{SpringProxy.class});   // 给代理类实现SpringProxy接口
+        // 给代理类实现SpringProxy接口
+        en.setInterfaces(new Class[]{SpringProxy.class});
         en.setCallback(this);
         return en.create();
     }
@@ -49,6 +51,10 @@ public class CglibAopProxy implements AopProxy, MethodInterceptor {
     @Override
     public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
 
+        if (!AopUtils.isInvokeAble(method)){
+            return method.invoke(proxy, args);
+        }
+
         // 获取这个方法的拦截器链
         List<Object> interceptorsAdvices = config.getInterceptorsAdvice(method, this.config.getTargetClass());
 
@@ -56,13 +62,11 @@ public class CglibAopProxy implements AopProxy, MethodInterceptor {
         MethodInvocation invocation =
                 new MethodInvocation(proxy, method, this.config.getTarget(), this.config.getTargetClass(), args, interceptorsAdvices);
 
-        if (!"toString".equals(method.getName())){
-            log.debug(method.getName() + " 方法 获取拦截器链 ===>");
-            for (int i = 0; i < interceptorsAdvices.size(); i++) {
-                log.debug(i + " ==> " + interceptorsAdvices.get(i).getClass());
-            }
-            log.debug("==> 执行以上拦截器链...");
+        log.debug(method.getName() + " 方法 获取拦截器链 ===>");
+        for (int i = 0; i < interceptorsAdvices.size(); i++) {
+            log.debug(i + " ==> " + interceptorsAdvices.get(i).getClass());
         }
+        log.debug("==> 执行以上拦截器链...");
 
         // 执行这个拦截器链
         return invocation.proceed();

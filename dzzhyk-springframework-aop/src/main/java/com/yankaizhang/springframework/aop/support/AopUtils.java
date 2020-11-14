@@ -3,9 +3,7 @@ package com.yankaizhang.springframework.aop.support;
 import com.yankaizhang.springframework.aop.AopProxy;
 import com.yankaizhang.springframework.aop.SpringProxy;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 
 /**
  * Aop工具类
@@ -15,6 +13,35 @@ import java.lang.reflect.Proxy;
 public class AopUtils {
 
     private static final String CGLIB_CLASS_SEPARATOR = "$$";
+    /**
+     * 一些不需要代理的方法名
+     */
+    private static final String HASHCODE = "hashCode";
+    private static final String EQUALS = "equals";
+    private static final String TO_STRING = "toString";
+
+    public static boolean isFinal(Method method){
+        return Modifier.isFinal(method.getModifiers());
+    }
+
+    public static boolean isHashCode(Method method){
+        return HASHCODE.equals(method.getName());
+    }
+
+    public static boolean isEquals(Method method){
+        return EQUALS.equals(method.getName());
+    }
+
+    public static boolean isToString(Method method){
+        return TO_STRING.equals(method.getName());
+    }
+
+    /**
+     * 检查是否可以代理方法
+     */
+    public static boolean isInvokeAble(Method method){
+        return !(isFinal(method) || isEquals(method) || isHashCode(method) || isToString(method));
+    }
 
     /**
      * 判断是否为Aop代理对象
@@ -100,7 +127,10 @@ public class AopUtils {
 
             Field advisedSupport = obj.getClass().getDeclaredField("config");
             advisedSupport.setAccessible(true);
-            Object temp = advisedSupport.get(obj);  // 获取真正的advisedSupport对象
+
+            // 获取真正的advisedSupport对象
+            Object temp = advisedSupport.get(obj);
+
             // 获取目标类的Class
             Field targetClass = temp.getClass().getDeclaredField("targetClass");
             targetClass.setAccessible(true);
@@ -111,22 +141,4 @@ public class AopUtils {
         return result;
     }
 
-    /**
-     * 获取注解反射类的源对象
-     */
-    public static Class<?> getAnnotationJdkProxyTarget(Object object){
-        Class<?> result = null;
-        try {
-            Field h = object.getClass().getSuperclass().getDeclaredField("h");
-            h.setAccessible(true);
-            InvocationHandler handler = (InvocationHandler) h.get(object);
-
-            Field config = handler.getClass().getDeclaredField("type");
-            config.setAccessible(true);
-            result = (Class<?>) config.get(handler);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return result;
-    }
 }
