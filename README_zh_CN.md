@@ -13,6 +13,25 @@ mine-springframework是本人学习spring框架原理和学习spring源码的练
 
 ## 现有功能
 
+> "To use this project like using Spring-Framework"
+
+```java
+@Controller
+public class TestController {
+
+    @Autowired
+    TestService testService;
+
+    @RequestMapping("/index")
+    public String index(){
+        testService.hi();
+        return "index";
+    }
+}
+```
+
+更多详细的示例直接查看 `project-test` 模块
+
 1. springIoC容器实现
 2. 简单又不失功能的springMVC功能
 3. AOP编程
@@ -59,33 +78,14 @@ $ cd mine-springframework
 </repositories>
 ```
 
-所以接下来需要使用maven坐标导入本项目的各模块jar包
+所以接下来只需要使用maven坐标导入一个jar包即可：
+`dzzhyk-springframework-pom`会帮你引入当前项目的所有依赖
 
 ```xml
 <dependencies>
     <dependency>
         <groupId>com.yankaizhang</groupId>
-        <artifactId>dzzhyk-springframework-core</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-        <groupId>com.yankaizhang</groupId>
-        <artifactId>dzzhyk-springframework-beans</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-        <groupId>com.yankaizhang</groupId>
-        <artifactId>dzzhyk-springframework-context</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-        <groupId>com.yankaizhang</groupId>
-        <artifactId>dzzhyk-springframework-aop</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-        <groupId>com.yankaizhang</groupId>
-        <artifactId>dzzhyk-springframework-webmvc</artifactId>
+        <artifactId>dzzhyk-springframework-pom</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </dependency>
 </dependencies>
@@ -139,7 +139,7 @@ fork and do it yourself!
 
 ## 持有者
 
-[@dzzhyk.](https://github.com/dzzhyk)
+[@dzzhyk](https://github.com/dzzhyk)
 
 ## 贡献与合作
 

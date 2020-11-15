@@ -10,6 +10,25 @@ Through this project, you can understand the simple implementation ways of sprin
 
 ## Features
 
+> "To use this project like using Spring-Framework"
+
+```java
+@Controller
+public class TestController {
+
+    @Autowired
+    TestService testService;
+
+    @RequestMapping("/index")
+    public String index(){
+        testService.hi();
+        return "index";
+    }
+}
+```
+
+For usage-examples, check module `project-test`
+
 1. Simple Spring IoC container implementation.
 2. Simple yet functional springMVC function.
 3. Annotation based AOP programming support.
@@ -17,6 +36,7 @@ Through this project, you can understand the simple implementation ways of sprin
 5. JavaConfig Class support
 6. MultipartFile upload and download
 7. coming soon...
+
 
 ## Install
 
@@ -57,37 +77,17 @@ First, you need to add my Nexus Repository in your `pom.xml`, so that you can us
 ```
 
 Next, you need to use maven coordinates to import all dependencies you need of this project with specified version.
+just add `dzzhyk-springframework-pom`, and it will get everything you need.
 
 ```xml
 <dependencies>
     <dependency>
         <groupId>com.yankaizhang</groupId>
-        <artifactId>dzzhyk-springframework-core</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-        <groupId>com.yankaizhang</groupId>
-        <artifactId>dzzhyk-springframework-beans</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-        <groupId>com.yankaizhang</groupId>
-        <artifactId>dzzhyk-springframework-context</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-        <groupId>com.yankaizhang</groupId>
-        <artifactId>dzzhyk-springframework-aop</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-        <groupId>com.yankaizhang</groupId>
-        <artifactId>dzzhyk-springframework-webmvc</artifactId>
+        <artifactId>dzzhyk-springframework-pom</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </dependency>
 </dependencies>
 ```
-
 
 ### 3. Create your project through a maven-archetype. (Attention: NOT available NOW)
 
@@ -141,7 +141,7 @@ fork and do it yourself!
 
 ## Maintainer
 
-[@dzzhyk.](https://github.com/dzzhyk)
+[@dzzhyk](https://github.com/dzzhyk)
 
 ## Contribute
 

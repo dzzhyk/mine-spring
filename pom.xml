@@ -12,7 +12,6 @@
         <module>dzzhyk-springframework-context</module>
         <module>dzzhyk-springframework-aop</module>
         <module>dzzhyk-springframework-webmvc</module>
-        <module>dzzhyk-springframework-test</module>
         <module>dzzhyk-springframework-pom</module>
         <module>dzzhyk-springframework-core</module>
     </modules>
