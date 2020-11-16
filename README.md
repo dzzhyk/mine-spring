@@ -93,7 +93,7 @@ just add `dzzhyk-springframework-pom`, and it will get everything you need.
 
 In order to make it easier for everyone to try this project, 
 
-I made a maven archetype `dzzhyk-springframework-archetype` based on this project for you.
+I made a maven archetype `mine-springframework-archetype` based on this project for you.
 
 Everyone can use this maven-archetype to quickly get started with this project.
 
@@ -102,7 +102,7 @@ This requires that you first need to add this archetype to your `maven` tool:
 ```xml
 <dependency>
   <groupId>com.yankaizhang</groupId>
-  <artifactId>dzzhyk-springframework-archetype</artifactId>
+  <artifactId>mine-springframework-archetype</artifactId>
   <version>RELEASE</version>
 </dependency>
 ```
