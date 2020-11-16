@@ -2,6 +2,13 @@
 
 ---
 
+- 2020年11月16日23:52:54
+
+1. mine-springframework项目的专属maven-archetype上线
+2. 现在你可以使用这个maven骨架快速创建一个基于mine-springframework的项目
+
+---
+
 - 2020年11月15日18:40:36
 
 1. 将原先的dzzhyk-springframework-test项目独立出来，这样方便打包测试和部署

@@ -92,7 +92,7 @@ $ cd mine-springframework
 ```
 
 
-### 3. 用maven-archetype方式创建项目 (还不完善，暂时不要用)
+### 3. 用maven-archetype方式创建项目 (推荐)
 
 我为了更方便大家体验到本项目的成果，特意为大家制作了一个基于本项目的maven骨架模板`dzzhyk-springframework-archetype`
 
@@ -104,7 +104,7 @@ $ cd mine-springframework
 <dependency>
   <groupId>com.yankaizhang</groupId>
   <artifactId>dzzhyk-springframework-archetype</artifactId>
-  <version>${version}</version>
+  <version>RELEASE</version>
 </dependency>
 ```
 

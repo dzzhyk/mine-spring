@@ -89,7 +89,7 @@ just add `dzzhyk-springframework-pom`, and it will get everything you need.
 </dependencies>
 ```
 
-### 3. Create your project through a maven-archetype. (Attention: NOT available NOW)
+### 3. Create your project through a maven-archetype. (Recommended)
 
 In order to make it easier for everyone to try this project, 
 
@@ -102,8 +102,8 @@ This requires that you first need to add this archetype to your `maven` tool:
 ```xml
 <dependency>
   <groupId>com.yankaizhang</groupId>
-  <artifactId>dzzhyk-archetype-springframework</artifactId>
-  <version>${version}</version>
+  <artifactId>dzzhyk-springframework-archetype</artifactId>
+  <version>RELEASE</version>
 </dependency>
 ```
 
