@@ -8,6 +8,7 @@ import com.yankaizhang.springframework.context.annotation.ComponentScan;
 import com.yankaizhang.springframework.context.annotation.Bean;
 import com.yankaizhang.springframework.context.annotation.Lazy;
 import com.yankaizhang.springframework.context.util.BeanDefinitionRegistryUtils;
+import com.yankaizhang.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 
@@ -69,7 +70,8 @@ public class ConfigClassReader {
 
         // 配置类就是@Bean对象的工厂
         Class<?> beanClass = method.getReturnType();
-        String factoryBeanName = configClass.getName();
+        // factoryBeanName改为beanName形式
+        String factoryBeanName = StringUtils.toLowerCase(configClass.getSimpleName());
         String beanName = method.getAnnotation(Bean.class).value();
         boolean lazyInit = (method.getAnnotation(Lazy.class)!=null);
         String factoryMethodName = method.getName();

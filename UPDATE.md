@@ -6,10 +6,12 @@
 
 1. 在webmvc下面新建了一个测试项目test，用于开发时测试
 2. 现在@RequestMapping可以同时对应多个映射地址了
-3. 添加了jsp模板文件支持
+3. 添加了jsp模板支持，现在可以使用suffix配置项自定义模板后缀了，默认为.jsp
 4. 为DispatcherServlet添加了抽象父类FrameworkServlet，准备进一步剥离通用部分
 5. 优化了一下返回的异常处理页面，现在会有统一返回的异常页面
 6. 一些小细节和代码优化调整
+7. 解决了HandlerMapping重复注册的问题，现在起IoC只用beanName注册，如果使用beanClass，会进行查找对应的bean实例
+8. 现在可以支持同时指定beanName和beanClass来获取bean对象了，如果信息不符合会抛出异常。
 
 ---
 

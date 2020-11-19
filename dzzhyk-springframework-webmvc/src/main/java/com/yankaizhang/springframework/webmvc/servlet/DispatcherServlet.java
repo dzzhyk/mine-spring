@@ -163,11 +163,29 @@ public class DispatcherServlet extends FrameworkServlet {
 
                     // 这里生成的最终url应该是正则表达式形式
                     // 允许同一个controller对应多个mapping
-                    for (String baseUrl : baseUrls) {
+                    if (baseUrls != null && baseUrls.length != 0) {
+                        // 如果存在Controller类的对应
+                        for (String baseUrl : baseUrls) {
+                            for (String methodMapping : methodMappings) {
+                                String url = null;
+                                // 特殊处理一下无后缀"/"的情况
+                                if ("".equals(methodMapping.trim())){
+                                    url = (baseUrl).replaceAll("/+", "/");
+                                }else{
+                                    url = (baseUrl + "/" + methodMapping).replaceAll("/+", "/");
+                                }
+                                Pattern pattern = Pattern.compile(url);
+                                handlerMappings.add(new HandlerMapping(beanInstance, method, pattern));
+                            }
+                        }
+                    }else{
                         for (String methodMapping : methodMappings) {
-                            String url = ("/" + baseUrl + "/" + methodMapping).replaceAll("/+", "/");
-                            Pattern pattern = Pattern.compile(url);
-                            handlerMappings.add(new HandlerMapping(beanInstance, method, pattern)); // 最后加入的都应该是代理对象
+                            // 如果没有controller根路径，则空路径情况需要避免
+                            if (!"".equals(methodMapping.trim())){
+                                String url = ("/" + methodMapping).replaceAll("/+", "/");
+                                Pattern pattern = Pattern.compile(url);
+                                handlerMappings.add(new HandlerMapping(beanInstance, method, pattern));
+                            }
                         }
                     }
                 }

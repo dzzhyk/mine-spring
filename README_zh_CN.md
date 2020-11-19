@@ -135,7 +135,7 @@ fork and do it yourself!
 ## 已知问题
 ~~太惨了~~
 - [x] ~~Controller方法不能被AOP切面切入问题~~
-- [ ] 注解HandlerMapping的时候重复注册的问题
+- [x] 注解HandlerMapping的时候重复注册的问题
 
 ## 持有者
 

@@ -290,7 +290,65 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
      */
     @Override
     public Object getBean(String beanName) throws Exception {
+        return getBean(beanName, null);
+    }
 
+    @Override
+    public Object getBean(Class<?> beanClass) throws Exception {
+        return getBean(null, beanClass);
+    }
+
+    @Override
+    public Object getBean(String beanName, Class<?> beanClass) throws Exception {
+
+        // 优先使用beanName进行查找
+        if (beanName != null){
+            Object result = doGetBean(beanName);
+            // 如果有类型指定，判断是否为当前类型
+            if (result != null && beanClass != null){
+                if (result.getClass().equals(beanClass)){
+                    return result;
+                }
+                throw new Exception("未找到beanName为" + beanName +"，类型为"+ beanClass.getName() +"的对象");
+            }else if (result != null){
+                return result;
+            }
+            return null;
+        }
+
+        // beanName为null或者使用name没找到的情况，尝试使用beanClass寻找
+        if (beanClass != null){
+            // beanClass不为null
+            Collection<BeanDefinition> values = this.beanDefinitionMap.values();
+
+            // 在bean定义中对比，查找是否有这个类的定义
+            for (BeanDefinition value : values) {
+                if (value.getBeanClassName().equals(beanClass.getName())){
+                    // 如果找到了该类的bean定义，就尝试在容器中找该类的实例
+                    for (Map.Entry<String, BeanWrapper> entry : commonIoc.entrySet()) {
+
+                        // 如果找到了
+                        if (entry.getValue().getWrappedClass().equals(beanClass)) {
+                            if (beanName != null && !beanName.equals(entry.getKey())){
+                                throw new Exception("未找到beanName= " + beanName + "的bean实例");
+                            }
+                            return entry.getValue().getWrappedInstance();
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        throw new Exception("beanName 与 beanClass 均为null，找不到Bean实例");
+    }
+
+    /**
+     * 真正的获取bean对象函数
+     * @param beanName  bean对象名称
+     * @return bean对象 (可能为null)
+     */
+    private Object doGetBean(String beanName){
         // 检查是否已经有了实例化好的bean
         if (commonIoc.containsKey(beanName)){
             return commonIoc.get(beanName).getWrappedInstance();
@@ -314,30 +372,18 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
             BeanWrapper beanWrapper = new BeanWrapper(instance);
 
             this.commonIoc.put(beanName, beanWrapper);  // beanName可以找到这个实例
-            this.commonIoc.putIfAbsent(beanDefinition.getBeanClassName(), beanWrapper); // 全类名也可以找到这个实例
 
             // 后置处理
             beanPostProcessor.postProcessAfterInitialization(instance, beanName);
 
-            // 返回实例化完成的bean，等待注入
-            return beanWrapper.getWrappedInstance();
+            // 返回实例化的bean包装类，等待注入
+            return beanWrapper;
 
         }catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
-
-    @Override
-    public Object getBean(Class<?> beanClass) throws Exception {
-        return getBean(toLowerCase(beanClass.getSimpleName()));
-    }
-
-    @Override
-    public Object getBean(String beanName, Class<?> beanClass) throws Exception {
-        return null;
-    }
-
 
     /**
      * 对bean实例属性进行依赖注入
@@ -428,13 +474,12 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
         }else{
 
 
-            // 获取工厂类全类名
-            String factoryBeanClassName = beanDefinition.getFactoryBeanName();
-            if (null != factoryBeanClassName && !"".equals(factoryBeanClassName.trim())){
-                // 这个beanDefinition拥有factoryBeanClassName信息
+            // 获取工厂类对象beanName
+            String factoryBeanName = beanDefinition.getFactoryBeanName();
+            if (null != factoryBeanName && !"".equals(factoryBeanName.trim())){
+                // 这个beanDefinition拥有factoryBeanName信息
                 // 说明应该是使用工厂方法实例化的（@Bean方式）
                 // 因此首先获取工厂bean
-                String factoryBeanName = beanDefinition.getFactoryBeanName();
 
                 if (null==factoryBeanName || "".equals(factoryBeanName.trim()) ||
                         null==factoryMethodName || "".equals(factoryMethodName.trim())) {
@@ -443,8 +488,8 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
 
                 // 使用工厂对象创建Bean对象并且加入
                 BeanWrapper wrappedFactoryBean = null;
-                if (commonIoc.containsKey(factoryBeanClassName)){
-                    wrappedFactoryBean = (BeanWrapper) commonIoc.get(factoryBeanClassName);
+                if (commonIoc.containsKey(factoryBeanName)){
+                    wrappedFactoryBean = (BeanWrapper) commonIoc.get(factoryBeanName);
                 }else{
                     // 如果工厂对象还没有被创建
                     wrappedFactoryBean = (BeanWrapper) getBean(factoryBeanName);
@@ -454,7 +499,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
                     throw new Exception("bean实例化错误：获取对象工厂bean失败");
                 }
                 Object factoryBeanInUse = wrappedFactoryBean.getWrappedInstance();  // 获取真正的工厂类对象
-                Class<?> factoryClazz = Class.forName(factoryBeanClassName);
+                Class<?> factoryClazz = factoryBeanInUse.getClass();
                 Method factoryMethod = factoryClazz.getMethod(factoryMethodName);
                 instance = factoryMethod.invoke(factoryBeanInUse);
 
