@@ -136,8 +136,8 @@ fork and do it yourself!
 
 **NEED YOUR HELP!**
 
-- [x] The ~~Controller's method cannot be accessed by the AOP aspect.~~
-- [x] Repeated registration when registering HandlerMapping.
+- [x] ~~The Controller's method cannot be accessed by the AOP aspect.~~
+- [x] ~~Repeated registration when registering HandlerMapping.~~
 
 ## Maintainer
 

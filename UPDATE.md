@@ -4,7 +4,7 @@
 
 - 2020年11月19日19:15:31
 
-1. 在webmvc下面新建了一个测试项目test，用于开发时测试
+1. 把测试项目独立出来了project-test，这个项目不参与打包和部署
 2. 现在@RequestMapping可以同时对应多个映射地址了
 3. 添加了jsp模板支持，现在可以使用suffix配置项自定义模板后缀了，默认为.jsp
 4. 为DispatcherServlet添加了抽象父类FrameworkServlet，准备进一步剥离通用部分
