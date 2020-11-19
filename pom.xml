@@ -14,6 +14,7 @@
         <module>dzzhyk-springframework-webmvc</module>
         <module>dzzhyk-springframework-pom</module>
         <module>dzzhyk-springframework-core</module>
+        <module>project-test</module>
     </modules>
     <packaging>pom</packaging>
 

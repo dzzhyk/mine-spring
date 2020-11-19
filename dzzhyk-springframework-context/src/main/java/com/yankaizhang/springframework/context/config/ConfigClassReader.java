@@ -9,8 +9,6 @@ import com.yankaizhang.springframework.context.annotation.Bean;
 import com.yankaizhang.springframework.context.annotation.Lazy;
 import com.yankaizhang.springframework.context.util.BeanDefinitionRegistryUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 
 
@@ -22,8 +20,6 @@ import java.lang.reflect.Method;
  */
 
 public class ConfigClassReader {
-
-    public static final Logger log = LoggerFactory.getLogger(AnnotatedBeanDefinitionReader.class);
 
     private BeanDefinitionRegistry registry;
     private ClassPathBeanDefinitionScanner scanner;

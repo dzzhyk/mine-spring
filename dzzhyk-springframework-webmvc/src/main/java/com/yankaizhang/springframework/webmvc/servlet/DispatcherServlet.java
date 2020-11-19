@@ -24,6 +24,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -238,18 +241,20 @@ public class DispatcherServlet extends FrameworkServlet {
         try {
             doDispatch(req, resp);
         }catch (Exception e){
-            e.printStackTrace();
-            try {
-                ModelAndView modelAndView = new ModelAndView("500");
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("stackTrace", Arrays.toString(e.getStackTrace()));
-                modelAndView.setModel(map);
-                processDispatchResult(req, resp, modelAndView); // 返回500渲染页面
-            }catch (Exception e1){
-                e1.printStackTrace();
-                resp.getWriter().write("<h1>500 Exception</h1>\n Message：\n" +
-                        e.getMessage() + "\nStackTrace：\n" + Arrays.toString(e.getStackTrace()));
+            // 目前只是简单的处理
+            resp.setCharacterEncoding("UTF-8");
+            resp.setContentType(View.DEFAULT_CONTENT_TYPE);
+            StringBuffer buffer = new StringBuffer();
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            buffer.append("<h1>500 Exception</h1>").append(now.format(dtf)).append("<br>mine-springframework 0.0.1-SNAPSHOT<br>");
+            buffer.append("<h2>Error Message</h2>").append(e.getMessage()).append("<hr><h2>StackTrace</h2>");
+            StackTraceElement[] stackTrace = e.getStackTrace();
+            for (StackTraceElement stackTraceElement : stackTrace) {
+                buffer.append(stackTraceElement).append("\n");
             }
+            resp.getWriter().write(buffer.toString());
+            e.printStackTrace();
         }
     }
 
@@ -264,8 +269,7 @@ public class DispatcherServlet extends FrameworkServlet {
         HandlerMapping handlerMapping = getHandlerMapping(processedRequest);
         if (null == handlerMapping){
             // 如果没有这个controller，返回404页面
-            processDispatchResult(req, resp, new ModelAndView("404"));
-            return;
+            throw new Exception("没有该请求对应的 HandlerMapping 实现 => \"" + req.getRequestURI() + "\"");
         }
 
         HandlerAdapter handlerAdapter = getHandlerAdapter(handlerMapping);

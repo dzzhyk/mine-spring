@@ -142,9 +142,6 @@ fork and do it yourself!
 ## Maintainer
 
 [@dzzhyk](https://github.com/dzzhyk)
-<a class="" data-hovercard-type="user" data-hovercard-url="/users/dzzhyk/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dzzhyk">
-    <img class="d-block avatar-user" src="https://avatars0.githubusercontent.com/u/36625372?s=64&amp;v=4" width="32" height="32" alt="@dzzhyk">
-</a>
 
 ## Contribute
 
