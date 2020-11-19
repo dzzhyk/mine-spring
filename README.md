@@ -27,7 +27,7 @@ public class TestController {
 }
 ```
 
-For usage-examples, check module `project-test`
+For usage-examples, check module `project-example`
 
 1. Simple Spring IoC container implementation.
 2. Simple yet functional springMVC function.
@@ -142,11 +142,26 @@ fork and do it yourself!
 ## Maintainer
 
 [@dzzhyk](https://github.com/dzzhyk)
+<a class="" data-hovercard-type="user" data-hovercard-url="/users/dzzhyk/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dzzhyk">
+    <img class="d-block avatar-user" src="https://avatars0.githubusercontent.com/u/36625372?s=64&amp;v=4" width="32" height="32" alt="@dzzhyk">
+</a>
 
 ## Contribute
 
 Feel free to dive in! Open an issue or submit PRs.
 
+<a class="" data-hovercard-type="user" data-hovercard-url="/users/dzzhyk/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dzzhyk">
+    <img class="d-block avatar-user" src="https://avatars0.githubusercontent.com/u/36625372?s=64&amp;v=4" width="32" height="32" alt="@dzzhyk">
+</a>
+<a class="" data-hovercard-type="user" data-hovercard-url="/users/Amber-coder/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/Amber-coder">
+      <img class="d-block avatar-user" src="https://avatars0.githubusercontent.com/u/54784449?s=64&amp;v=4" width="32" height="32" alt="@Amber-coder">
+</a>
+<a class="" data-hovercard-type="user" data-hovercard-url="/users/adiaoer/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/adiaoer">
+      <img class="d-block avatar-user" src="https://avatars1.githubusercontent.com/u/30997087?s=64&amp;v=4" width="32" height="32" alt="@adiaoer">
+</a>
+<a class="" data-hovercard-type="user" data-hovercard-url="/users/daydreamofscience/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/daydreamofscience">
+      <img class="d-block avatar-user" src="https://avatars3.githubusercontent.com/u/73294057?s=64&amp;v=4" width="32" height="32" alt="@daydreamofscience">
+</a>
 
 ## Contact
 

@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
  */
 public class View {
     public static final String DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8";
+    private static final String EL_PATTERN = "\\$\\{[^}]+}";
+
     private File viewFile;
 
     public View(File viewFile) {
@@ -30,19 +32,20 @@ public class View {
      * 根据模板和传回的参数渲染
      */
     public void render(Map<String, ?> model, HttpServletRequest req, HttpServletResponse resp) throws Exception{
+
+        DispatcherServlet.log.debug("渲染至==>" + viewFile.getName());
         StringBuffer buffer = new StringBuffer();
 
         BufferedReader br =
                 new BufferedReader(
                         new InputStreamReader(
                                 new FileInputStream(viewFile), StandardCharsets.UTF_8));
-
         try {
             String line = null;
             while (null != (line = br.readLine())) {
                 line = new String(line.getBytes(StandardCharsets.UTF_8));
                 // 用正则表达式匹配模板中的动态内容 ${abc}
-                Pattern pattern = Pattern.compile("\\$\\{[^}]+}", Pattern.CASE_INSENSITIVE);
+                Pattern pattern = Pattern.compile(EL_PATTERN, Pattern.CASE_INSENSITIVE);
                 Matcher matcher = pattern.matcher(line);
 
                 // 遍历解析所有模板中的动态内容
@@ -61,10 +64,8 @@ public class View {
         } finally {
             br.close();
         }
-
         resp.setCharacterEncoding("UTF-8");
         resp.getWriter().write(buffer.toString());
-        DispatcherServlet.logger.debug("渲染至==>" + viewFile.getName());
     }
 
     public static String makeStringForRegExp(String str){

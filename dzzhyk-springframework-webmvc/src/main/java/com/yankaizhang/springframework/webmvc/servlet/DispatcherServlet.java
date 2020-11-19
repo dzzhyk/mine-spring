@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -33,19 +34,16 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @WebServlet(
         name = "dispatcherServlet",
-        displayName = "com.yankaizhang.springframework",
+        displayName = "com.yankaizhang.springframework.webmvc.servlet.DispatcherServlet",
         urlPatterns="/*",
-        loadOnStartup = 1,
+        loadOnStartup = -1,
         initParams = {
                 @WebInitParam(name = "contextConfigLocation", value = "classpath:application.properties")
         }
 )
-public class DispatcherServlet extends HttpServlet {
+public class DispatcherServlet extends FrameworkServlet {
 
-    public static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private final String LOCATION = "contextConfigLocation";
-    private Properties configProperties = new Properties();   // 用来存储配置文件对象
-    private static final String BASE_PACKAGE = "basePackage";
+    public static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     /**
      * 文件请求解析器
@@ -55,43 +53,27 @@ public class DispatcherServlet extends HttpServlet {
     private Map<HandlerMapping, HandlerAdapter> handlerAdapterMap = new HashMap<>();
     private List<ViewResolver> viewResolvers = new ArrayList<>();
 
-    /**
-     * 内置IoC容器
-     */
     private AnnotationConfigApplicationContext context;
 
     /**
      * 默认模板文件路径
      */
-    private String TEMPLATE_ROOT = "templates";
+    private final String TEMPLATE_ROOT = "templates";
+
+
+    public DispatcherServlet() {
+        super();
+    }
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-
-
-        String location = config.getInitParameter(LOCATION);
-        // 目前现在这里读取出basePackage
-        InputStream ins = this.getClass()
-                .getClassLoader().getResourceAsStream(location.replace("classpath:", ""));
-        try {
-            configProperties.load(ins);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            if (null != ins){
-                try { ins.close(); } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        // 初始化IoC容器
-        context = new AnnotationConfigApplicationContext(configProperties.getProperty(BASE_PACKAGE));
+    public void init(ServletConfig config) {
+        super.init(config);
+        this.context = super.getContext();
         initStrategies(context);
     }
 
     private void initStrategies(AnnotationConfigApplicationContext context){
-        logger.debug("**********Dispatcher Servlet 初始化开始**********");
+        log.debug("**********Dispatcher Servlet 初始化开始**********");
 
         initMultipartResolver(context);         // 多部分文件上传解析multipart
 
@@ -106,9 +88,9 @@ public class DispatcherServlet extends HttpServlet {
         initViewResolvers(context);             // 通过viewResolver将逻辑视图解析为具体视图实现
         initFlashMapManager(context);           // 初始化Flash映射管理器
 
-        logger.debug("singletonIoC容器实例个数 ===> " + String.valueOf(context.getSingletonIoc().size()) + " 个");
-        logger.debug("commonsIoC容器实例个数 ===> " + String.valueOf(context.getCommonIoc().size()) + " 个");
-        logger.debug("**********Dispatcher Servlet 初始化完成**********");
+        log.debug("singletonIoC容器实例个数 ===> " + String.valueOf(context.getSingletonIoc().size()) + " 个");
+        log.debug("commonsIoC容器实例个数 ===> " + String.valueOf(context.getCommonIoc().size()) + " 个");
+        log.debug("**********Dispatcher Servlet 初始化完成**********");
     }
 
 
@@ -126,10 +108,10 @@ public class DispatcherServlet extends HttpServlet {
         }
         if (multipartResolver != null){
             this.multipartResolver = multipartResolver;
-            logger.debug("获取了已配置MultipartResolver对象 => " + multipartResolver.getClass());
+            log.debug("获取了已配置MultipartResolver对象 => " + multipartResolver.getClass());
         }else{
             this.multipartResolver = new CommonsMultipartResolver();
-            logger.debug("未定义MultipartResolver对象，创建默认MultipartResolver => " + this.multipartResolver.getClass());
+            log.debug("未定义MultipartResolver对象，创建默认MultipartResolver => " + this.multipartResolver.getClass());
         }
     }
 
@@ -163,10 +145,10 @@ public class DispatcherServlet extends HttpServlet {
 
                 if (clazz==null || !clazz.isAnnotationPresent(Controller.class)) continue;
 
-                String baseUrl = "";
+                String[] baseUrls = {};
                 if (clazz.isAnnotationPresent(RequestMapping.class)){
                     RequestMapping requestMapping = clazz.getAnnotation(RequestMapping.class);
-                    baseUrl = requestMapping.value();   // 如果标注了@Controller注解的值
+                    baseUrls = requestMapping.value();   // 如果标注了@Controller注解的值
                 }
 
                 // 将controller标注@MyRequestMapping的方法加入handlerMapping
@@ -174,11 +156,17 @@ public class DispatcherServlet extends HttpServlet {
                     if (!method.isAnnotationPresent(RequestMapping.class)) continue;
 
                     RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                    String[] methodMappings = requestMapping.value();
 
                     // 这里生成的最终url应该是正则表达式形式
-                    String url = ("/" + baseUrl + "/" + requestMapping.value()).replaceAll("/+", "/");
-                    Pattern pattern = Pattern.compile(url);
-                    handlerMappings.add(new HandlerMapping(beanInstance, method, pattern)); // 最后加入的都应该是代理对象
+                    // 允许同一个controller对应多个mapping
+                    for (String baseUrl : baseUrls) {
+                        for (String methodMapping : methodMappings) {
+                            String url = ("/" + baseUrl + "/" + methodMapping).replaceAll("/+", "/");
+                            Pattern pattern = Pattern.compile(url);
+                            handlerMappings.add(new HandlerMapping(beanInstance, method, pattern)); // 最后加入的都应该是代理对象
+                        }
+                    }
                 }
             }
         }catch (Exception e){
@@ -193,7 +181,7 @@ public class DispatcherServlet extends HttpServlet {
     private void initHandlerAdapters(AnnotationConfigApplicationContext context){
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerAdapterMap.put(handlerMapping, new HandlerAdapter());
-            logger.debug("Mapped: " + handlerMapping.getPattern() + " ===> " + handlerMapping.getMethod());
+            log.debug("Mapped: " + handlerMapping.getPattern() + " ===> " + handlerMapping.getMethod());
         }
     }
 
@@ -207,7 +195,36 @@ public class DispatcherServlet extends HttpServlet {
 
         File templateRootDir = new File(templateRootPath);
         for (File template : templateRootDir.listFiles()) {
-            viewResolvers.add(new ViewResolver(templateRoot, template.getName()));
+            doInitViewResolver(templateRootPath, template.getName());
+        }
+
+        // 解析可能的jsp模板
+        String projectDir = getProjectDir();
+        if (null != projectDir && !"".equals(projectDir)){
+            doLoadWebapp(projectDir);
+        }
+    }
+
+    private void doInitViewResolver(String rootPath, String tempName){
+        viewResolvers.add(new ViewResolver(rootPath, tempName));
+        log.debug("扫描到模板 : [" + tempName + "] => " + rootPath);
+    }
+
+    /**
+     * 对于webapp目录的处理
+     */
+    private void doLoadWebapp(String basePath){
+        File webappDir = new File(basePath);
+        for (File jspFile : webappDir.listFiles()) {
+            if (jspFile.isDirectory()){
+                doLoadWebapp(basePath + File.separator + jspFile.getName());
+            }else{
+                String fileName = jspFile.getName();
+                if (".jsp".equals(fileName.substring(fileName.lastIndexOf(".")))){
+                    // jsp文件
+                    doInitViewResolver(basePath, jspFile.getName());
+                }
+            }
         }
     }
 
@@ -237,7 +254,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void doDispatch(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        logger.debug("收到请求 ===> " + req.getRequestURI());
+        log.debug("收到请求 ===> " + req.getRequestURI());
 
         HttpServletRequest processedRequest = req;
         boolean multipartRequestParsed = false;
@@ -276,7 +293,7 @@ public class DispatcherServlet extends HttpServlet {
             }
             catch (Exception ex) {
                 if (request.getAttribute("javax.servlet.error.exception") != null) {
-                    logger.debug("上传文件解析失败", ex);
+                    log.debug("上传文件解析失败", ex);
                     // Keep processing error dispatch with regular request handle below
                 }
                 else {
@@ -297,7 +314,7 @@ public class DispatcherServlet extends HttpServlet {
         if (viewResolvers.isEmpty()) return;
 
         for (ViewResolver viewResolver : viewResolvers) {
-            if (!viewResolver.getViewName().equals(modelAndView.getViewName().trim()+ViewResolver.DEFAULT_TEMPLATE_SUFFIX)) continue;
+            if (!viewResolver.getViewName().equals(modelAndView.getViewName().trim() + DEFAULT_TEMPLATE_SUFFIX)) continue;
             View view = viewResolver.resolveViewName(modelAndView.getViewName(), null);
             if (view != null){
                 view.render(modelAndView.getModel(), req, resp);

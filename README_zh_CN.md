@@ -30,7 +30,7 @@ public class TestController {
 }
 ```
 
-更多详细的示例直接查看 `project-test` 模块
+更多详细的示例直接查看 `project-example` 模块
 
 1. springIoC容器实现
 2. 简单又不失功能的springMVC功能
@@ -144,6 +144,19 @@ fork and do it yourself!
 ## 贡献与合作
 
 欢迎任何形式的issue和PR，需要你的帮助！
+
+<a class="" data-hovercard-type="user" data-hovercard-url="/users/dzzhyk/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dzzhyk">
+    <img class="d-block avatar-user" src="https://avatars0.githubusercontent.com/u/36625372?s=64&amp;v=4" width="32" height="32" alt="@dzzhyk">
+</a>
+<a class="" data-hovercard-type="user" data-hovercard-url="/users/Amber-coder/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/Amber-coder">
+      <img class="d-block avatar-user" src="https://avatars0.githubusercontent.com/u/54784449?s=64&amp;v=4" width="32" height="32" alt="@Amber-coder">
+</a>
+<a class="" data-hovercard-type="user" data-hovercard-url="/users/adiaoer/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/adiaoer">
+      <img class="d-block avatar-user" src="https://avatars1.githubusercontent.com/u/30997087?s=64&amp;v=4" width="32" height="32" alt="@adiaoer">
+</a>
+<a class="" data-hovercard-type="user" data-hovercard-url="/users/daydreamofscience/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/daydreamofscience">
+      <img class="d-block avatar-user" src="https://avatars3.githubusercontent.com/u/73294057?s=64&amp;v=4" width="32" height="32" alt="@daydreamofscience">
+</a>
 
 ## 联系方式
 

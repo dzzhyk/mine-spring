@@ -2,6 +2,22 @@
 
 ---
 
+- 2020年11月19日19:15:31
+
+1. 在webmvc下面新建了一个测试项目test，用于开发时测试
+2. 现在@RequestMapping可以同时对应多个映射地址了
+3. 添加了jsp模板文件支持
+4. 为DispatcherServlet添加了抽象父类FrameworkServlet，准备进一步剥离通用部分
+5. 一些小细节和代码优化调整
+
+---
+
+- 2020年11月18日23:13:37
+
+1. 示例项目更名为project-example
+
+---
+
 - 2020年11月16日23:52:54
 
 1. mine-springframework项目的专属maven-archetype上线

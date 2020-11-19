@@ -1,6 +1,5 @@
 package com.yankaizhang.springframework.webmvc;
 
-
 import com.yankaizhang.springframework.util.MultiValueMap;
 import com.yankaizhang.springframework.webmvc.annotation.RequestParam;
 import com.yankaizhang.springframework.webmvc.multipart.MultipartFile;
@@ -38,7 +37,8 @@ public class HandlerAdapter {
                 if (annotation instanceof RequestParam){
                     String paramName = ((RequestParam) annotation).value();
                     if (!"".equals(paramName.trim())){
-                        paramMapping.put(paramName, i); // 统计方法的各个含有注解的参数是第几个
+                        // 统计方法的各个含有注解的参数是第几个
+                        paramMapping.put(paramName, i);
                     }
                 }
             }
@@ -53,7 +53,8 @@ public class HandlerAdapter {
             }
         }
 
-        Object[] paramValues = new Object[parameterTypes.length];   // 最后传递给invoke方法执行的参数
+        // 最后传递给invoke方法执行的参数
+        Object[] paramValues = new Object[parameterTypes.length];
 
 
         // 请求参数映射
@@ -61,7 +62,11 @@ public class HandlerAdapter {
         for (Map.Entry<String, String[]> entry : params.entrySet()) {
             String value = Arrays.toString(entry.getValue()).replaceAll("[\\[\\]]", "")
                     .replaceAll("\\s", ",");
-            if (!paramMapping.containsKey(entry.getKey())) continue;   // 如果没有注解标记这个参数，略过
+
+            // 如果没有注解标记这个参数，略过
+            if (!paramMapping.containsKey(entry.getKey())) {
+                continue;
+            }
             // 将传递过来的参数根据名字获得index
             int index = paramMapping.get(entry.getKey());
 
@@ -85,13 +90,15 @@ public class HandlerAdapter {
             MultiValueMap<String, MultipartFile> multiFileMap = ((MultipartRequest) req).getMultiFileMap();
             for (Map.Entry<String, List<MultipartFile>> entry : multiFileMap.entrySet()) {
                 for (MultipartFile file : entry.getValue()) {
-                    if (!paramMapping.containsKey(entry.getKey())) continue;   // 如果没有注解标记这个参数，略过
+                    // 如果没有注解标记这个参数，略过
+                    if (!paramMapping.containsKey(entry.getKey())) {
+                        continue;
+                    }
                     int index = paramMapping.get(entry.getKey());
                     paramValues[index] = file;
                 }
             }
         }
-
 
         // 执行方法
         Object returnValue = handlerMapping.getMethod().invoke(handlerMapping.getController(), paramValues);

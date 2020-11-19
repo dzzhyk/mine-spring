@@ -1,7 +1,11 @@
 package com.yankaizhang.springframework.webmvc;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
+
+import static com.yankaizhang.springframework.webmvc.servlet.DispatcherServlet.DEFAULT_TEMPLATE_SUFFIX;
 
 /**
  * 根据模板名称选择合适的模板解析引擎
@@ -9,17 +13,11 @@ import java.util.Locale;
  */
 public class ViewResolver {
 
-    /**
-     * 默认解析html模板
-     */
-    public static final String DEFAULT_TEMPLATE_SUFFIX = ".html";
-
     private File templateRootDir;
     private String viewName;
 
     public ViewResolver(String templateRoot, String viewName){
-        String templateRootPath = this.getClass().getClassLoader().getResource(templateRoot).getFile();
-        this.templateRootDir = new File(templateRootPath);
+        this.templateRootDir = new File(templateRoot);
         this.viewName = viewName;
     }
 

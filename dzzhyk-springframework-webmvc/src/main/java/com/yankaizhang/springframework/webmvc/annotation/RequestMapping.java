@@ -14,6 +14,6 @@ public @interface RequestMapping {
     /**
      * Controller路径
      */
-    String value() default "";
+    String[] value() default "";
 
 }
