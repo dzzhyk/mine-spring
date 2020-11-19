@@ -145,8 +145,6 @@ fork and do it yourself!
 
 ## Contribute
 
-Feel free to dive in! Open an issue or submit PRs.
-
 <a href="https://github.com/dzzhyk">
     <img class="d-block avatar-user" src="https://avatars0.githubusercontent.com/u/36625372?s=64&amp;v=4" width="32" height="32" alt="@dzzhyk">
 </a>
@@ -159,6 +157,9 @@ Feel free to dive in! Open an issue or submit PRs.
 <a href="https://github.com/daydreamofscience">
       <img class="d-block avatar-user" src="https://avatars3.githubusercontent.com/u/73294057?s=64&amp;v=4" width="32" height="32" alt="@daydreamofscience">
 </a>
+
+
+If you like this repository, why not star 🌟 or fork ✈️ it ? I'm working hard 💪!
 
 ## Contact
 

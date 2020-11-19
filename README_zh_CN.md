@@ -143,8 +143,6 @@ fork and do it yourself!
 
 ## 贡献与合作
 
-欢迎任何形式的issue和PR，需要你的帮助！
-
 <a href="https://github.com/dzzhyk">
     <img class="d-block avatar-user" src="https://avatars0.githubusercontent.com/u/36625372?s=64&amp;v=4" width="32" height="32" alt="@dzzhyk">
 </a>
@@ -157,6 +155,8 @@ fork and do it yourself!
 <a href="https://github.com/daydreamofscience">
       <img class="d-block avatar-user" src="https://avatars3.githubusercontent.com/u/73294057?s=64&amp;v=4" width="32" height="32" alt="@daydreamofscience">
 </a>
+
+如果您感觉不错，还请收藏 🌟 或者fork ✈️ 这个项目，这是我持续更新的动力 💪！
 
 ## 联系方式
 
