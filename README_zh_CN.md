@@ -30,7 +30,7 @@ public class TestController {
 }
 ```
 
-更多详细的示例直接查看 `project-example` 模块
+更多详细的示例直接查看 `mine-spring-example` 模块
 
 1. springIoC容器实现
 2. 简单又不失功能的springMVC功能
@@ -38,12 +38,13 @@ public class TestController {
 4. 几乎和Spring相同的注解用法
 5. 支持使用Java注解配置类配置Bean对象
 6. 文件上传和文件下载支持
-7. 还有更多...
+7. 支持jsp和html模板
+8. 还有更多...
 
 ## 下载源码
 
 ```shell script
-$ git clone https://github.com/dzzhyk/mine-springframework.git
+$ git clone https://github.com/dzzhyk/mine-spring.git
 $ cd mine-springframework
 ```
 
@@ -63,7 +64,7 @@ $ cd mine-springframework
 
 ```xml
 <repositories>
-    <!-- https://github.com/dzzhyk/mine-springframework -->
+    <!-- https://github.com/dzzhyk/mine-spring -->
     <repository>
         <id>dzzhyk-nexus</id>
         <name>dzzhyk-nexus</name>
@@ -91,7 +92,7 @@ $ cd mine-springframework
 
 ### 3. 用maven-archetype方式创建项目 (推荐)
 
-我为了更方便大家体验到本项目的成果，特意为大家制作了一个基于本项目的maven骨架模板`mine-springframework-archetype`
+我为了更方便大家体验到本项目的成果，特意为大家制作了一个基于本项目的maven骨架模板`mine-spring-archetype`
 
 大家使用这个maven骨架工程可以快速上手使用本项目
 
@@ -100,7 +101,7 @@ $ cd mine-springframework
 ```xml
 <dependency>
   <groupId>com.yankaizhang</groupId>
-  <artifactId>mine-springframework-archetype</artifactId>
+  <artifactId>mine-spring-archetype</artifactId>
   <version>RELEASE</version>
 </dependency>
 ```

@@ -35,13 +35,14 @@ For usage-examples, check module `mine-spring-example`
 4. Almost the same annotation usage as Spring-Framework.
 5. JavaConfig Class support
 6. MultipartFile upload and download
-7. coming soon...
+7. jsp support
+8. coming soon...
 
 
 ## Install
 
 ```shell script
-$ git clone https://github.com/dzzhyk/mine-springframework.git
+$ git clone https://github.com/dzzhyk/mine-spring.git
 $ cd mine-springframework
 ```
 
@@ -61,7 +62,7 @@ First, you need to add my Nexus Repository in your `pom.xml`, so that you can us
 
 ```xml
 <repositories>
-    <!-- https://github.com/dzzhyk/mine-springframework -->
+    <!-- https://github.com/dzzhyk/mine-spring -->
     <repository>
         <id>dzzhyk-nexus</id>
         <name>dzzhyk-nexus</name>
@@ -90,7 +91,7 @@ just add `dzzhyk-springframework-pom`, and it will get everything you need.
 
 In order to make it easier for everyone to try this project, 
 
-I made a maven archetype `mine-springframework-archetype` based on this project for you.
+I made a maven archetype `mine-spring-archetype` based on this project for you.
 
 Everyone can use this maven-archetype to quickly get started with this project.
 
@@ -99,7 +100,7 @@ This requires that you first need to add this archetype to your `maven` tool:
 ```xml
 <dependency>
   <groupId>com.yankaizhang</groupId>
-  <artifactId>mine-springframework-archetype</artifactId>
+  <artifactId>mine-spring-archetype</artifactId>
   <version>RELEASE</version>
 </dependency>
 ```
