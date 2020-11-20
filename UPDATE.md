@@ -6,7 +6,7 @@
 
 1. 把测试项目独立出来了project-test，这个项目不参与打包和部署
 2. 现在@RequestMapping可以同时对应多个映射地址了
-3. 添加了jsp模板支持，现在可以使用suffix配置项自定义模板后缀了，默认为.jsp
+3. 添加了jsp模板支持，现在可以使用suffix配置项自定义模板后缀了，默认为.html
 4. 为DispatcherServlet添加了抽象父类FrameworkServlet，准备进一步剥离通用部分
 5. 优化了一下返回的异常处理页面，现在会有统一返回的异常页面
 6. 一些小细节和代码优化调整

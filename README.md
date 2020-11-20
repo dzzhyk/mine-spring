@@ -84,7 +84,7 @@ just add `dzzhyk-springframework-pom`, and it will get everything you need.
     <dependency>
         <groupId>com.yankaizhang</groupId>
         <artifactId>dzzhyk-springframework-pom</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${version}</version>
     </dependency>
 </dependencies>
 ```
