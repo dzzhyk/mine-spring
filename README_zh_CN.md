@@ -68,12 +68,6 @@ $ cd mine-springframework
         <id>dzzhyk-nexus</id>
         <name>dzzhyk-nexus</name>
         <url>http://maven.yankaizhang.com/repository/github/</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
     </repository>
 </repositories>
 ```

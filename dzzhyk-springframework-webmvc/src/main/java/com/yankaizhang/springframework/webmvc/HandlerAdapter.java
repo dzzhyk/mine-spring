@@ -113,7 +113,9 @@ public class HandlerAdapter {
         if (ModelAndView.class.equals(returnType)) {
             modelAndView = (ModelAndView) returnValue;
         } else if (String.class.equals(returnType)) {
-            modelAndView = new ModelAndView((String) returnValue);
+            // 如果是String类型
+            String stringValue = (String) returnValue;
+            modelAndView = new ModelAndView(stringValue);
         } else {
             return null;
         }

@@ -1,6 +1,7 @@
 package com.yankaizhang.springframework.webmvc.servlet;
 
 import com.yankaizhang.springframework.context.AnnotationConfigApplicationContext;
+import com.yankaizhang.springframework.webmvc.ViewResolver;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -17,33 +18,19 @@ import java.util.Properties;
  */
 public abstract class FrameworkServlet extends HttpServlet {
 
-    // 用来存储配置文件对象
-    private Properties configProperties = new Properties();
-    private static final String BASE_PACKAGE = "basePackage";
+    /** 配置文件的默认位置 */
     private final String LOCATION = "contextConfigLocation";
 
-    /**
-     * 默认解析html模板
-     */
-    public static String DEFAULT_TEMPLATE_SUFFIX = ".html";
+    /** 用来存储配置文件对象 */
+    private Properties configProperties = new Properties();
 
-    /**
-     * 配置文件中的模板文件后缀
-     */
-    private final String TEMPLATE_SUFFIX = "suffix";
+    /** 配置文件中的扫描包路径 */
+    private static final String BASE_PACKAGE = "context.basePackage";
 
-    /**
-     * 项目根目录
-     */
-    private static String PROJECT_DIR = null;
-
-    /**
-     * 内置IoC容器
-     */
+    /** 内置IoC容器 */
     private AnnotationConfigApplicationContext context;
 
-    public FrameworkServlet() {
-    }
+    public FrameworkServlet() {}
 
     @Override
     public void init(ServletConfig config) {
@@ -65,27 +52,12 @@ public abstract class FrameworkServlet extends HttpServlet {
 
         // 初始化IoC容器
         context = new AnnotationConfigApplicationContext(configProperties.getProperty(BASE_PACKAGE));
-        DEFAULT_TEMPLATE_SUFFIX = configProperties.getProperty(TEMPLATE_SUFFIX);
-        PROJECT_DIR = config.getServletContext().getRealPath("/");
-    }
-
-    public Properties getConfigProperties() {
-        return configProperties;
-    }
-
-    public static String getBasePackage() {
-        return BASE_PACKAGE;
-    }
-
-    public static String getDefaultTemplateSuffix() {
-        return DEFAULT_TEMPLATE_SUFFIX;
-    }
-
-    public static String getProjectDir() {
-        return PROJECT_DIR;
+        // 初始化模板解析器中的项目根目录
+        ViewResolver.PROJECT_DIR = config.getServletContext().getRealPath("/");
     }
 
     public AnnotationConfigApplicationContext getContext() {
         return context;
     }
+
 }

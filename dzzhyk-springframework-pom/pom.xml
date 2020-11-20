@@ -5,9 +5,8 @@
     <parent>
         <artifactId>dzzhyk-springframework</artifactId>
         <groupId>com.yankaizhang</groupId>
-        <version>0.0.1</version>
+        <version>${revision}</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <properties>
@@ -20,22 +19,27 @@
         <dependency>
             <groupId>com.yankaizhang</groupId>
             <artifactId>dzzhyk-springframework-aop</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.yankaizhang</groupId>
             <artifactId>dzzhyk-springframework-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.yankaizhang</groupId>
             <artifactId>dzzhyk-springframework-beans</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.yankaizhang</groupId>
             <artifactId>dzzhyk-springframework-context</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.yankaizhang</groupId>
             <artifactId>dzzhyk-springframework-webmvc</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

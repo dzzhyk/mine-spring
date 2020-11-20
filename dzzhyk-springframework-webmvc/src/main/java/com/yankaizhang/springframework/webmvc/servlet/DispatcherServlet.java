@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,7 +39,7 @@ import java.util.regex.Pattern;
 @WebServlet(
         name = "dispatcherServlet",
         displayName = "com.yankaizhang.springframework.webmvc.servlet.DispatcherServlet",
-        urlPatterns="/*",
+        urlPatterns="/",
         loadOnStartup = -1,
         initParams = {
                 @WebInitParam(name = "contextConfigLocation", value = "classpath:application.properties")
@@ -47,6 +48,12 @@ import java.util.regex.Pattern;
 public class DispatcherServlet extends FrameworkServlet {
 
     public static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+
+    /** 默认文件上传解析器beanName */
+    public static final String MULTIPART_RESOLVER_BEAN_NAME = "multipartResolver";
+
+    /** 默认视图解析器beanName */
+    public static final String VIEW_RESOLVER_BEAN_NAME = "internalResourceViewResolver";
 
     /**
      * 文件请求解析器
@@ -57,11 +64,6 @@ public class DispatcherServlet extends FrameworkServlet {
     private List<ViewResolver> viewResolvers = new ArrayList<>();
 
     private AnnotationConfigApplicationContext context;
-
-    /**
-     * 默认模板文件路径
-     */
-    private final String TEMPLATE_ROOT = "templates";
 
 
     public DispatcherServlet() {
@@ -103,9 +105,8 @@ public class DispatcherServlet extends FrameworkServlet {
     private void initMultipartResolver(AnnotationConfigApplicationContext context){
         MultipartResolver multipartResolver = null;
         try {
-            // 从容器中获取
-            multipartResolver = (MultipartResolver) context.getBean("multipartResolver");
-
+            // 尝试从容器中获取
+            multipartResolver = (MultipartResolver) context.getBean(MULTIPART_RESOLVER_BEAN_NAME);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -211,41 +212,20 @@ public class DispatcherServlet extends FrameworkServlet {
      * 注册模板解析器
      */
     private void initViewResolvers(AnnotationConfigApplicationContext context){
-        String templateRoot = TEMPLATE_ROOT;    //TODO: 先写死，后面可以通过配置文件修改
-        String templateRootPath = this.getClass().getClassLoader().getResource(templateRoot).getFile();
-
-        File templateRootDir = new File(templateRootPath);
-        for (File template : templateRootDir.listFiles()) {
-            doInitViewResolver(templateRootPath, template.getName());
+        // 尝试从容器中获取视图解析器
+        ViewResolver internalViewResolver = null;
+        try {
+            internalViewResolver = (ViewResolver) context.getBean(VIEW_RESOLVER_BEAN_NAME);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-        // 解析可能的jsp模板
-        String projectDir = getProjectDir();
-        if (null != projectDir && !"".equals(projectDir)){
-            doLoadWebapp(projectDir);
-        }
-    }
-
-    private void doInitViewResolver(String rootPath, String tempName){
-        viewResolvers.add(new ViewResolver(rootPath, tempName));
-        log.debug("扫描到模板 : [" + tempName + "] => " + rootPath);
-    }
-
-    /**
-     * 对于webapp目录的处理
-     */
-    private void doLoadWebapp(String basePath){
-        File webappDir = new File(basePath);
-        for (File jspFile : webappDir.listFiles()) {
-            if (jspFile.isDirectory()){
-                doLoadWebapp(basePath + File.separator + jspFile.getName());
-            }else{
-                String fileName = jspFile.getName();
-                if (".jsp".equals(fileName.substring(fileName.lastIndexOf(".")))){
-                    // jsp文件
-                    doInitViewResolver(basePath, jspFile.getName());
-                }
-            }
+        if (internalViewResolver != null){
+            viewResolvers.add(internalViewResolver);
+            log.debug("获取了已配置internalViewResolver对象 => " + internalViewResolver.toString());
+        }else{
+            ViewResolver resolver = new ViewResolver();
+            log.warn("未配置viewResolver，将创建默认viewResolver => " + resolver.toString());
+            viewResolvers.add(resolver);
         }
     }
 
@@ -277,7 +257,8 @@ public class DispatcherServlet extends FrameworkServlet {
     }
 
     private void doDispatch(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        log.debug("收到请求 ===> " + req.getRequestURI());
+        String requestURI = req.getRequestURI();
+        log.debug("收到请求 ===> " + requestURI);
 
         HttpServletRequest processedRequest = req;
         boolean multipartRequestParsed = false;
@@ -287,12 +268,12 @@ public class DispatcherServlet extends FrameworkServlet {
         HandlerMapping handlerMapping = getHandlerMapping(processedRequest);
         if (null == handlerMapping){
             // 如果没有这个controller，返回404页面
-            throw new Exception("没有该请求对应的 HandlerMapping 实现 => \"" + req.getRequestURI() + "\"");
+            throw new Exception("没有该请求对应的 HandlerMapping 实现 => \"" + requestURI + "\"");
         }
 
         HandlerAdapter handlerAdapter = getHandlerAdapter(handlerMapping);
         if (handlerAdapter == null){
-            throw new Exception("没有该请求对应的 HandlerAdapter 实现 => \"" + req.getRequestURI() + "\"");
+            throw new Exception("没有该请求对应的 HandlerAdapter 实现 => \"" + requestURI + "\"");
         }
         ModelAndView model = handlerAdapter.handle(processedRequest, resp, handlerMapping);
         processDispatchResult(req, resp, model);
@@ -336,15 +317,14 @@ public class DispatcherServlet extends FrameworkServlet {
         if (viewResolvers.isEmpty()) return;
 
         for (ViewResolver viewResolver : viewResolvers) {
-            if (!viewResolver.getViewName().equals(modelAndView.getViewName().trim() + DEFAULT_TEMPLATE_SUFFIX)) continue;
-            View view = viewResolver.resolveViewName(modelAndView.getViewName(), null);
+            // 尝试解析这个view，可能返回null
+            View view = viewResolver.resolveViewName(modelAndView.getViewName());
             if (view != null){
-                view.render(modelAndView.getModel(), req, resp);
+                view.render(modelAndView, viewResolver, req, resp);
                 return;
             }
         }
     }
-
 
     /**
      * 获取handler对应的HandlerAdapter

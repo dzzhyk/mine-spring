@@ -5,8 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.yankaizhang</groupId>
     <artifactId>dzzhyk-springframework</artifactId>
-
-    <version>0.0.1</version>
+    <version>${revision}</version>
 
     <modules>
         <module>dzzhyk-springframework-beans</module>
@@ -24,6 +23,8 @@
     <url>https://www.yankaizhang.com</url>
 
     <properties>
+        <!-- 这里修改项目发布版本 -->
+        <revision>0.0.2</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -74,36 +75,6 @@
                 <groupId>javax</groupId>
                 <artifactId>javaee-api</artifactId>
                 <version>8.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yankaizhang</groupId>
-                <artifactId>dzzhyk-springframework-core</artifactId>
-                <version>0.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yankaizhang</groupId>
-                <artifactId>dzzhyk-springframework-beans</artifactId>
-                <version>0.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yankaizhang</groupId>
-                <artifactId>dzzhyk-springframework-context</artifactId>
-                <version>0.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yankaizhang</groupId>
-                <artifactId>dzzhyk-springframework-aop</artifactId>
-                <version>0.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yankaizhang</groupId>
-                <artifactId>dzzhyk-springframework-webmvc</artifactId>
-                <version>0.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yankaizhang</groupId>
-                <artifactId>dzzhyk-springframework-pom</artifactId>
-                <version>0.0.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

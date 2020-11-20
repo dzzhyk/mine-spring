@@ -66,12 +66,6 @@ First, you need to add my Nexus Repository in your `pom.xml`, so that you can us
         <id>dzzhyk-nexus</id>
         <name>dzzhyk-nexus</name>
         <url>http://maven.yankaizhang.com/repository/github/</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
     </repository>
 </repositories>
 ```
