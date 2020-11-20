@@ -1,4 +1,4 @@
-# mine-springframework
+# mine-spring
 
 > 一个用于学习的简洁Spring框架实现
 
@@ -6,7 +6,7 @@
 
 ## 背景
 
-mine-springframework是本人学习spring框架原理和学习spring源码的练习产物，免费分享给大家！
+mine-spring是本人学习spring框架原理和学习spring源码的练习产物，免费分享给大家！
 通过本项目，可以了解Spring的主要模块如IoC、AOP、webmvc、JDBC的实现原理，同时在学习的过程中会进一步提升阅读Spring源码的能力。  
 本项目正在持续更新中...  
 生命不息，折腾不止...
@@ -45,10 +45,10 @@ public class TestController {
 
 ```shell script
 $ git clone https://github.com/dzzhyk/mine-spring.git
-$ cd mine-springframework
+$ cd mine-spring
 ```
 
-## 使用mine-springframework构建应用
+## 使用mine-spring构建应用
 
 ### 1. 在项目中添加lib依赖
 
@@ -58,7 +58,7 @@ $ cd mine-springframework
 
 ### 2. 用Spring项目的方式创建项目
 
-使用方式基本和创建一个Spring项目完全相同，只需要创建一个Spring-web项目并且导入maven依赖即可
+使用方式基本和创建一个Spring项目完全相同，只需要创建一个Spring项目并且导入maven依赖即可
 
 首先你需要在pom.xml中添加我的Nexus仓库，这样就可以使用到本项目的发布的所有jar包了
 
@@ -77,7 +77,6 @@ $ cd mine-springframework
 ```
 
 所以接下来只需要使用maven坐标导入一个jar包即可：
-`dzzhyk-springframework-pom`会帮你引入当前项目的所有依赖
 
 ```xml
 <dependencies>

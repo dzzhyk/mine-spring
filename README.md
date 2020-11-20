@@ -1,11 +1,11 @@
-# mine-springframework
+# mine-spring
 > A Simple Spring-Framework implementation for learning.
 
 [中文README](./README_zh_CN.md)
 
 ## Background
 
-mine-springframework is a practice product of learning Spring-Framework source code.  
+mine-spring is a practice product of learning Spring-Framework source code.  
 Through this project, you can understand the simple implementation ways of spring and learn about Spring more clearly!
 
 ## Features
@@ -43,7 +43,7 @@ For usage-examples, check module `mine-spring-example`
 
 ```shell script
 $ git clone https://github.com/dzzhyk/mine-spring.git
-$ cd mine-springframework
+$ cd mine-spring
 ```
 
 ## Usage
@@ -75,13 +75,12 @@ First, you need to add my Nexus Repository in your `pom.xml`, so that you can us
 ```
 
 Next, you need to use maven coordinates to import all dependencies you need of this project with specified version.
-just add `dzzhyk-springframework-pom`, and it will get everything you need.
 
 ```xml
 <dependencies>
     <dependency>
         <groupId>com.yankaizhang</groupId>
-        <artifactId>dzzhyk-springframework-pom</artifactId>
+        <artifactId>mine-spring</artifactId>
         <version>${version}</version>
     </dependency>
 </dependencies>
