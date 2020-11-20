@@ -3,10 +3,11 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.yankaizhang</groupId>
     <artifactId>dzzhyk-springframework</artifactId>
+
     <version>0.0.1</version>
+
     <modules>
         <module>dzzhyk-springframework-beans</module>
         <module>dzzhyk-springframework-context</module>
@@ -16,6 +17,7 @@
         <module>dzzhyk-springframework-core</module>
         <module>project-test</module>
     </modules>
+
     <packaging>pom</packaging>
 
     <description>springframework实现By: dzzhyk</description>
@@ -76,32 +78,32 @@
             <dependency>
                 <groupId>com.yankaizhang</groupId>
                 <artifactId>dzzhyk-springframework-core</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>0.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.yankaizhang</groupId>
                 <artifactId>dzzhyk-springframework-beans</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>0.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.yankaizhang</groupId>
                 <artifactId>dzzhyk-springframework-context</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>0.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.yankaizhang</groupId>
                 <artifactId>dzzhyk-springframework-aop</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>0.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.yankaizhang</groupId>
                 <artifactId>dzzhyk-springframework-webmvc</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>0.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.yankaizhang</groupId>
                 <artifactId>dzzhyk-springframework-pom</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>0.0.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
