@@ -25,7 +25,7 @@ public abstract class FrameworkServlet extends HttpServlet {
     /**
      * 默认解析html模板
      */
-    public static String DEFAULT_TEMPLATE_SUFFIX = ".jsp";
+    public static String DEFAULT_TEMPLATE_SUFFIX = ".html";
 
     /**
      * 配置文件中的模板文件后缀

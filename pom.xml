@@ -6,7 +6,7 @@
 
     <groupId>com.yankaizhang</groupId>
     <artifactId>dzzhyk-springframework</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <modules>
         <module>dzzhyk-springframework-beans</module>
         <module>dzzhyk-springframework-context</module>
