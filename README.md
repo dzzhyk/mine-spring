@@ -27,7 +27,7 @@ public class TestController {
 }
 ```
 
-For usage-examples, check module `project-example`
+For usage-examples, check module `mine-spring-example`
 
 1. Simple Spring IoC container implementation.
 2. Simple yet functional springMVC function.
@@ -66,6 +66,9 @@ First, you need to add my Nexus Repository in your `pom.xml`, so that you can us
         <id>dzzhyk-nexus</id>
         <name>dzzhyk-nexus</name>
         <url>http://maven.yankaizhang.com/repository/github/</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
     </repository>
 </repositories>
 ```

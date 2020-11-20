@@ -68,6 +68,9 @@ $ cd mine-springframework
         <id>dzzhyk-nexus</id>
         <name>dzzhyk-nexus</name>
         <url>http://maven.yankaizhang.com/repository/github/</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
     </repository>
 </repositories>
 ```
@@ -79,7 +82,7 @@ $ cd mine-springframework
 <dependencies>
     <dependency>
         <groupId>com.yankaizhang</groupId>
-        <artifactId>dzzhyk-springframework-pom</artifactId>
+        <artifactId>mine-spring</artifactId>
         <version>${version}</version>
     </dependency>
 </dependencies>
