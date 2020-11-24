@@ -5,7 +5,9 @@ import com.yankaizhang.spring.beans.BeanWrapper;
 import com.yankaizhang.spring.context.AnnotationConfigApplicationContext;
 import com.yankaizhang.spring.context.annotation.Controller;
 import com.yankaizhang.spring.webmvc.*;
+import com.yankaizhang.spring.webmvc.annotation.RequestBody;
 import com.yankaizhang.spring.webmvc.annotation.RequestMapping;
+import com.yankaizhang.spring.webmvc.annotation.ResponseBody;
 import com.yankaizhang.spring.webmvc.multipart.MultipartRequest;
 import com.yankaizhang.spring.webmvc.multipart.MultipartResolver;
 import com.yankaizhang.spring.webmvc.multipart.commons.CommonsMultipartResolver;
@@ -144,6 +146,12 @@ public class DispatcherServlet extends FrameworkServlet {
                 }
 
                 if (clazz==null || !clazz.isAnnotationPresent(Controller.class)) continue;
+
+                // 检查是否有ResponseBody注解，如果有说明是json形式数据返回
+                if (clazz.isAnnotationPresent(ResponseBody.class)){
+                    
+                }
+
 
                 String[] baseUrls = {};
                 if (clazz.isAnnotationPresent(RequestMapping.class)){
