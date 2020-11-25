@@ -72,7 +72,12 @@ public class ConfigClassReader {
         Class<?> beanClass = method.getReturnType();
         // factoryBeanName改为beanName形式
         String factoryBeanName = StringUtils.toLowerCase(configClass.getSimpleName());
-        String beanName = method.getAnnotation(Bean.class).value();
+
+        Bean beanAnno = method.getAnnotation(Bean.class);
+        String beanName = beanAnno.value();
+        String initMethod = beanAnno.initMethod();
+        String destroyMethod = beanAnno.destroyMethod();
+
         boolean lazyInit = (method.getAnnotation(Lazy.class)!=null);
         String factoryMethodName = method.getName();
 
@@ -81,13 +86,15 @@ public class ConfigClassReader {
         }
 
         // 创建待注册的bean定义对象
-        // 其实还可以添加很多属性，只不过那些注解都没实现
+        // 其实还可以添加很多属性，只不过有些注解都没实现，目前就实现了一个@Lazy
         AnnotatedGenericBeanDefinition beanDef = new AnnotatedGenericBeanDefinition(beanClass);
         beanDef.setFactoryBeanName(factoryBeanName);
         beanDef.setFactoryMethodName(factoryMethodName);
         beanDef.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
         beanDef.setRole(BeanDefinition.ROLE_APPLICATION);
         beanDef.setLazyInit(lazyInit);
+        beanDef.setInitMethodName(initMethod);
+        beanDef.setDestroyMethodName(destroyMethod);
 
         BeanDefinitionRegistryUtils.registerBeanDefinition(registry, beanName, beanDef);
     }

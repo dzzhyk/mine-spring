@@ -147,6 +147,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
             for (Map.Entry<String, BeanDefinition> entry : this.beanDefinitionMap.entrySet()) {
                 BeanDefinition definition = entry.getValue();
                 Class<?> configClazz = Class.forName(definition.getBeanClassName());
+                // 如果是配置类，就解析该配置类下的@Bean注册内容
                 if (configClazz.isAnnotationPresent(Configuration.class)){
                     configClassReader.parseAnnotationConfigClass(configClazz);
                 }
