@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -368,15 +369,18 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
             if (null == instance) return null;
 
             // 前置处理
-            beanPostProcessor.postProcessBeforeInitialization(instance, beanName);
+            Object bean = beanPostProcessor.postProcessBeforeInitialization(instance, beanName);
 
-            // 生成BeanWrapper增强对象
-            BeanWrapper beanWrapper = new BeanWrapper(instance);
-
-            this.commonIoc.put(beanName, beanWrapper);  // beanName可以找到这个实例
+            // 执行定义的init-method
+            invokeInitMethods(bean, beanDefinition);
 
             // 后置处理
-            beanPostProcessor.postProcessAfterInitialization(instance, beanName);
+            bean = beanPostProcessor.postProcessAfterInitialization(bean, beanName);
+
+            // 生成BeanWrapper增强对象
+            BeanWrapper beanWrapper = new BeanWrapper(bean);
+
+            this.commonIoc.put(beanName, beanWrapper);  // beanName可以找到这个实例
 
             // 返回实例化的bean包装类，等待注入
             return beanWrapper;
@@ -384,6 +388,28 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
         }catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * 执行bean的定义好的初始化函数
+     * @param bean bean对象
+     * @param beanDefinition bean对象的bean定义
+     */
+    private void invokeInitMethods(Object bean, BeanDefinition beanDefinition) {
+        String initMethodName = beanDefinition.getInitMethodName();
+        if (null != initMethodName){
+            try {
+                Method initMethod = bean.getClass().getMethod(initMethodName);
+                initMethod.invoke(bean, null);
+                log.debug("执行 => "+ bean.getClass() +"对象的初始化方法 : " + initMethod.getName());
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+                log.warn("获取 => "+ bean.getClass() +"对象的初始化方法失败");
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+                log.warn("执行 => " + bean.getClass() + "对象的初始化方法失败");
+            }
         }
     }
 

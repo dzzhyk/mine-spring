@@ -16,4 +16,13 @@ public @interface Bean {
      */
     String value() default "";
 
+    /**
+     * bean初始化方法
+     */
+    String initMethod() default "";
+
+    /**
+     * bean销毁方法
+     */
+    String destroyMethod() default "";
 }
