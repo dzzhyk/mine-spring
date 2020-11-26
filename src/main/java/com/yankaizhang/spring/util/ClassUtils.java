@@ -14,14 +14,16 @@ import java.util.jar.JarFile;
  * 包名工具类
  * @author dzzhyk
  */
-@SuppressWarnings("unused")
-public class ClazzUtils {
+@SuppressWarnings("all")
+public class ClassUtils {
+
+    private static final String CGLIB_CLASS_SEPARATOR = "$$";
     private static final String CLASS_SUFFIX = ".class";
     private static final String CLASS_FILE_PREFIX = File.separator + "classes"  + File.separator;
     private static final String PACKAGE_SEPARATOR = ".";
 
 
-    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ClazzUtils.class);
+    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ClassUtils.class);
 
     /**
      * 查找包下的所有类的名字
@@ -190,5 +192,21 @@ public class ClazzUtils {
         }
         strings[3] = ss.substring(ss.lastIndexOf("(")+1, ss.lastIndexOf(")"));
         return strings;
+    }
+
+
+    /**
+     * 获取对象的类别，如果是cglib代理类，返回其原始类
+     */
+    public static Class<?> getUserClass(Object object){
+        assert object != null;
+        Class<?> clazz = object.getClass();
+        if (clazz.getName().contains(CGLIB_CLASS_SEPARATOR)) {
+            Class<?> superclass = clazz.getSuperclass();
+            if (superclass != null && superclass != Object.class) {
+                return superclass;
+            }
+        }
+        return clazz;
     }
 }

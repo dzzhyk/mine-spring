@@ -1,7 +1,7 @@
 package com.yankaizhang.spring.webmvc.multipart.commons;
 
-import com.yankaizhang.spring.util.LinkedMultiValueMap;
-import com.yankaizhang.spring.util.MultiValueMap;
+import com.yankaizhang.spring.core.LinkedMultiValueMap;
+import com.yankaizhang.spring.core.MultiValueMap;
 import com.yankaizhang.spring.util.StringUtils;
 import com.yankaizhang.spring.webmvc.multipart.MultipartFile;
 import org.apache.commons.fileupload.FileItem;

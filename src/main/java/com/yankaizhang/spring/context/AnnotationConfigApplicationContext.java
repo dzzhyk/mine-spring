@@ -193,7 +193,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
                             Object proxy = createProxy(myConfig).getProxy();
                             beanWrapper.setWrappedInstance(proxy);  // 将这个二次代理对象包装起来
 
-                            log.debug("为"+ AopUtils.getAopTarget(proxy).getSimpleName() +"创建代理对象 ==> " + proxy.getClass());
+                            log.debug("为"+ AopUtils.getAopTarget(proxy).getSimpleName() +"创建代理对象 : " + proxy.getClass());
                             commonIoc.replace(clazzName, beanWrapper);       // 重新设置commonIoC中的对象为代理对象
                             String beanName = toLowerCase(clazzName.substring(clazzName.lastIndexOf(".") + 1));
                             commonIoc.replace(beanName, beanWrapper);    // 同时更新beanName对应的实例
@@ -366,6 +366,7 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
         try {
             BeanPostProcessor beanPostProcessor = new BeanPostProcessor();
 
+            // 实例化原始bean对象
             Object instance = instantiateBean(beanDefinition);
             if (null == instance) return null;
 
@@ -399,17 +400,17 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
      */
     private void invokeInitMethods(Object bean, BeanDefinition beanDefinition) {
         String initMethodName = beanDefinition.getInitMethodName();
-        if (null != initMethodName){
+        if (!StringUtils.isEmpty(initMethodName)){
             try {
                 Method initMethod = bean.getClass().getMethod(initMethodName);
                 initMethod.invoke(bean, null);
-                log.debug("执行 => "+ bean.getClass() +"对象的初始化方法 : " + initMethod.getName());
+                log.debug("执行 : "+ bean.getClass() +"对象的初始化方法 : " + initMethod.getName());
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
-                log.warn("获取 => "+ bean.getClass() +"对象的初始化方法失败");
+                log.warn("获取 : "+ bean.getClass() +"对象的初始化方法失败");
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
-                log.warn("执行 => " + bean.getClass() + "对象的初始化方法失败");
+                log.warn("执行 : " + bean.getClass() + "对象的初始化方法失败");
             }
         }
     }

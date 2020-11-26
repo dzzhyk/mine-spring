@@ -16,7 +16,7 @@
 
 package com.yankaizhang.spring.webmvc.multipart;
 
-import com.yankaizhang.spring.util.MultiValueMap;
+import com.yankaizhang.spring.core.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Iterator;

@@ -46,4 +46,11 @@ public class StringUtils {
         chars[0] += 32;
         return String.valueOf(chars);
     }
+
+    /**
+     * 判断某个字符串是否为空
+     */
+    public static boolean isEmpty(String s) {
+        return (s==null || "".equals(s.trim()));
+    }
 }

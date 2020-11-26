@@ -3,7 +3,8 @@ package com.yankaizhang.spring.webmvc.annotation;
 import java.lang.annotation.*;
 
 /**
- * 请求体，标注了此注解的内容会被解析到controller参数中
+ * 请求体
+ * 标注了此注解的参数，请求传送过来的参数会尽可能的被解析到目标对象中
  * @author dzzhyk
  */
 @Target(ElementType.PARAMETER)

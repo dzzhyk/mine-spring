@@ -1,4 +1,4 @@
-package com.yankaizhang.spring.util;
+package com.yankaizhang.spring.core;
 
 import java.util.List;
 import java.util.Map;

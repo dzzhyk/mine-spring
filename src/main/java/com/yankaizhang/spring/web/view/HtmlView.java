@@ -1,53 +1,44 @@
-package com.yankaizhang.spring.webmvc;
+package com.yankaizhang.spring.web.view;
 
+import com.yankaizhang.spring.web.View;
+import com.yankaizhang.spring.webmvc.ModelAndView;
 import com.yankaizhang.spring.webmvc.servlet.DispatcherServlet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 模板解析引擎
+ * 这是内置的HtmlView类型，目前可以支持简单了el表达式解析，继承自{@link View}
  * @author dzzhyk
  */
-public class View {
-    public static final String DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8";
+public class HtmlView extends AbstractView {
+
     private static final String EL_PATTERN = "\\$\\{[^}]+}";
-    private static final String JSP_SUFFIX = ".jsp";
 
-    private final File viewFile;
-
-    public View(File viewFile) {
-        this.viewFile = viewFile;
+    public HtmlView(String url) {
+        super(url);
     }
 
     /**
      * 根据模板和传回的参数渲染
      */
-    public void render(ModelAndView mav, ViewResolver viewResolver,
-                       HttpServletRequest req, HttpServletResponse resp) throws Exception{
+    @Override
+    public void render(ModelAndView mav, HttpServletRequest req, HttpServletResponse resp)
+            throws Exception {
 
-        // 如果是jsp
-        if (JSP_SUFFIX.equals(viewResolver.getSuffix())){
-            // 拼接Jsp文件路径，然后转发
-            String path = viewResolver.getPrefix() + mav.getViewName() + viewResolver.getSuffix();
-            req.getRequestDispatcher(path).forward(req, resp);
-            return;
-        }
+        // 获取文件url
+        String url = getUrl();
 
-        // 如果不是jsp，目前可以简单解析模板，支持el表达式
-        DispatcherServlet.log.debug("渲染至==>" + viewFile.getName());
+        DispatcherServlet.log.debug("渲染至==>" + url);
         StringBuilder builder = new StringBuilder();
 
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(
-                        new FileInputStream(viewFile), StandardCharsets.UTF_8))
+                        new FileInputStream(url), StandardCharsets.UTF_8))
         ) {
             String line = null;
             while (null != (line = br.readLine())) {
@@ -76,7 +67,12 @@ public class View {
         resp.getWriter().write(builder.toString());
     }
 
-    public static String makeStringForRegExp(String str){
+
+
+    /**
+     * 从字符串创建得到正则字符串
+     */
+    private String makeStringForRegExp(String str){
         return str.replace("\\", "\\\\").replace("*", "\\*")
                 .replace("|", "\\|").replace("+", "\\+")
                 .replace("{", "\\{").replace("}", "\\}")
@@ -86,4 +82,5 @@ public class View {
                 .replace("?", "\\?").replace(",", "\\,")
                 .replace(".", "\\.").replace("&", "\\&");
     }
+
 }

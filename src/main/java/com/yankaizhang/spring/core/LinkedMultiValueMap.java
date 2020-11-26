@@ -1,4 +1,4 @@
-package com.yankaizhang.spring.util;
+package com.yankaizhang.spring.core;
 
 import java.io.Serializable;
 import java.util.*;

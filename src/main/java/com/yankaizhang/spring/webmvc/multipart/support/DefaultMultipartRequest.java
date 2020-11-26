@@ -1,6 +1,6 @@
 package com.yankaizhang.spring.webmvc.multipart.support;
 
-import com.yankaizhang.spring.util.MultiValueMap;
+import com.yankaizhang.spring.core.MultiValueMap;
 import com.yankaizhang.spring.webmvc.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;

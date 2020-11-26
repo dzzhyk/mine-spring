@@ -1,4 +1,4 @@
-package com.yankaizhang.spring.core.http;
+package com.yankaizhang.spring.http;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public interface HttpMessageConverter<T> {
      * @return 读取的数据
      * @throws Exception 抛出的简化异常
      */
-    T read(Class<? extends T> clazz, HttpInputMessage inputMessage) throws Exception;
+//    T read(Class<? extends T> clazz, HttpInputMessage inputMessage) throws Exception;
 
     /**
      * 将后台数据转换然后返回给前端
@@ -49,6 +49,6 @@ public interface HttpMessageConverter<T> {
      * @param outputMessage
      * @throws Exception
      */
-    void write(T t, MediaType contentType, HttpOutputMessage outputMessage) throws Exception;
+//    void write(T t, MediaType contentType, HttpOutputMessage outputMessage) throws Exception;
 
 }

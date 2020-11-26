@@ -1,6 +1,6 @@
 package com.yankaizhang.spring.aop.support;
 
-import com.yankaizhang.spring.util.ClazzUtils;
+import com.yankaizhang.spring.util.ClassUtils;
 
 import java.util.Comparator;
 
@@ -39,7 +39,7 @@ public class AdviceSupportComparator implements Comparator<AdvisedSupport> {
 
     private String[] getPackageClassMethodParamsPart(String[] split) throws Exception {
         String ss = split[split.length-1];
-        return ClazzUtils.dividePackageClassMethodParamsString(ss);
+        return ClassUtils.dividePackageClassMethodParamsString(ss);
     }
 
     private String generateStringFromPartForCompare(String[] part){

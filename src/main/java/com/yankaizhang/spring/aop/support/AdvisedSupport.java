@@ -5,7 +5,7 @@ import com.yankaizhang.spring.aop.PointCutConfig;
 import com.yankaizhang.spring.aop.aspect.AfterReturningAdvice;
 import com.yankaizhang.spring.aop.aspect.AfterThrowingAdvice;
 import com.yankaizhang.spring.aop.aspect.MethodBeforeAdvice;
-import com.yankaizhang.spring.util.ClazzUtils;
+import com.yankaizhang.spring.util.ClassUtils;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -151,7 +151,7 @@ public class AdvisedSupport implements Cloneable {
                 .replaceAll("\\.+", ".")
                 .replaceAll("\\.\\*", "");
 
-        return ClazzUtils.getClazzName(packageName, true);
+        return ClassUtils.getClazzName(packageName, true);
     }
 
     @Override

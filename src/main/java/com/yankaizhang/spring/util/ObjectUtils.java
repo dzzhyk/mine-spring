@@ -1,6 +1,7 @@
 package com.yankaizhang.spring.util;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * 对象操作的工具类
@@ -8,6 +9,13 @@ import java.util.Arrays;
  * @author dzzhyk
  */
 public class ObjectUtils {
+
+    /**
+     * 判断数组是否为空
+     */
+    public static boolean isEmpty(Object[] objects){
+        return (objects==null || objects.length == 0);
+    }
 
     /**
      * 判断两个对象是否相同

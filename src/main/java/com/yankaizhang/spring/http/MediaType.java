@@ -1,4 +1,4 @@
-package com.yankaizhang.spring.core.http;
+package com.yankaizhang.spring.http;
 
 /**
  * 一些mime-type

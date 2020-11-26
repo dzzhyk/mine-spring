@@ -4,10 +4,11 @@ import com.yankaizhang.spring.aop.support.AopUtils;
 import com.yankaizhang.spring.beans.BeanWrapper;
 import com.yankaizhang.spring.context.AnnotationConfigApplicationContext;
 import com.yankaizhang.spring.context.annotation.Controller;
+import com.yankaizhang.spring.web.ViewResolver;
+import com.yankaizhang.spring.web.method.HandlerMethod;
+import com.yankaizhang.spring.web.View;
 import com.yankaizhang.spring.webmvc.*;
-import com.yankaizhang.spring.webmvc.annotation.RequestBody;
 import com.yankaizhang.spring.webmvc.annotation.RequestMapping;
-import com.yankaizhang.spring.webmvc.annotation.ResponseBody;
 import com.yankaizhang.spring.webmvc.multipart.MultipartRequest;
 import com.yankaizhang.spring.webmvc.multipart.MultipartResolver;
 import com.yankaizhang.spring.webmvc.multipart.commons.CommonsMultipartResolver;
@@ -53,6 +54,12 @@ public class DispatcherServlet extends FrameworkServlet {
 
     /** 默认视图解析器beanName */
     public static final String VIEW_RESOLVER_BEAN_NAME = "internalResourceViewResolver";
+
+    /** 视图处理器的beanName */
+    public static final String HANDLER_MAPPING_BEAN_NAME = "handlerMapping";
+
+    /** 视图处理器适配器的beanName */
+    public static final String HANDLER_ADAPTER_BEAN_NAME = "handlerAdapter";
 
     /**
      * 文件请求解析器
@@ -147,11 +154,6 @@ public class DispatcherServlet extends FrameworkServlet {
 
                 if (clazz==null || !clazz.isAnnotationPresent(Controller.class)) continue;
 
-                // 检查是否有ResponseBody注解，如果有说明是json形式数据返回
-                if (clazz.isAnnotationPresent(ResponseBody.class)){
-                    
-                }
-
 
                 String[] baseUrls = {};
                 if (clazz.isAnnotationPresent(RequestMapping.class)){
@@ -159,6 +161,7 @@ public class DispatcherServlet extends FrameworkServlet {
                     baseUrls = requestMapping.value();   // 如果标注了@Controller注解的值
                 }
 
+                // 获得了controller对象之后，就把方法包装成HandlerMethod对象吧
                 // 将controller标注@MyRequestMapping的方法加入handlerMapping
                 for (Method method : clazz.getDeclaredMethods()) {
                     if (!method.isAnnotationPresent(RequestMapping.class)) continue;
@@ -180,7 +183,9 @@ public class DispatcherServlet extends FrameworkServlet {
                                     url = (baseUrl + "/" + methodMapping).replaceAll("/+", "/");
                                 }
                                 Pattern pattern = Pattern.compile(url);
-                                handlerMappings.add(new HandlerMapping(beanInstance, method, pattern));
+                                handlerMappings.add(
+                                        new HandlerMapping(beanInstance, new HandlerMethod(beanInstance, method), pattern)
+                                );
                             }
                         }
                     }else{
@@ -189,7 +194,9 @@ public class DispatcherServlet extends FrameworkServlet {
                             if (!"".equals(methodMapping.trim())){
                                 String url = ("/" + methodMapping).replaceAll("/+", "/");
                                 Pattern pattern = Pattern.compile(url);
-                                handlerMappings.add(new HandlerMapping(beanInstance, method, pattern));
+                                handlerMappings.add(
+                                        new HandlerMapping(beanInstance, new HandlerMethod(beanInstance, method), pattern)
+                                );
                             }
                         }
                     }
@@ -203,6 +210,7 @@ public class DispatcherServlet extends FrameworkServlet {
     /**
      * 注册每个handler的参数适配器
      * 注意HandlerMapping是所说的handler的包装类
+     * 在参数适配器中进行传入参数和传出参数处理
      */
     private void initHandlerAdapters(AnnotationConfigApplicationContext context){
         for (HandlerMapping handlerMapping : handlerMappings) {
@@ -245,11 +253,13 @@ public class DispatcherServlet extends FrameworkServlet {
         }catch (Exception e){
             // 目前只是简单的处理
             resp.setCharacterEncoding("UTF-8");
-            resp.setContentType(View.DEFAULT_CONTENT_TYPE);
+            resp.setContentType("text/html;charset=utf-8");
             StringBuffer buffer = new StringBuffer();
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();
-            buffer.append("<h1>500 Exception</h1>").append(now.format(dtf)).append("<br>mine-springframework 0.0.1-SNAPSHOT<br>");
+            buffer.append("<h1>500 Exception</h1>").append(now.format(dtf))
+                    .append("<br>https://github.com/dzzhyk/mine-spring<br>")
+                    .append("<br>mine-spring 0.0.2<br>");
             buffer.append("<h2>Error Message</h2>").append(e.getMessage()).append("<hr><h2>StackTrace</h2>");
             StackTraceElement[] stackTrace = e.getStackTrace();
             for (StackTraceElement stackTraceElement : stackTrace) {
@@ -279,8 +289,11 @@ public class DispatcherServlet extends FrameworkServlet {
         if (handlerAdapter == null){
             throw new Exception("没有该请求对应的 HandlerAdapter 实现 => \"" + requestURI + "\"");
         }
-        ModelAndView model = handlerAdapter.handle(processedRequest, resp, handlerMapping);
-        processDispatchResult(req, resp, model);
+
+        ModelAndView mv = handlerAdapter.handle(processedRequest, resp, handlerMapping);
+
+        // 处理dispatcher结果，渲染视图
+        processDispatchResult(req, resp, mv);
 
         // 清理上传产生的资源文件
         if (multipartRequestParsed) {
@@ -315,19 +328,57 @@ public class DispatcherServlet extends FrameworkServlet {
     /**
      * 调用视图处理器处理相应视图
      */
-    private void processDispatchResult(HttpServletRequest req, HttpServletResponse resp, ModelAndView modelAndView)
+    private void processDispatchResult(HttpServletRequest req, HttpServletResponse resp, ModelAndView mav)
             throws Exception {
-        if (null == modelAndView) return;
+        if (null == mav) return;
         if (viewResolvers.isEmpty()) return;
 
-        for (ViewResolver viewResolver : viewResolvers) {
-            // 尝试解析这个view，可能返回null
-            View view = viewResolver.resolveViewName(modelAndView.getViewName());
-            if (view != null){
-                view.render(modelAndView, viewResolver, req, resp);
-                return;
+        // 如果mav需要渲染就进行渲染
+        if (!mav.isCleared()){
+            try {
+                render(req, resp, mav);
+            }catch (Exception e){
+                log.warn("渲染视图发生错误 : " + mav);
+                e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 渲染{@link ModelAndView}视图
+     */
+    private void render(HttpServletRequest req, HttpServletResponse resp, ModelAndView mav) throws Exception {
+
+        View view = null;
+        String viewName = mav.getViewName();
+        if (null != viewName){
+            view = resolveViewName(viewName);
+            if (view == null){
+                throw new Exception("找不到对应名称的视图 => " + viewName);
+            }
+        }else{
+            // 如果mav已经包含了视图对象了，就不需要查找了
+            view = mav.getView();
+            if (view == null) {
+                throw new Exception("ModelAndView [" + mav + "] 即找不到视图模板，又缺少直接View对象，无法解析视图");
+            }
+        }
+        view.render(mav, req, resp);
+    }
+
+    /**
+     * 解析视图名称
+     */
+    private View resolveViewName(String viewName) throws Exception {
+        View view = null;
+        for (ViewResolver viewResolver : viewResolvers) {
+            // 尝试解析这个view，可能返回null
+            view = viewResolver.resolveViewName(viewName);
+            if (view != null) {
+                return view;
+            }
+        }
+        return null;
     }
 
     /**

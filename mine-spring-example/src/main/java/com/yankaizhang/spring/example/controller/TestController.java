@@ -12,8 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 public class TestController {
 
     @RequestMapping({"/", "/index"})
-    public String index(HttpServletRequest request){
-        request.setAttribute("msg", "this is a message!");
+    public String index(){
         return "index";
     }
 

@@ -1,7 +1,7 @@
 package com.yankaizhang.spring.webmvc.servlet;
 
 import com.yankaizhang.spring.context.AnnotationConfigApplicationContext;
-import com.yankaizhang.spring.webmvc.ViewResolver;
+import com.yankaizhang.spring.web.ViewResolver;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServlet;

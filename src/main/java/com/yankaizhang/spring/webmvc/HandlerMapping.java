@@ -1,5 +1,7 @@
 package com.yankaizhang.spring.webmvc;
 
+import com.yankaizhang.spring.web.method.HandlerMethod;
+
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
@@ -8,11 +10,16 @@ import java.util.regex.Pattern;
  * @author dzzhyk
  */
 public class HandlerMapping {
+
     private Object controller;
-    private Method method;
+
+    /**
+     * 处理器方法这里改为包装类对象
+     */
+    private HandlerMethod method;
     private Pattern pattern;
 
-    public HandlerMapping(Object controller, Method method, Pattern pattern) {
+    public HandlerMapping(Object controller, HandlerMethod method, Pattern pattern) {
         this.controller = controller;
         this.method = method;
         this.pattern = pattern;
@@ -26,11 +33,11 @@ public class HandlerMapping {
         this.controller = controller;
     }
 
-    public Method getMethod() {
+    public HandlerMethod getMethod() {
         return method;
     }
 
-    public void setMethod(Method method) {
+    public void setMethod(HandlerMethod method) {
         this.method = method;
     }
 

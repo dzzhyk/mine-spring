@@ -6,7 +6,7 @@
     <groupId>com.yankaizhang</groupId>
     <artifactId>mine-spring</artifactId>
 
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
 
     <description>springframework实现By: dzzhyk</description>
