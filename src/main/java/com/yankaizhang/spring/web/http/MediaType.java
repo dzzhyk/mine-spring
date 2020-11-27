@@ -1,10 +1,13 @@
-package com.yankaizhang.spring.http;
+package com.yankaizhang.spring.web.http;
+
+import com.yankaizhang.spring.util.StringUtils;
 
 /**
  * 一些mime-type
  * @author dzzhyk
  */
 public enum MediaType {
+
     /** 全部类型 */
     ALL("*/*"),
 
@@ -22,20 +25,35 @@ public enum MediaType {
 //    MULTIPART_RELATED("multipart/related"),
 
     /** json字符串 */
+    JSON("json"),
     APPLICATION_JSON("application/json"),
     APPLICATION_JSON_UTF8("application/json;charset=UTF-8"),
     /** 表单 */
     APPLICATION_FORM_URLENCODED("application/x-www-form-urlencoded");
 
+    private final String contentType;
 
     MediaType(String s) {
-
+        this.contentType = s;
     }
 
     /**
-     * 根据contentType字符串获取枚举对象
+     * 根据contentType字符串获取MediaType对象
      */
-    MediaType getContentType(String contentType){
-        return MediaType.valueOf(contentType);
+    public static MediaType getMediaType(String contentType){
+        if (StringUtils.isEmpty(contentType)){
+            return null;
+        }
+        MediaType[] values = MediaType.values();
+        for (MediaType value : values) {
+            if (value.getContentType().equals(contentType)){
+                return value;
+            }
+        }
+        return null;
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 }

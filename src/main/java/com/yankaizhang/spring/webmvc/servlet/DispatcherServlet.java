@@ -6,12 +6,12 @@ import com.yankaizhang.spring.context.AnnotationConfigApplicationContext;
 import com.yankaizhang.spring.context.annotation.Controller;
 import com.yankaizhang.spring.web.ViewResolver;
 import com.yankaizhang.spring.web.method.HandlerMethod;
-import com.yankaizhang.spring.web.View;
+import com.yankaizhang.spring.web.model.ModelAndView;
+import com.yankaizhang.spring.web.view.View;
 import com.yankaizhang.spring.webmvc.*;
 import com.yankaizhang.spring.webmvc.annotation.RequestMapping;
 import com.yankaizhang.spring.webmvc.multipart.MultipartRequest;
 import com.yankaizhang.spring.webmvc.multipart.MultipartResolver;
-import com.yankaizhang.spring.webmvc.multipart.commons.CommonsMultipartResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +25,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -84,7 +81,7 @@ public class DispatcherServlet extends FrameworkServlet {
     }
 
     private void initStrategies(AnnotationConfigApplicationContext context){
-        log.debug("**********Dispatcher Servlet 初始化开始**********");
+        log.debug("********** Dispatcher Servlet 初始化开始 **********");
         initMultipartResolver(context);         // 多部分文件上传解析multipart
 
         initLocaleResolver(context);            // 本地化解析
@@ -98,9 +95,9 @@ public class DispatcherServlet extends FrameworkServlet {
         initViewResolvers(context);             // 通过viewResolver将逻辑视图解析为具体视图实现
         initFlashMapManager(context);           // 初始化Flash映射管理器
 
-        log.debug("singletonIoC容器实例个数 ===> " + String.valueOf(context.getSingletonIoc().size()) + " 个");
-        log.debug("commonsIoC容器实例个数 ===> " + String.valueOf(context.getCommonIoc().size()) + " 个");
-        log.debug("**********Dispatcher Servlet 初始化完成**********");
+        log.debug("singletonIoC 容器bean个数 : " + String.valueOf(context.getSingletonIoc().size()) + " 个");
+        log.debug("commonsIoC 容器bean个数 : " + String.valueOf(context.getCommonIoc().size()) + " 个");
+        log.debug("********** Dispatcher Servlet 初始化完成 **********");
     }
 
 
@@ -117,10 +114,7 @@ public class DispatcherServlet extends FrameworkServlet {
         }
         if (multipartResolver != null){
             this.multipartResolver = multipartResolver;
-            log.debug("获取了已配置MultipartResolver对象 => " + multipartResolver.getClass());
-        }else{
-            this.multipartResolver = new CommonsMultipartResolver();
-            log.warn("未定义MultipartResolver对象，创建默认MultipartResolver => " + this.multipartResolver.getClass());
+            log.debug("获取了已配置 [MultipartResolver] 对象 : " + multipartResolver.getClass());
         }
     }
 
@@ -162,7 +156,7 @@ public class DispatcherServlet extends FrameworkServlet {
                 }
 
                 // 获得了controller对象之后，就把方法包装成HandlerMethod对象吧
-                // 将controller标注@MyRequestMapping的方法加入handlerMapping
+                // 将controller标注@RequestMapping的方法加入handlerMapping
                 for (Method method : clazz.getDeclaredMethods()) {
                     if (!method.isAnnotationPresent(RequestMapping.class)) continue;
 
@@ -215,7 +209,7 @@ public class DispatcherServlet extends FrameworkServlet {
     private void initHandlerAdapters(AnnotationConfigApplicationContext context){
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerAdapterMap.put(handlerMapping, new HandlerAdapter());
-            log.debug("Mapped: " + handlerMapping.getPattern() + " ===> " + handlerMapping.getMethod());
+            log.debug(String.format("映射路径 : [ %s ]", handlerMapping.getPattern()));
         }
     }
 
@@ -233,10 +227,10 @@ public class DispatcherServlet extends FrameworkServlet {
         }
         if (internalViewResolver != null){
             viewResolvers.add(internalViewResolver);
-            log.debug("获取了已配置internalViewResolver对象 => " + internalViewResolver.toString());
+            log.debug("获取了已配置 [internalResourceViewResolver] 对象 : " + internalViewResolver.toString());
         }else{
             ViewResolver resolver = new ViewResolver();
-            log.warn("未配置viewResolver，将创建默认viewResolver => " + resolver.toString());
+            log.warn("未配置 [internalResourceViewResolver] 将使用默认viewResolver : " + resolver.toString());
             viewResolvers.add(resolver);
         }
     }
@@ -272,7 +266,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
     private void doDispatch(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String requestURI = req.getRequestURI();
-        log.debug("收到请求 ===> " + requestURI);
+        log.debug(String.format("路径请求 : [ %s ]", requestURI));
 
         HttpServletRequest processedRequest = req;
         boolean multipartRequestParsed = false;
@@ -292,6 +286,9 @@ public class DispatcherServlet extends FrameworkServlet {
 
         ModelAndView mv = handlerAdapter.handle(processedRequest, resp, handlerMapping);
 
+        // 将request中的attribute加入model
+        parseRequestAttributes(mv, req);
+
         // 处理dispatcher结果，渲染视图
         processDispatchResult(req, resp, mv);
 
@@ -301,6 +298,28 @@ public class DispatcherServlet extends FrameworkServlet {
                 this.multipartResolver.cleanupMultipart((MultipartRequest) processedRequest);
             }
         }
+    }
+
+
+    /**
+     * 解析request中的attribute，将其加入model
+     */
+    private ModelAndView parseRequestAttributes(ModelAndView modelAndView, HttpServletRequest request){
+        if (modelAndView==null){
+            return null;
+        }
+        Enumeration attributeNames = request.getAttributeNames();
+        Map<String, Object> model = (Map<String, Object>) modelAndView.getModel();
+        if (null == model){
+            model = new HashMap<>();
+        }
+        while (attributeNames.hasMoreElements()){
+            String s = (String) attributeNames.nextElement();
+            Object attribute = request.getAttribute(s);
+            model.put(s, attribute);
+        }
+        modelAndView.setModel(model);
+        return modelAndView;
     }
 
     /**
@@ -337,6 +356,7 @@ public class DispatcherServlet extends FrameworkServlet {
         if (!mav.isCleared()){
             try {
                 render(req, resp, mav);
+                mav.setCleared(true);
             }catch (Exception e){
                 log.warn("渲染视图发生错误 : " + mav);
                 e.printStackTrace();

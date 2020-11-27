@@ -5,8 +5,11 @@ import com.yankaizhang.spring.util.ObjectUtils;
 import com.yankaizhang.spring.util.ReflectionUtils;
 import com.yankaizhang.spring.web.method.HandlerMethod;
 import com.yankaizhang.spring.web.method.ArgumentResolver;
+import com.yankaizhang.spring.web.model.ModelAndViewBuilder;
 import com.yankaizhang.spring.web.request.WebRequest;
-import com.yankaizhang.spring.webmvc.ModelAndView;
+import com.yankaizhang.spring.webmvc.annotation.RequestBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -22,6 +25,7 @@ import java.util.Arrays;
  */
 public class InvocableHandlerMethod extends HandlerMethod {
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     /** 空参数常量 */
     private static final Object[] EMPTY_ARGS = new Object[0];
@@ -32,6 +36,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
     /** 返回值处理器对象集合类 */
     private ReturnValueResolverComposite returnValueResolvers;
 
+    /** 该handlerMethod方法是否合法 */
+    private boolean valid = true;
 
     public InvocableHandlerMethod(Object bean, Method method) {
         super(bean, method);
@@ -46,6 +52,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
      */
     public InvocableHandlerMethod(HandlerMethod method) {
         super(method);
+        validate();
     }
 
     public ArgumentResolverComposite getArgumentResolvers() {
@@ -67,7 +74,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
     /**
      * 执行方法
      */
-    public void invokeAndHandle(WebRequest webRequest, ModelAndView mav) throws Exception {
+    public void invokeAndHandle(WebRequest webRequest, ModelAndViewBuilder mav) throws Exception {
 
         // 调用传参解析器解析传入参数，然后执行这个方法，拿到原始返回值
         Object returnValue = invokeForRequest(webRequest);
@@ -87,7 +94,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
      */
     private Object invokeForRequest(WebRequest request) throws Exception {
         Object[] args = getMethodArgumentValues(request);
-        log.debug("原始请求参数 => " + Arrays.toString(args));
+        log.debug("解析参数 : " + Arrays.toString(args));
         return doInvoke(args);
     }
 
@@ -101,16 +108,16 @@ public class InvocableHandlerMethod extends HandlerMethod {
             return EMPTY_ARGS;
         }
 
-        // 如果方法参数列表不为，就开始处理参数了！
-        Object[] args = new Object[methodParameters.length-1];
+        // 如果方法参数列表不为空，就开始处理参数了！
+        Object[] args = new Object[methodParameters.length];
 
         // 这里不要第一个返回值参数
         for (int i = 0; i < methodParameters.length; i++) {
             MethodParameter parameter = methodParameters[i];
 
-            // 如果当前所有的resolver没有一个适合当前方法参数的，就直接抛出异常
+            // 检查当前resolver集合是否有解析器内容
             if (!this.argumentResolvers.supportsParameter(parameter)) {
-                throw new Exception("对于参数 : " + parameter.getParameterName() + " 找不到合适的解析器");
+                throw new Exception("当前resolvers对于参数 => " + parameter.getParameterName() + " 缺少解析器");
             }
 
             // 如果找到了合适的解析器，就使用该解析器解析得到该参数对象
@@ -133,16 +140,43 @@ public class InvocableHandlerMethod extends HandlerMethod {
             result = method.invoke(getBean(), args);
         } catch (IllegalAccessException e) {
 
-            log.error("invoke非法访问 : " + method.getName());
-            throw new Exception("invoke方法出错，非法访问 : " + method.getName());
+            log.error("invoke非法访问 => " + method.getName());
+            throw new Exception("invoke方法出错，非法访问 => " + method.getName());
 
         } catch (InvocationTargetException e) {
 
-            log.error("invoke方法出错 : " + method.getName());
-            throw new Exception("invoke方法出错 : " + method.getName());
+            log.error("invoke方法出错 => " + method.getName());
+            throw new Exception("invoke方法出错 => " + method.getName());
 
         }
         return result;
     }
 
+    public boolean isValid() {
+        return valid;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
+
+    @Override
+    public void validate() {
+        try {
+            // 检查对象
+            int cnt = 0;
+            MethodParameter[] parameters = getMethodParameters();
+            for (MethodParameter parameter : parameters) {
+                if (parameter.hasParameterAnnotation(RequestBody.class)){
+                    ++cnt;
+                }
+                if (cnt > 1){
+                    throw new Exception("同一方法中 @RequestBody请求体对象只能出现1次 => "
+                            + getMethod().getDeclaringClass() + "." + getMethod().getName());
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

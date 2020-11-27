@@ -4,10 +4,12 @@ import com.yankaizhang.spring.util.BeanUtils;
 import com.yankaizhang.spring.util.StringUtils;
 import com.yankaizhang.spring.web.view.AbstractView;
 import com.yankaizhang.spring.web.view.JspView;
-import com.yankaizhang.spring.webmvc.ModelAndView;
+import com.yankaizhang.spring.web.view.View;
+import com.yankaizhang.spring.web.model.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 
 /**
  * 根据模板名称选择合适的模板解析引擎
@@ -124,7 +126,7 @@ public class ViewResolver {
         AbstractView view = (AbstractView) BeanUtils.instantiateClass(viewClass);
 
         // 为创建好的视图对象设置属性
-        view.setUrl(getPrefix() + viewName + getSuffix());
+        view.setUrl((getPrefix()+ File.separator + viewName + getSuffix()).replaceAll("/+", "/"));
 
         String contentType = getContentType();
         if (contentType != null) {

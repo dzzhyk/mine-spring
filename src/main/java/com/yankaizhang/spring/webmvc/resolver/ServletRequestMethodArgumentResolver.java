@@ -6,7 +6,6 @@ import com.yankaizhang.spring.web.request.WebRequest;
 import com.yankaizhang.spring.webmvc.multipart.MultipartRequest;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Servlet请求参数解析
@@ -27,7 +26,7 @@ public class ServletRequestMethodArgumentResolver implements ArgumentResolver {
         Class<?> parameterType = parameter.getParameterType();
         if (ServletRequest.class.isAssignableFrom(parameterType) || MultipartRequest.class.isAssignableFrom(parameterType)){
             // 如果是request类型
-            return webRequest;
+            return webRequest.getRequest();
 
         }else{
             throw new Exception("遭遇了不可解析的类型 => " + parameterType.getName());

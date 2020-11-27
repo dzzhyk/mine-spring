@@ -5,6 +5,8 @@ import com.yankaizhang.spring.web.method.ReturnValueResolver;
 import com.yankaizhang.spring.web.method.support.ArgumentResolverComposite;
 import com.yankaizhang.spring.web.method.support.InvocableHandlerMethod;
 import com.yankaizhang.spring.web.method.support.ReturnValueResolverComposite;
+import com.yankaizhang.spring.web.model.ModelAndView;
+import com.yankaizhang.spring.web.model.ModelAndViewBuilder;
 import com.yankaizhang.spring.web.request.WebRequest;
 import com.yankaizhang.spring.webmvc.resolver.*;
 
@@ -66,14 +68,12 @@ public class HandlerAdapter {
         }
 
         // 返回的mav内容
-        ModelAndView mav = null;
-
+        ModelAndViewBuilder mavBuilder = new ModelAndViewBuilder();
 
         // 真正执行方法
-        invocableMethod.invokeAndHandle(webRequest, mav);
+        invocableMethod.invokeAndHandle(webRequest, mavBuilder);
 
-        // 将request中的内容加入model
-        return parseRequestAttributes(mav, req);
+        return mavBuilder.build();
 
 //
 //        // 保存形参列表
@@ -170,38 +170,19 @@ public class HandlerAdapter {
 
 
     /**
-     * 解析request中的attribute，将其加入model
-     */
-    private ModelAndView parseRequestAttributes(ModelAndView modelAndView, HttpServletRequest request){
-        Enumeration attributeNames = request.getAttributeNames();
-        Map<String, Object> model = (Map<String, Object>) modelAndView.getModel();
-        if (null == model){
-            model = new HashMap<>();
-        }
-        while (attributeNames.hasMoreElements()){
-            String s = (String) attributeNames.nextElement();
-            Object attribute = request.getAttribute(s);
-            model.put(s, attribute);
-        }
-        modelAndView.setModel(model);
-        return modelAndView;
-    }
-
-
-    /**
      * 将url传过来的String类型转换为多种类型
      */
-    private Object convert(Class<?> type, String value) {
-        if (Integer.class == type){
-            return Integer.valueOf(value);
-        }else if (Double.class == type){
-            return Double.valueOf(value);
-        }else if (int.class == type){
-            return Integer.parseInt(value);
-        }
-        // 可以继续用策略模式增加
-        return value;
-    }
+//    private Object convert(Class<?> type, String value) {
+//        if (Integer.class == type){
+//            return Integer.valueOf(value);
+//        }else if (Double.class == type){
+//            return Double.valueOf(value);
+//        }else if (int.class == type){
+//            return Integer.parseInt(value);
+//        }
+//        // 可以继续用策略模式增加
+//        return value;
+//    }
 
 
     /**
@@ -212,9 +193,11 @@ public class HandlerAdapter {
 
         // TODO: 在这里添加内置的ArgumentResolver参数处理器
         resolvers.add(new ModelAndViewMethodResolver());
+        resolvers.add(new RequestParamMethodArgumentResolver());
         resolvers.add(new RequestResponseBodyMethodResolver());
-        resolvers.add(new RequestParamMethodResolver());
         resolvers.add(new SimpleClassMethodResolver());
+        resolvers.add(new ServletRequestMethodArgumentResolver());
+        resolvers.add(new ServletResponseMethodArgumentResolver());
 
         return resolvers;
     }

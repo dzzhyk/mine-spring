@@ -1,13 +1,17 @@
 package com.yankaizhang.spring.web.view;
 
-import com.yankaizhang.spring.web.View;
-import com.yankaizhang.spring.webmvc.ModelAndView;
+import com.yankaizhang.spring.web.ViewResolver;
+import com.yankaizhang.spring.web.model.ModelAndView;
 import com.yankaizhang.spring.webmvc.servlet.DispatcherServlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +21,11 @@ import java.util.regex.Pattern;
  */
 public class HtmlView extends AbstractView {
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     private static final String EL_PATTERN = "\\$\\{[^}]+}";
+
+    public HtmlView() {}
 
     public HtmlView(String url) {
         super(url);
@@ -33,12 +41,16 @@ public class HtmlView extends AbstractView {
         // 获取文件url
         String url = getUrl();
 
-        DispatcherServlet.log.debug("渲染至==>" + url);
+        String classPath = Objects.requireNonNull(this.getClass().getClassLoader().getResource("")).getPath();
+
+        String finalPath = (classPath + File.separator + url).replaceAll("/+", "/");
+
+        log.debug("[内置HTML渲染] 渲染至 : " + url);
         StringBuilder builder = new StringBuilder();
 
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(
-                        new FileInputStream(url), StandardCharsets.UTF_8))
+                        new FileInputStream(finalPath), StandardCharsets.UTF_8))
         ) {
             String line = null;
             while (null != (line = br.readLine())) {

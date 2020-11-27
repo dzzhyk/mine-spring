@@ -55,7 +55,26 @@ public class ArgumentResolverComposite implements ArgumentResolver {
      * 遍历该集合，找到能够处理该方法参数的resolver并且进行处理
      */
     @Override
-    public Object resolveArgument(MethodParameter parameter, WebRequest webRequest) {
+    public Object resolveArgument(MethodParameter parameter, WebRequest webRequest) throws Exception {
+
+        ArgumentResolver resolver = selectResolver(parameter);
+        if (null == resolver){
+            StringBuilder builder = new StringBuilder();
+            builder.append("找不到对应的ArgumentResolver => 方法 ").append(parameter.getMethod())
+                    .append("，参数位置 ").append(parameter.getParameterIndex())
+                    .append("，参数名 ").append(parameter.getParameterName())
+                    .append("，不存在这种resolver，或许你需要自定义解析该种类型的ArgumentResolver ?");
+            throw new Exception(builder.toString());
+        }
+        return resolver.resolveArgument(parameter, webRequest);
+    }
+
+    private ArgumentResolver selectResolver(MethodParameter parameter) {
+        for (ArgumentResolver resolver : argumentResolvers) {
+            if (resolver.supportsParameter(parameter)){
+                return resolver;
+            }
+        }
         return null;
     }
 

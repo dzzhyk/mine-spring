@@ -1,5 +1,7 @@
-package com.yankaizhang.spring.http;
+package com.yankaizhang.spring.web.http;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import java.util.List;
 
 /**
@@ -36,19 +38,19 @@ public interface HttpMessageConverter<T> {
     /**
      * 读取传入的数据
      * @param clazz 数据类型
-     * @param inputMessage 输入数据
+     * @param request 输入目标
      * @return 读取的数据
-     * @throws Exception 抛出的简化异常
+     * @throws Exception 处理异常
      */
-//    T read(Class<? extends T> clazz, HttpInputMessage inputMessage) throws Exception;
+    T read(Class<? extends T> clazz, ServletRequest request) throws Exception;
 
     /**
      * 将后台数据转换然后返回给前端
-     * @param t
-     * @param contentType
-     * @param outputMessage
-     * @throws Exception
+     * @param value 原始值
+     * @param contentType 返回响应的contentType
+     * @param response 返回响应
+     * @throws Exception 处理异常
      */
-//    void write(T t, MediaType contentType, HttpOutputMessage outputMessage) throws Exception;
+    void write(T value, MediaType contentType, ServletResponse response) throws Exception;
 
 }

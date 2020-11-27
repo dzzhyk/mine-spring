@@ -1,17 +1,9 @@
-package com.yankaizhang.spring.web;
+package com.yankaizhang.spring.web.view;
 
-import com.yankaizhang.spring.webmvc.ModelAndView;
-import com.yankaizhang.spring.webmvc.servlet.DispatcherServlet;
+import com.yankaizhang.spring.web.model.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 模板视图接口，定义了模板视图的操作

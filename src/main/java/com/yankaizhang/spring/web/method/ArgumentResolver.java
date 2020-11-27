@@ -3,8 +3,6 @@ package com.yankaizhang.spring.web.method;
 
 import com.yankaizhang.spring.core.MethodParameter;
 import com.yankaizhang.spring.web.request.WebRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 

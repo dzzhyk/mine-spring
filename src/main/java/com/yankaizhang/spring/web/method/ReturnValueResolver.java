@@ -1,10 +1,9 @@
 package com.yankaizhang.spring.web.method;
 
 import com.yankaizhang.spring.core.MethodParameter;
+import com.yankaizhang.spring.web.model.ModelAndViewBuilder;
 import com.yankaizhang.spring.web.request.WebRequest;
-import com.yankaizhang.spring.webmvc.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
+import com.yankaizhang.spring.web.model.ModelAndView;
 
 /**
  * Handler方法返回值处理器解析器的总接口
@@ -24,11 +23,11 @@ public interface ReturnValueResolver {
      * 解析返回参数，并且放到{@link ModelAndView}对象中
      * @param returnValue 原始返回值
      * @param returnType 返回类型
-     * @param mav ModelAndView对象
+     * @param mav ModelAndViewBuilder对象
      * @param webRequest 请求包装类
      * @throws Exception 处理过程中的异常
      */
     void resolveReturnValue(Object returnValue, MethodParameter returnType,
-                              ModelAndView mav, WebRequest webRequest) throws Exception;
+                            ModelAndViewBuilder mav, WebRequest webRequest) throws Exception;
 
 }

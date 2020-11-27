@@ -2,11 +2,10 @@ package com.yankaizhang.spring.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -22,8 +21,31 @@ public class ClassUtils {
     private static final String CLASS_FILE_PREFIX = File.separator + "classes"  + File.separator;
     private static final String PACKAGE_SEPARATOR = ".";
 
+    private static final List<Class<?>> BASE_TYPE_CLASSES;
+    private static final Map<Class<?>, Comparable> BASE_COLLECTIONS_MAP;
 
     public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ClassUtils.class);
+
+    static {
+        BASE_TYPE_CLASSES = new ArrayList<>(8);
+        BASE_TYPE_CLASSES.add(int.class);
+        BASE_TYPE_CLASSES.add(double.class);
+        BASE_TYPE_CLASSES.add(char.class);
+        BASE_TYPE_CLASSES.add(float.class);
+        BASE_TYPE_CLASSES.add(short.class);
+        BASE_TYPE_CLASSES.add(byte.class);
+        BASE_TYPE_CLASSES.add(boolean.class);
+        BASE_TYPE_CLASSES.add(void.class);
+
+        BASE_COLLECTIONS_MAP = new HashMap<>(8);
+        BASE_COLLECTIONS_MAP.put(int.class, Integer.valueOf("1"));
+        BASE_COLLECTIONS_MAP.put(double.class, Double.valueOf("1"));
+        BASE_COLLECTIONS_MAP.put(char.class, Character.valueOf('c'));
+        BASE_COLLECTIONS_MAP.put(float.class, Float.valueOf("1"));
+        BASE_COLLECTIONS_MAP.put(short.class, Short.valueOf("1"));
+        BASE_COLLECTIONS_MAP.put(byte.class, Byte.valueOf("1"));
+        BASE_COLLECTIONS_MAP.put(boolean.class, Boolean.valueOf("false"));
+    }
 
     /**
      * 查找包下的所有类的名字

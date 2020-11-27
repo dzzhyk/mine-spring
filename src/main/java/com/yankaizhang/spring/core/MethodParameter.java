@@ -39,6 +39,11 @@ public class MethodParameter {
         this.method = method;
         assert parameterIndex >= -1 && parameterIndex <= (method.getParameterCount()-1);
         this.parameterIndex = parameterIndex;
+
+        // 解析其他信息
+        getParameterName();
+        getParameterType();
+        getParameterAnnotations();
     }
 
     public MethodParameter(int parameterIndex) {
@@ -59,9 +64,10 @@ public class MethodParameter {
                 }else{
                     this.parameterType = void.class;
                 }
+            }else{
+                // 普通参数
+                this.parameterType = this.method.getParameterTypes()[this.parameterIndex];
             }
-            // 普通参数
-            this.parameterType = this.method.getParameterTypes()[this.parameterIndex];
         }
         return this.parameterType;
     }
@@ -85,7 +91,7 @@ public class MethodParameter {
         if (this.parameterAnnotations == null){
             Annotation[][] annotations = this.method.getParameterAnnotations();
             this.parameterAnnotations =
-                    (this.parameterIndex >= 0) && (this.parameterIndex < this.method.getParameterCount()-1)
+                    (this.parameterIndex >= 0) && (this.parameterIndex < this.method.getParameterCount())
                             ? annotations[this.parameterIndex]
                             : EMPTY_ANNOTATION_ARRAY;
         }
@@ -160,6 +166,13 @@ public class MethodParameter {
         @Override
         protected Object clone() throws CloneNotSupportedException {
             return new ReturnValueMethodParameter(this);
+        }
+
+        @Override
+        public String toString() {
+            return "ReturnValueMethodParameter{" +
+                    "returnValue=" + returnValue +
+                    "} " + super.toString();
         }
     }
 }

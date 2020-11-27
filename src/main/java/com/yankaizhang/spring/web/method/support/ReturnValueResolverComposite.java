@@ -3,10 +3,9 @@ package com.yankaizhang.spring.web.method.support;
 import com.yankaizhang.spring.core.MethodParameter;
 import com.yankaizhang.spring.util.CollectionUtils;
 import com.yankaizhang.spring.web.method.ReturnValueResolver;
+import com.yankaizhang.spring.web.model.ModelAndViewBuilder;
 import com.yankaizhang.spring.web.request.WebRequest;
-import com.yankaizhang.spring.webmvc.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +45,7 @@ public class ReturnValueResolverComposite implements ReturnValueResolver {
 
     @Override
     public void resolveReturnValue(Object returnValue, MethodParameter returnType,
-                                   ModelAndView mav, WebRequest request) throws Exception {
+                                   ModelAndViewBuilder mav, WebRequest request) throws Exception {
         ReturnValueResolver handler = selectHandler(returnValue, returnType);
         if (handler == null){
             throw new Exception("找不到对应的ReturnValueResolver => " + returnType);

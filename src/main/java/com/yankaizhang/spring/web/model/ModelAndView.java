@@ -1,7 +1,7 @@
-package com.yankaizhang.spring.webmvc;
+package com.yankaizhang.spring.web.model;
 
 import com.yankaizhang.spring.util.CollectionUtils;
-import com.yankaizhang.spring.web.View;
+import com.yankaizhang.spring.web.view.View;
 
 import java.util.Map;
 
@@ -17,8 +17,8 @@ public class ModelAndView {
     /** 视图属性map */
     private Map<String, ?> model;
 
-    /** 当前mav是否没有任何内容 */
-    private boolean cleared;
+    /** 当前mav是否没有任何内容，默认为true */
+    private boolean cleared = true;
 
     public ModelAndView() {}
 

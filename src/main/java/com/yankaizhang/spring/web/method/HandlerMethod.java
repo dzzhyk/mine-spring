@@ -17,8 +17,6 @@ import java.lang.reflect.Method;
  */
 public class HandlerMethod {
 
-    public static final Logger log = LoggerFactory.getLogger(HandlerMethod.class);
-
     /** 真正的方法对象 */
     private final Method method;
 
@@ -68,7 +66,7 @@ public class HandlerMethod {
     /**
      * 初始化该HandlerMethod对象获得方法参数
      */
-    private MethodParameter[] initMethodParameters(){
+    public MethodParameter[] initMethodParameters(){
         int count = this.method.getParameterCount();
         MethodParameter[] temp = new MethodParameter[count];
         for (int i = 0; i < count; i++) {
@@ -76,6 +74,11 @@ public class HandlerMethod {
         }
         return temp;
     }
+
+    /**
+     * 子类可以重写该方法，用于添加验证条件
+     */
+    public void validate(){}
 
     public Method getMethod() {
         return this.method;
@@ -99,5 +102,13 @@ public class HandlerMethod {
 
     public Class<?> getBeanType() {
         return beanType;
+    }
+
+    @Override
+    public String toString() {
+        return "HandlerMethod{" +
+                "method=" + method +
+                ", bean=" + bean +
+                '}';
     }
 }

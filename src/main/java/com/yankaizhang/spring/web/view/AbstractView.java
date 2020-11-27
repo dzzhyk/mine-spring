@@ -1,9 +1,7 @@
 package com.yankaizhang.spring.web.view;
 
-import com.yankaizhang.spring.web.View;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 抽象视图类AbstractView，包含了通用操作，实现了{@link View}接口

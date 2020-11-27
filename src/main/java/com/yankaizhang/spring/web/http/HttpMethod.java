@@ -1,4 +1,4 @@
-package com.yankaizhang.spring.http;
+package com.yankaizhang.spring.web.http;
 
 import java.util.HashMap;
 import java.util.Map;

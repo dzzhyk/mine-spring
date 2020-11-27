@@ -5,7 +5,6 @@ import com.yankaizhang.spring.web.method.ArgumentResolver;
 import com.yankaizhang.spring.web.request.WebRequest;
 
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import java.io.OutputStream;
 import java.io.Writer;
 
