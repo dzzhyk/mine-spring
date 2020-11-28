@@ -3,8 +3,9 @@ package com.yankaizhang.spring.web.http;
 import com.yankaizhang.spring.util.StringUtils;
 
 /**
- * 一些mime-type
+ * 一些contentType枚举
  * @author dzzhyk
+ * @since 2020-11-28 13:45:31
  */
 public enum MediaType {
 

@@ -12,6 +12,7 @@ import java.util.Objects;
  *
  * 一般定义的BeanDefinition对象都是这个实现类
  * @author dzzhyk
+ * @since 2020-11-28 13:52:16
  */
 public class GenericBeanDefinition extends AbstractBeanDefinition {
 

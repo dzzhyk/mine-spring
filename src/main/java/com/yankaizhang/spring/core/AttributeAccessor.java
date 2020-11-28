@@ -3,6 +3,7 @@ package com.yankaizhang.spring.core;
 /**
  * AttributeAccessor接口定义了元数据MetaData的访问方法
  * @author dzzhyk
+ * @since 2020-11-28 13:47:12
  */
 public interface AttributeAccessor {
 

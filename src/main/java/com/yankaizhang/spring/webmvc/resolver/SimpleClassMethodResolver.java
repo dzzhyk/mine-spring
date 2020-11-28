@@ -9,6 +9,7 @@ import com.yankaizhang.spring.webmvc.annotation.RequestParam;
 /**
  * 专门解析controller的普通参数
  * @author dzzhyk
+ * @since 2020-11-28 13:41:09
  */
 public class SimpleClassMethodResolver implements ArgumentResolver {
 

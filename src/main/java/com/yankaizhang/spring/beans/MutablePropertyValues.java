@@ -8,6 +8,7 @@ import java.util.List;
  * 一个Bean对象的属性包装类
  * 用于在生成BeanDefinition的时候保存该对象的配置属性
  * @author dzzhyk
+ * @since 2020-11-28 13:53:12
  */
 public class MutablePropertyValues implements PropertyValues {
 

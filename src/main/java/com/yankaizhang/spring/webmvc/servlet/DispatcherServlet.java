@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 /**
  * DispatcherServlet实现
  * @author dzzhyk
+ * @since 2020-11-28 13:40:18
  */
 @SuppressWarnings("all")
 @WebServlet(
@@ -82,18 +83,18 @@ public class DispatcherServlet extends FrameworkServlet {
 
     private void initStrategies(AnnotationConfigApplicationContext context){
         log.debug("********** Dispatcher Servlet 初始化开始 **********");
-        initMultipartResolver(context);         // 多部分文件上传解析multipart
+        initMultipartResolver(context);             // 多部分文件上传解析multipart
 
-        initLocaleResolver(context);            // 本地化解析
-        initThemeResolver(context);             // 主题解析
+        initLocaleResolver(context);                // 本地化解析
+        initThemeResolver(context);                 // 主题解析
 
-        initHandlerMappings(context);           // url映射到controller
-        initHandlerAdapters(context);           // 多类型参数动态匹配，获得ModelAndView对象
+        initHandlerMappings(context);               // url映射到controller
+        initHandlerAdapters(context);               // 多类型参数动态匹配，获得ModelAndView对象
 
         initHandlerExceptionResolvers(context);     // 运行异常处理
         initRequestToViewNameTranslator(context);   // 直接将请求解析到视图名
-        initViewResolvers(context);             // 通过viewResolver将逻辑视图解析为具体视图实现
-        initFlashMapManager(context);           // 初始化Flash映射管理器
+        initViewResolvers(context);                 // 通过viewResolver将逻辑视图解析为具体视图实现
+        initFlashMapManager(context);               // 初始化Flash映射管理器
 
         log.debug("singletonIoC 容器bean个数 : " + String.valueOf(context.getSingletonIoc().size()) + " 个");
         log.debug("commonsIoC 容器bean个数 : " + String.valueOf(context.getCommonIoc().size()) + " 个");
@@ -136,12 +137,14 @@ public class DispatcherServlet extends FrameworkServlet {
         try {
             for (BeanWrapper beanWrapper : ioc.values()) {
                 Object beanInstance = beanWrapper.getWrappedInstance();
-                if (beanInstance == null) continue;   // 排除可能有的bean没有在容器中
+                // 排除可能有的bean没有在容器中
+                if (beanInstance == null) continue;
 
                 Class<?> clazz = null;
                 // 如果是Aop代理bean对象
                 if (AopUtils.isAopProxy(beanInstance)){
-                    clazz = AopUtils.getAopTarget(beanInstance);    // 如果是代理对象，需要获取到代理对象的最终目标类
+                    // 如果是代理对象，需要获取到代理对象的最终目标类
+                    clazz = AopUtils.getAopTarget(beanInstance);
                 }else{
                     clazz = beanInstance.getClass();
                 }
@@ -152,7 +155,7 @@ public class DispatcherServlet extends FrameworkServlet {
                 String[] baseUrls = {};
                 if (clazz.isAnnotationPresent(RequestMapping.class)){
                     RequestMapping requestMapping = clazz.getAnnotation(RequestMapping.class);
-                    baseUrls = requestMapping.value();   // 如果标注了@Controller注解的值
+                    baseUrls = requestMapping.value();
                 }
 
                 // 获得了controller对象之后，就把方法包装成HandlerMethod对象吧
@@ -271,7 +274,9 @@ public class DispatcherServlet extends FrameworkServlet {
         HttpServletRequest processedRequest = req;
         boolean multipartRequestParsed = false;
         processedRequest = checkMultipart(req);
-        multipartRequestParsed = (processedRequest != req); // 如果两次解析出来的请求不是一个，说明是文件上传请求
+
+        // 如果两次解析出来的请求不是一个，说明是文件上传请求
+        multipartRequestParsed = (processedRequest != req);
 
         HandlerMapping handlerMapping = getHandlerMapping(processedRequest);
         if (null == handlerMapping){
@@ -419,9 +424,12 @@ public class DispatcherServlet extends FrameworkServlet {
     private HandlerMapping getHandlerMapping(HttpServletRequest req){
         if (handlerMappings.isEmpty()) return null;
         String url = req.getRequestURI();
-        String contextPath = req.getContextPath();  // contextPath是项目部署的url地址，需要替换为空字符
+
+        // contextPath是项目部署的url地址，需要替换为空字符
+        String contextPath = req.getContextPath();
         url = url.replace(contextPath, "").replaceAll("/+", "/");
         for (HandlerMapping handler : handlerMappings) {
+
             // 如果这个url被某个regex匹配到了，就返回这个对应的handler
             if (handler.getPattern().matcher(url).matches()){
                 return handler;
@@ -430,4 +438,3 @@ public class DispatcherServlet extends FrameworkServlet {
         return null;
     }
 }
-

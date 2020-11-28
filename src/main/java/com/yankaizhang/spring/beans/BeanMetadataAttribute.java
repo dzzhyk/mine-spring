@@ -3,6 +3,7 @@ package com.yankaizhang.spring.beans;
 /**
  * bean定义的某个元数据属性的包装类
  * @author dzzhyk
+ * @since 2020-11-28 13:52:54
  */
 public class BeanMetadataAttribute implements BeanMetadataElement {
 

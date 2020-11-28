@@ -12,6 +12,7 @@ import java.util.Objects;
 /**
  * 简易的方法的参数包装类
  * @author dzzhyk
+ * @since 2020-11-28 13:47:37
  */
 @SuppressWarnings("all")
 public class MethodParameter {

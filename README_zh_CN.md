@@ -36,10 +36,12 @@ public class TestController {
 2. 简单又不失功能的springMVC功能
 3. AOP编程
 4. 几乎和Spring相同的注解用法
-5. 支持使用Java注解配置类配置Bean对象
+5. 使用Java注解配置类 `@Configuration` 配置Bean对象
 6. 文件上传和文件下载支持
-7. 支持jsp和html模板
-8. 还有更多...
+7. 支持Jsp模板和内置HTML解析模板
+8. `@RequestBody`和`@ResponseBody`请求体和响应体解析
+9. 自动装配`@Autowired`
+10. 还有更多...
 
 ## 下载源码
 
@@ -50,13 +52,13 @@ $ cd mine-spring
 
 ## 使用mine-spring构建应用
 
-### 1. 在项目中添加lib依赖
+### 方法1. 在项目中添加lib依赖
 
 1. 下载本项目的release版本jar包
 2. 使用IDE（例如IDEA）创建一个web项目
 3. 在项目目录下新建lib目录，将本项目jar包放置于lib目录下，然后添加该lib目录为External Library
 
-### 2. 用Spring项目的方式创建项目
+### 方法2. 用Spring项目的方式创建项目
 
 使用方式基本和创建一个Spring项目完全相同，只需要创建一个Spring项目并且导入maven依赖即可
 
@@ -89,7 +91,7 @@ $ cd mine-spring
 ```
 
 
-### 3. 用maven-archetype方式创建项目 (推荐)
+### 方法3. 用maven-archetype方式创建项目 (推荐)
 
 我为了更方便大家体验到本项目的成果，特意为大家制作了一个基于本项目的maven骨架模板`mine-spring-archetype`
 
@@ -112,15 +114,14 @@ $ cd mine-spring
 - [spring-framework](https://github.com/spring-projects/spring-framework) - Spring 框架源码
 
 ## 更新日志
-[logs](./UPDATE.md)
+[点这里查看更新日志](./UPDATE.md)
 
 ## TODO
-fork and do it yourself!
 
 - [ ] springJDBC实现
 - [x] 多切面AOP支持
 - [ ] 类似JPA的简易orm框架实现
-- [ ] @ResponseBody注解和json解析支持
+- [x] @ResponseBody注解和json解析支持
 - [x] Controller参数简化
 - [x] @Configuration配置类和@Bean注解配置
 - [x] 文件上传和文件下载支持
@@ -130,7 +131,7 @@ fork and do it yourself!
 - [ ] @Around Aop环切实现
 
 ## 已知问题
-~~太惨了~~
+
 - [x] ~~Controller方法不能被AOP切面切入问题~~
 - [x] ~~注解HandlerMapping的时候重复注册的问题~~
 

@@ -5,8 +5,8 @@ import java.util.Map;
 
 /**
  * 多值map
- *
  * @author dzzhyk
+ * @since 2020-11-28 13:47:43
  */
 public interface MultiValueMap<K, V> extends Map<K, List<V>> {
     /**

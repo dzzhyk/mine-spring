@@ -11,6 +11,7 @@ import static com.yankaizhang.spring.util.ClassUtils.dividePackageClassMethodPar
 /**
  * pointCut信息封装类
  * @author dzzhyk
+ * @since 2020-11-28 13:56:22
  */
 @SuppressWarnings("all")
 public class PointCutConfig {

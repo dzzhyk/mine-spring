@@ -7,9 +7,9 @@ import com.yankaizhang.spring.util.StringUtils;
 
 /**
  * AnnotatedBeanDefinitionReader主要完成对注解配置类的解析
- *
  * 这里是源码的一个简化实现
  * @author dzzhyk
+ * @since 2020-11-28 13:50:48
  */
 public class AnnotatedBeanDefinitionReader {
 

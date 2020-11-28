@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * 类属性集合的包装类接口
  * @author dzzhyk
+ * @since 2020-11-28 13:53:20
  */
 public interface PropertyValues {
 

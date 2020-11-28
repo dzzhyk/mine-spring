@@ -3,8 +3,9 @@ package com.yankaizhang.spring.context.annotation;
 import java.lang.annotation.*;
 
 /**
- * 配置类中定义Bean对象
+ * Bean对象
  * @author dzzhyk
+ * @since 2020-11-28 13:47:52
  */
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

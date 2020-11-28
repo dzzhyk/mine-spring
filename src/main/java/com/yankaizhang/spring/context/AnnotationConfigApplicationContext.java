@@ -45,8 +45,8 @@ import static com.yankaizhang.spring.util.StringUtils.toLowerCase;
  * 实现了AnnotationConfigRegistry接口，说明拥有基本的两个方法scan和register
  *
  * TODO: 这里其实对于AnnotationConfigApplicationContext而言，在这一层实现了多个功能，其实是简化过后的
- * TODO: 完成综合设计
  * @author dzzhyk
+ * @since 2020-11-28 13:51:22
  */
 @SuppressWarnings("all")
 public class AnnotationConfigApplicationContext extends DefaultListableBeanFactory

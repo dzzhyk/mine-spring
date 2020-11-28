@@ -7,6 +7,7 @@ import java.lang.reflect.Modifier;
 /**
  * 方法元数据的一个标准实现
  * @author dzzhyk
+ * @since 2020-11-28 13:47:08
  */
 
 public class StandMethodMetadata implements MethodMetadata {

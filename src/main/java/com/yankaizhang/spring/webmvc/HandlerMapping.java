@@ -2,21 +2,20 @@ package com.yankaizhang.spring.webmvc;
 
 import com.yankaizhang.spring.web.method.HandlerMethod;
 
-import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
 /**
- * url和method映射
+ * 处理器方法映射包装类
  * @author dzzhyk
+ * @since 2020-11-28 13:40:03
  */
 public class HandlerMapping {
 
     private Object controller;
 
-    /**
-     * 处理器方法这里改为包装类对象
-     */
+    /** 处理器方法为包装类对象 */
     private HandlerMethod method;
+
     private Pattern pattern;
 
     public HandlerMapping(Object controller, HandlerMethod method, Pattern pattern) {

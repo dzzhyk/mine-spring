@@ -7,6 +7,7 @@ import javax.servlet.ServletContext;
 /**
  * 实现了这个接口，你就可以获取ServletContext这个对象
  * @author dzzhyk
+ * @since 2020-11-28 13:42:39
  */
 public interface ServletContextAware extends Aware {
 

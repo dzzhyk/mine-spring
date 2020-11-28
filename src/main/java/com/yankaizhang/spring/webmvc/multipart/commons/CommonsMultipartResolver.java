@@ -22,16 +22,16 @@ import java.util.List;
  * 上传中的临时文件保存在服务器的临时目录下
  * 需要使用web IoC容器创建它，这里简化为不能独立存在
  * @author dzzhyk
+ * @since 2020-11-28 13:41:33
  */
 
 public class CommonsMultipartResolver extends CommonsFileUploadSupport
 		implements MultipartResolver, ServletContextAware {
 
-	private static final Logger log = LoggerFactory.getLogger(CommonsMultipartResolver.class);
 	/**
 	 * web容器的临时文件暂存路径
 	 */
-	private static final String TEMPDIR = "javax.servlet.context.tempdir";
+	private static final String TEMP_DIR = "javax.servlet.context.tempdir";
 
 
 	public CommonsMultipartResolver() {
@@ -44,7 +44,7 @@ public class CommonsMultipartResolver extends CommonsFileUploadSupport
 	 */
 	@Override
 	public void setServletContext(ServletContext context) {
-		File attribute = (File) context.getAttribute(TEMPDIR);
+		File attribute = (File) context.getAttribute(TEMP_DIR);
 		getFileItemFactory().setRepository(attribute);
 	}
 

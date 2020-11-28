@@ -5,6 +5,7 @@ import java.util.Objects;
 /**
  * Bean实例化后的属性包装类
  * @author dzzhyk
+ * @since 2020-11-28 13:53:16
  */
 public class PropertyValue {
     private String name;

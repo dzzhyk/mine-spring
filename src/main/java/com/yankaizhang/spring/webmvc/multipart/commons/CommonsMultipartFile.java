@@ -15,7 +15,9 @@ import java.io.InputStream;
  * 使用了apache-fileupload包
  * MultipartFile具体实现
  * @author dzzhyk
+ * @since 2020-11-28 13:41:28
  */
+@SuppressWarnings("all")
 public class CommonsMultipartFile implements MultipartFile {
 
 	protected final Logger logger = LoggerFactory.getLogger(CommonsMultipartFile.class);

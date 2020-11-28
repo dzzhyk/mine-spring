@@ -3,6 +3,7 @@ package com.yankaizhang.spring.aop.intercept;
 /**
  * 方法拦截器顶层接口
  * @author dzzhyk
+ * @since 2020-11-28 13:54:54
  */
 public interface MethodInterceptor {
 

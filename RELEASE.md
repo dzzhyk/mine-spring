@@ -2,6 +2,16 @@
 
 ---
 
+- 0.0.2
+
+1. 添加了@ResponseBody和@RequestBody注解解析
+2. 重构了ViewResolver的解析过程，将功能拆分
+3. 将View处理过程独立出去了，现在可以支持内置HTML和jsp视图渲染
+4. 现在进入controller方法和退出controller方法之前可以使用resolver来对参数和返回值进行一定的处理
+5. 一些bug修复
+
+---
+
 - 0.0.1
 
 1. 最初的release版本

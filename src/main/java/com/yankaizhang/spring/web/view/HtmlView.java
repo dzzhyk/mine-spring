@@ -1,15 +1,12 @@
 package com.yankaizhang.spring.web.view;
 
-import com.yankaizhang.spring.web.ViewResolver;
 import com.yankaizhang.spring.web.model.ModelAndView;
-import com.yankaizhang.spring.webmvc.servlet.DispatcherServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -18,6 +15,7 @@ import java.util.regex.Pattern;
 /**
  * 这是内置的HtmlView类型，目前可以支持简单了el表达式解析，继承自{@link View}
  * @author dzzhyk
+ * @since 2020-11-28 13:43:27
  */
 public class HtmlView extends AbstractView {
 

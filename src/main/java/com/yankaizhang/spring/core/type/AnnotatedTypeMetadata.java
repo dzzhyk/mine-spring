@@ -17,6 +17,7 @@ import java.lang.annotation.Annotation;
  *
  * 当然，为了方便，这个类我简化过了，去掉了复杂的包装类，所以使用起来还不是"太方便"
  * @author dzzhyk
+ * @since 2020-11-28 13:46:42
  */
 public interface AnnotatedTypeMetadata {
 

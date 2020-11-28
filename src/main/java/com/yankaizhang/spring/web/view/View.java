@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 模板视图接口，定义了模板视图的操作
  * @author dzzhyk
+ * @since 2020-11-28 13:43:51
  */
 public interface View {
 

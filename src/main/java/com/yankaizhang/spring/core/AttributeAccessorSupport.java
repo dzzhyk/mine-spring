@@ -29,6 +29,7 @@ import java.util.Map;
  *
  * <p>{@link Serializable} if subclasses and all attribute values are {@link Serializable}.
  * @author dzzhyk
+ * @since 2020-11-28 13:47:16
  */
 
 @SuppressWarnings("serial")

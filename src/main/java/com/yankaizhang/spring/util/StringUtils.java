@@ -4,8 +4,8 @@ import java.util.Collection;
 
 /**
  * 自制String工具类
- *
  * @author dzzhyk
+ * @since 2020-11-28 13:46:34
  */
 public class StringUtils {
 

@@ -12,6 +12,7 @@ import com.yankaizhang.spring.core.AttributeAccessorSupport;
  * 因此这个类既可以获取元数据，也可以提供属性访问
  * 这里的属性全部都是{@link BeanMetadataAttribute}类型
  * @author dzzhyk
+ * @since 2020-11-28 13:52:58
  */
 
 public class BeanMetadataAttributeAccessor extends AttributeAccessorSupport implements BeanMetadataElement {

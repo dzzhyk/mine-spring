@@ -8,6 +8,8 @@ import java.lang.reflect.Method;
 
 /**
  * 异常通知
+ * @author dzzhyk
+ * @since 2020-11-28 13:54:24
  */
 public class AfterThrowingAdvice extends AbstractAspectjAdvice implements Advice, MethodInterceptor {
 
@@ -23,7 +25,9 @@ public class AfterThrowingAdvice extends AbstractAspectjAdvice implements Advice
         try {
             return methodInvocation.proceed();
         }catch (Throwable ex){
-            invokeAdviceMethod(methodInvocation, null, ex);  // 在方法调用过程中拦截异常
+
+            // 在方法调用过程中拦截异常
+            invokeAdviceMethod(methodInvocation, null, ex);
             throw ex;
         }
     }

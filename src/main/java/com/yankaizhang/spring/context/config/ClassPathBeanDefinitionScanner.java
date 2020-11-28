@@ -26,6 +26,7 @@ import java.util.Set;
  * 这个类在原有的Spring里面也存在继承关系，比较复杂
  * 因为我们目前只向实现Java配置类的容器和解析实现，这里我将简化实现这个扫描类，所以后面还可以继续改进和拓展
  * @author dzzhyk
+ * @since 2020-11-28 13:50:53
  */
 
 public class ClassPathBeanDefinitionScanner {

@@ -27,16 +27,18 @@ public class TestController {
 }
 ```
 
-For usage-examples, check module `mine-spring-example`
+For examples, check module `mine-spring-example`
 
 1. Simple Spring IoC container implementation.
 2. Simple yet functional springMVC function.
 3. Annotation based AOP programming support.
 4. Almost the same annotation usage as Spring-Framework.
-5. JavaConfig Class support
-6. MultipartFile upload and download
-7. jsp support
-8. coming soon...
+5. JavaConfig Class `@Configuration` support
+6. MultipartFile upload and download `MultipartFile`
+7. Jsp and simple HTML template support which support el-expression `${}`
+8. `@RequestBody` and `@ResponseBody` support
+9. `@Autowired`
+10. coming soon...
 
 
 ## Install
@@ -47,6 +49,8 @@ $ cd mine-spring
 ```
 
 ## Usage
+
+There are three ways to use this project.
 
 ### 1. Add lib dependency to your project.
 
@@ -112,15 +116,14 @@ Then create a new project by selecting `create from maven-archetype` in your `ID
 
 ## Update
 
-[logs](./UPDATE.md)
+[update logs](./UPDATE.md)
 
 ## TODO
-fork and do it yourself!
 
 - [ ] Simple Spring JDBC.
 - [x] Multi-Aspect AOP support.
 - [ ] Simple ORM like Spring Data JPA.
-- [ ] @ResponseBody and JSON parser.
+- [x] @ResponseBody and JSON parser.
 - [x] Simplify to Controller params.
 - [x] @Configuration based Java ConfigClass support
 - [x] MultipartFile upload and download
@@ -130,8 +133,6 @@ fork and do it yourself!
 - [ ] @Around Aop
 
 ## Known Bugs
-
-**NEED YOUR HELP!**
 
 - [x] ~~The Controller's method cannot be accessed by the AOP aspect.~~
 - [x] ~~Repeated registration when registering HandlerMapping.~~

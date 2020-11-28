@@ -25,6 +25,7 @@ import java.util.Iterator;
  * 实现这个接口代表是一个文件上传请求request
  * DefaultMultipartRequest是这个接口的具体实现类
  * @author dzzhyk
+ * @since 2020-11-28 13:42:09
  */
 public interface MultipartRequest extends HttpServletRequest {
 
@@ -36,7 +37,7 @@ public interface MultipartRequest extends HttpServletRequest {
 	 *
 	 * @return 所有上传文件name的迭代器
 	 */
-	Iterator getFileNames();
+	Iterator<String> getFileNames();
 
 	/**
 	 * 返回文件包装类或者null

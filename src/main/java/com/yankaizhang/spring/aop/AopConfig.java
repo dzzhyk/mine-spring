@@ -3,8 +3,8 @@ package com.yankaizhang.spring.aop;
 /**
  * AOP配置封装类
  * @author dzzhyk
+ * @since 2020-11-28 13:55:22
  */
-
 public class AopConfig implements Cloneable {
 
     private String pointCut;

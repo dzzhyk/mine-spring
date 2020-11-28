@@ -3,6 +3,7 @@ package com.yankaizhang.spring.beans.factory;
 /**
  * 单例工厂的顶层设计
  * @author dzzhyk
+ * @since 2020-11-28 13:52:36
  */
 public interface BeanFactory {
 

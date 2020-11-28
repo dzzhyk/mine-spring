@@ -9,7 +9,8 @@ import java.util.List;
  * {@link com.yankaizhang.spring.webmvc.annotation.RequestBody}与
  * {@link com.yankaizhang.spring.webmvc.annotation.ResponseBody}
  * @author dzzhyk
- * @param <T>
+ * @param <T> 模板类型
+ * @since 2020-11-28 13:45:05
  */
 public interface HttpMessageConverter<T> {
 

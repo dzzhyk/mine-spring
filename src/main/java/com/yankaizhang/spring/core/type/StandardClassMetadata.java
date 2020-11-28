@@ -8,6 +8,7 @@ import java.lang.reflect.Modifier;
  *
  * 创建这个对象需要制定某个类Class，然后使用标准反射创建StandardClassMetadata
  * @author dzzhyk
+ * @since 2020-11-28 13:47:04
  */
 
 public class StandardClassMetadata implements ClassMetadata {

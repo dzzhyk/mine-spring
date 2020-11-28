@@ -25,6 +25,7 @@ import com.yankaizhang.spring.core.AttributeAccessor;
  * 这个接口存在的目的主要是允许BeanFactoryPostProcessor这个BeanDefinition后置处理器介入处理这个对象，
  * 从而达到了提供对BeanDefinition自定义功能（modify）
  * @author dzzhyk
+ * @since 2020-11-28 13:52:49
  */
 
 public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {

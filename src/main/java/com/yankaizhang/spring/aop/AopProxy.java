@@ -2,10 +2,11 @@ package com.yankaizhang.spring.aop;
 
 /**
  * 代理工厂的顶层接口，提供获取代理对象的顶层入口
- * 子类主要有两个：
- * CglibAopProxy
- * JdkDynamicAopProxy
+ * 实现子类：
+ * <li>{@link CglibAopProxy}</li>
+ * <li>{@link JdkDynamicAopProxy}</li>
  * @author dzzhyk
+ * @since 2020-11-28 13:55:30
  */
 public interface AopProxy {
 

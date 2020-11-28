@@ -9,8 +9,8 @@ import com.yankaizhang.spring.core.type.MethodMetadata;
 /**
  * 注解配置类型BeanDefinition的通用接口
  * @author dzzhyk
+ * @since 2020-11-28 13:51:45
  */
-
 public interface AnnotatedBeanDefinition extends BeanDefinition {
 
     /**

@@ -1,11 +1,9 @@
 package com.yankaizhang.spring.web.view;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * 抽象视图类AbstractView，包含了通用操作，实现了{@link View}接口
  * @author dzzhyk
+ * @since 2020-11-28 13:43:18
  */
 public abstract class AbstractView implements View {
 

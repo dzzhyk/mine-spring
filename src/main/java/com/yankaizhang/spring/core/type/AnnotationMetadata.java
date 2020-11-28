@@ -9,6 +9,7 @@ import java.util.Set;
  * 注解本身也是类实现，所以继承了ClassMetadata
  * 注解可以有注解，因此继承了AnnotatedTypeMetadata
  * @author dzzhyk
+ * @since 2020-11-28 13:46:46
  */
 public interface AnnotationMetadata extends ClassMetadata, AnnotatedTypeMetadata {
 

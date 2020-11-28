@@ -19,6 +19,7 @@ import java.util.*;
  * 以及数值转换工作
  * TODO: 这个类目前还是扁平的，如果要拆分各种功能并且提高扩展性，需要改为接口，并且逐层实现
  * @author dzzhyk
+ * @since 2020-11-28 13:39:53
  */
 public class HandlerAdapter {
 
@@ -74,116 +75,7 @@ public class HandlerAdapter {
         invocableMethod.invokeAndHandle(webRequest, mavBuilder);
 
         return mavBuilder.build();
-
-//
-//        // 保存形参列表
-//        HashMap<String, Integer> paramMapping = new HashMap<>();
-//        Annotation[][] pa = method.getParameterAnnotations();
-//
-//        for (int i = 0; i < pa.length; i++) {
-//            for (Annotation annotation : pa[i]) {
-//                if (annotation instanceof RequestParam){
-//                    String paramName = ((RequestParam) annotation).value();
-//                    if (!"".equals(paramName.trim())){
-//                        // 统计方法的各个含有注解的参数是第几个
-//                        paramMapping.put(paramName, i);
-//                    }
-//                }
-//            }
-//        }
-//
-//        // 处理req和resp两个参数
-//        Class<?>[] parameterTypes = method.getParameterTypes();
-//        for (int i = 0; i < parameterTypes.length; i++) {
-//            Class<?> type = parameterTypes[i];
-//            if (type == HttpServletRequest.class || type == HttpServletResponse.class){
-//                paramMapping.put(type.getName(), i);
-//            }
-//        }
-//
-//        // 最后传递给invoke方法执行的参数
-//        Object[] paramValues = new Object[parameterTypes.length];
-//
-//
-//        // 请求参数映射
-//        Map<String, String[]> params = req.getParameterMap();
-//        for (Map.Entry<String, String[]> entry : params.entrySet()) {
-//            String value = Arrays.toString(entry.getValue()).replaceAll("[\\[\\]]", "")
-//                    .replaceAll("\\s", ",");
-//
-//            // 如果没有注解标记这个参数，略过
-//            if (!paramMapping.containsKey(entry.getKey())) {
-//                continue;
-//            }
-//            // 将传递过来的参数根据名字获得index
-//            int index = paramMapping.get(entry.getKey());
-//
-//            // 根据index获得参数类型，根据这个类型转换param到对应类型
-//            paramValues[index] = convert(parameterTypes[index], value);
-//        }
-//
-//        // 如果参数是req或者resp
-//        if (paramMapping.containsKey(HttpServletRequest.class.getName())){
-//            int reqIndex = paramMapping.get(HttpServletRequest.class.getName());
-//            paramValues[reqIndex] = req;
-//        }
-//        if (paramMapping.containsKey(HttpServletResponse.class.getName())){
-//            int respIndex = paramMapping.get(HttpServletResponse.class.getName());
-//            paramValues[respIndex] = resp;
-//        }
-//
-//        // 处理文件请求
-//        if (req instanceof MultipartRequest) {
-//            // 如果是文件上传类型
-//            MultiValueMap<String, MultipartFile> multiFileMap = ((MultipartRequest) req).getMultiFileMap();
-//            for (Map.Entry<String, List<MultipartFile>> entry : multiFileMap.entrySet()) {
-//                for (MultipartFile file : entry.getValue()) {
-//                    // 如果没有注解标记这个参数，略过
-//                    if (!paramMapping.containsKey(entry.getKey())) {
-//                        continue;
-//                    }
-//                    int index = paramMapping.get(entry.getKey());
-//                    paramValues[index] = file;
-//                }
-//            }
-//        }
-//
-//        // 执行方法
-//        Object returnValue = method.invoke(handlerMapping.getController(), paramValues);
-//        if (returnValue == null) {
-//            return null;
-//        }
-//
-//        // 判断返回类型
-//        Class<?> returnType = method.getReturnType();
-//        ModelAndView modelAndView = null;
-//        if (ModelAndView.class.equals(returnType)) {
-//            modelAndView = (ModelAndView) returnValue;
-//        } else if (String.class.equals(returnType)) {
-//            // 如果是String类型
-//            String stringValue = (String) returnValue;
-//            modelAndView = new ModelAndView(stringValue);
-//        } else {
-//            return null;
-//        }
     }
-
-
-    /**
-     * 将url传过来的String类型转换为多种类型
-     */
-//    private Object convert(Class<?> type, String value) {
-//        if (Integer.class == type){
-//            return Integer.valueOf(value);
-//        }else if (Double.class == type){
-//            return Double.valueOf(value);
-//        }else if (int.class == type){
-//            return Integer.parseInt(value);
-//        }
-//        // 可以继续用策略模式增加
-//        return value;
-//    }
-
 
     /**
      * 获取默认的ArgumentResolver列表
@@ -191,7 +83,7 @@ public class HandlerAdapter {
     private List<ArgumentResolver> getDefaultArgumentResolvers() {
         List<ArgumentResolver> resolvers = new ArrayList<>();
 
-        // TODO: 在这里添加内置的ArgumentResolver参数处理器
+        // TODO: 在这里继续添加内置的ArgumentResolver参数处理器
         resolvers.add(new ModelAndViewMethodResolver());
         resolvers.add(new RequestParamMethodArgumentResolver());
         resolvers.add(new RequestResponseBodyMethodResolver());
@@ -208,7 +100,7 @@ public class HandlerAdapter {
     private List<ReturnValueResolver> getDefaultReturnValueResolvers() {
         List<ReturnValueResolver> resolvers = new ArrayList<>();
 
-        // TODO: 在这里添加内置的ReturnValueResolver返回值处理器
+        // TODO: 在这里继续添加内置的ReturnValueResolver返回值处理器
         resolvers.add(new ViewNameMethodReturnValueResolver());
         resolvers.add(new ModelAndViewMethodResolver());
         resolvers.add(new RequestResponseBodyMethodResolver());

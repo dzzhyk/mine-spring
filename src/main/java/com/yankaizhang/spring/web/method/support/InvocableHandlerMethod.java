@@ -22,6 +22,7 @@ import java.util.Arrays;
  * 在已知的{@link ArgumentResolver}对象集合中寻找到一个可以处理的，然后处理该参数
  * 处理完成之后再invoke该方法
  * @author dzzhyk
+ * @since 2020-11-28 13:44:43
  */
 public class InvocableHandlerMethod extends HandlerMethod {
 
@@ -94,7 +95,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
      */
     private Object invokeForRequest(WebRequest request) throws Exception {
         Object[] args = getMethodArgumentValues(request);
-        log.debug("解析参数 : " + Arrays.toString(args));
+        log.debug("参数 : " + Arrays.toString(args));
         return doInvoke(args);
     }
 

@@ -14,6 +14,7 @@ import com.yankaizhang.spring.beans.factory.config.ConstructorArgumentValues;
  * BeanMetadataAttributeAccessor包含了操作
  * 另外在这个抽象类里面还定义了所有BeanDefinition都应该具有的属性，结合实现BeanDefinition里面的方法就可以把这些属性暴露出去
  * @author dzzhyk
+ * @since 2020-11-28 13:52:11
  */
 public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccessor
     implements BeanDefinition, Cloneable {

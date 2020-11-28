@@ -4,8 +4,6 @@ package com.yankaizhang.spring.web.method;
 import com.yankaizhang.spring.beans.factory.BeanFactory;
 import com.yankaizhang.spring.core.MethodParameter;
 import com.yankaizhang.spring.util.ClassUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

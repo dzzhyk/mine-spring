@@ -6,6 +6,7 @@ import java.util.Map;
 /**
  * Http请求方法枚举类
  * @author dzzhyk
+ * @since 2020-11-28 13:45:26
  */
 @SuppressWarnings("all")
 public enum HttpMethod {

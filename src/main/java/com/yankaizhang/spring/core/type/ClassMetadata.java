@@ -4,6 +4,7 @@ package com.yankaizhang.spring.core.type;
 /**
  * ClassMetadata接口定义了Class的元数据
  * @author dzzhyk
+ * @since 2020-11-28 13:46:51
  */
 public interface ClassMetadata {
 

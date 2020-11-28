@@ -5,6 +5,7 @@ package com.yankaizhang.spring.context;
  * 1. 扫描注解
  * 2. 注册
  * @author dzzhyk
+ * @since 2020-11-28 13:51:29
  */
 
 public interface AnnotationConfigRegistry {
