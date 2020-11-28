@@ -329,6 +329,8 @@ public class DispatcherServlet extends FrameworkServlet {
 
     /**
      * 检查请求是否为文件上传请求
+     * @return 解析后的请求
+     * @throws 异常
      */
     protected HttpServletRequest checkMultipart(HttpServletRequest request) throws Exception {
         if (this.multipartResolver != null && this.multipartResolver.isMultipart(request)) {

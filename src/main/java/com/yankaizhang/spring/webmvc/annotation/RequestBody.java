@@ -15,6 +15,7 @@ public @interface RequestBody {
 
     /**
      * 标识当前该参数是否是必须的
+     * @return 当前参数是否必须
      */
     boolean required() default true;
 
