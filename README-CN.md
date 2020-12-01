@@ -1,19 +1,44 @@
+[English](./README.md) | 简体中文
+
 # mine-spring
 
-> 一个用于学习的简洁Spring框架实现
-
-[English](./README.md)
+一个用于学习的简洁Spring框架实现
 
 ## 背景
 
 mine-spring是本人学习spring框架原理和学习spring源码的练习产物，免费分享给大家！
-通过本项目，可以了解Spring的主要模块如IoC、AOP、webmvc、JDBC的实现原理，同时在学习的过程中会进一步提升阅读Spring源码的能力。  
-本项目正在持续更新中...  
+通过本项目，可以了解Spring的主要模块如IoC、AOP、webmvc、JDBC的实现原理，同时在学习的过程中会进一步提升阅读Spring源码的能力。    
 生命不息，折腾不止...
 
 ## 现有功能
 
-> "To use this project like using Spring-Framework"
+1. springIoC容器实现
+2. 简单又不失功能的springMVC功能
+3. AOP编程
+4. 几乎和Spring相同的注解用法
+5. 使用Java注解配置类 `@Configuration` 配置Bean对象
+6. 文件上传和文件下载支持
+7. 支持Jsp模板和内置HTML解析模板
+8. `@RequestBody`和`@ResponseBody`请求体和响应体解析
+9. 自动装配`@Autowired`
+10. 还有更多...
+
+## 使用mine-spring
+
+创建一个web项目，然后添加如下`mine-spring`的jar依赖即可：
+
+```xml
+<dependency>
+    <groupId>com.yankaizhang</groupId>
+    <artifactId>mine-spring</artifactId>
+    <version>0.0.2</version>
+</dependency>
+```
+
+导入完成后就可以使用`mine-spring`的相关功能了
+
+
+## 示例
 
 ```java
 @Controller
@@ -29,85 +54,7 @@ public class TestController {
     }
 }
 ```
-
 更多详细的示例直接查看 `mine-spring-example` 模块
-
-1. springIoC容器实现
-2. 简单又不失功能的springMVC功能
-3. AOP编程
-4. 几乎和Spring相同的注解用法
-5. 使用Java注解配置类 `@Configuration` 配置Bean对象
-6. 文件上传和文件下载支持
-7. 支持Jsp模板和内置HTML解析模板
-8. `@RequestBody`和`@ResponseBody`请求体和响应体解析
-9. 自动装配`@Autowired`
-10. 还有更多...
-
-## 下载源码
-
-```shell script
-$ git clone https://github.com/dzzhyk/mine-spring.git
-$ cd mine-spring
-```
-
-## 使用mine-spring构建应用
-
-### 方法1. 在项目中添加lib依赖
-
-1. 下载本项目的release版本jar包
-2. 使用IDE（例如IDEA）创建一个web项目
-3. 在项目目录下新建lib目录，将本项目jar包放置于lib目录下，然后添加该lib目录为External Library
-
-### 方法2. 用Spring项目的方式创建项目
-
-使用方式基本和创建一个Spring项目完全相同，只需要创建一个Spring项目并且导入maven依赖即可
-
-首先你需要在pom.xml中添加我的Nexus仓库，这样就可以使用到本项目的发布的所有jar包了
-
-```xml
-<repositories>
-    <!-- https://github.com/dzzhyk/mine-spring -->
-    <repository>
-        <id>dzzhyk-nexus</id>
-        <name>dzzhyk-nexus</name>
-        <url>http://maven.yankaizhang.com/repository/github/</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-    </repository>
-</repositories>
-```
-
-所以接下来只需要使用maven坐标导入一个jar包即可：
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>com.yankaizhang</groupId>
-        <artifactId>mine-spring</artifactId>
-        <version>${version}</version>
-    </dependency>
-</dependencies>
-```
-
-
-### 方法3. 用maven-archetype方式创建项目 (推荐)
-
-我为了更方便大家体验到本项目的成果，特意为大家制作了一个基于本项目的maven骨架模板`mine-spring-archetype`
-
-大家使用这个maven骨架工程可以快速上手使用本项目
-
-这要求你首先需要添加我的archetype到你的`maven`工具：
-
-```xml
-<dependency>
-  <groupId>com.yankaizhang</groupId>
-  <artifactId>mine-spring-archetype</artifactId>
-  <version>RELEASE</version>
-</dependency>
-```
-
-紧接着在你的`IDE`中选择从maven archetype创建即可
 
 ## 相关项目
 
