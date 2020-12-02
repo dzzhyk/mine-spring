@@ -1,7 +1,7 @@
 package com.yankaizhang.spring.context.util;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
-import com.yankaizhang.spring.context.BeanDefinitionRegistry;
+import com.yankaizhang.spring.beans.factory.support.BeanDefinitionRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -14,7 +14,9 @@ import com.yankaizhang.spring.beans.BeanDefinition;
 import com.yankaizhang.spring.beans.BeanWrapper;
 import com.yankaizhang.spring.beans.factory.BeanFactory;
 import com.yankaizhang.spring.beans.factory.annotation.Autowired;
+import com.yankaizhang.spring.beans.factory.config.BeanFactoryPostProcessor;
 import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
+import com.yankaizhang.spring.beans.factory.support.BeanDefinitionRegistry;
 import com.yankaizhang.spring.context.annotation.Configuration;
 import com.yankaizhang.spring.context.annotation.Controller;
 import com.yankaizhang.spring.context.annotation.Service;
@@ -46,7 +48,7 @@ import static com.yankaizhang.spring.util.StringUtils.toLowerCase;
  *
  * TODO: 这里其实对于AnnotationConfigApplicationContext而言，在这一层实现了多个功能，其实是简化过后的
  * @author dzzhyk
- * @since 2020-11-28 13:51:22
+ * @since 2020-12-02 14:55:28
  */
 @SuppressWarnings("all")
 public class AnnotationConfigApplicationContext extends DefaultListableBeanFactory
@@ -87,7 +89,15 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
      */
     private List<Class<?>> aspectBeanInstanceCache = new CopyOnWriteArrayList<>();
 
+    /**
+     * beanFactoryPostProcessor列表
+     */
+    private List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
 
+    /**
+     * beanPostProcessors列表
+     */
+    private List<BeanPostProcessor> beanPostProcessors = new CopyOnWriteArrayList<>();
 
     public AnnotationConfigApplicationContext() {
         this.reader = new AnnotatedBeanDefinitionReader(this);
@@ -583,6 +593,14 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
         return super.beanDefinitionMap.get(beanName);
     }
 
+    public List<BeanFactoryPostProcessor> getBeanFactoryPostProcessors() {
+        return this.beanFactoryPostProcessors;
+    }
+
+    public List<BeanPostProcessor> getBeanPostProcessors() {
+        return this.beanPostProcessors;
+    }
+
     @Override
     public boolean containsBeanDefinition(String beanName) {
         return super.beanDefinitionMap.containsKey(beanName);
@@ -601,5 +619,23 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
     @Override
     public boolean isBeanNameInUse(String beanName) {
         return super.beanDefinitionMap.get(beanName) != null;
+    }
+
+    /**
+     * 向当前容器中添加BeanFactoryPostProcessor
+     * @param processor
+     */
+    public void addBeanFactoryPostProcessor(BeanFactoryPostProcessor processor){
+        this.beanFactoryPostProcessors.remove(processor);
+        this.beanFactoryPostProcessors.add(processor);
+    }
+
+    /**
+     * 向当前容器中添加BeanPostProcessor
+     * @param postProcessor
+     */
+    public void addBeanPostProcessor(BeanPostProcessor postProcessor){
+        this.beanPostProcessors.remove(postProcessor);
+        this.beanPostProcessors.add(postProcessor);
     }
 }

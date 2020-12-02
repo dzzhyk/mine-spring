@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * 构造函数的参数列表包装类
  * @author dzzhyk
- * @since 2020-11-28 13:52:07
+ * @since 2020-12-02 14:55:16
  */
 public class ConstructorArgumentValues {
 
@@ -49,7 +49,8 @@ public class ConstructorArgumentValues {
      * 构造函数的参数值的包装类
      * 实现了BeanMetadataElement表明他也拥有一个来源，并且可以获取这个来源
      */
-    public class ValueHolder implements BeanMetadataElement {
+    private class ValueHolder implements BeanMetadataElement {
+
         private String name;    // 这个参数名称
         private Object value;   // 参数值 （必须有）
         private String type;    // 参数全类名

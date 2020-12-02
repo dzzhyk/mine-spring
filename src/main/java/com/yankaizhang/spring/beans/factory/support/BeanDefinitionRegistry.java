@@ -1,4 +1,4 @@
-package com.yankaizhang.spring.context;
+package com.yankaizhang.spring.beans.factory.support;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
 
@@ -8,7 +8,7 @@ import com.yankaizhang.spring.beans.BeanDefinition;
  *
  * 当然，目前是简化的版本，而且IoC容器没有进行分层，还不太复杂
  * @author dzzhyk
- * @since 2020-11-28 13:51:37
+ * @since 2020-12-02 14:55:23
  */
 
 public interface BeanDefinitionRegistry {
