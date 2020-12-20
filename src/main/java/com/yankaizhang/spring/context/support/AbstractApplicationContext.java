@@ -1,6 +1,6 @@
 package com.yankaizhang.spring.context.support;
 
-import com.yankaizhang.spring.context.ApplicationContext;
+import com.yankaizhang.spring.context.ConfigurableApplicationContext;
 
 /**
  * IOC容器实现类的顶层抽象类
@@ -8,7 +8,7 @@ import com.yankaizhang.spring.context.ApplicationContext;
  * @author dzzhyk
  * @since 2020-11-28 13:51:08
  */
-public abstract class AbstractApplicationContext implements ApplicationContext {
+public abstract class AbstractApplicationContext implements ConfigurableApplicationContext {
     /**
      * 刷新容器内容
      */

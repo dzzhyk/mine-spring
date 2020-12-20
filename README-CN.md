@@ -72,8 +72,8 @@ public class TestController {
 - [x] Controller参数简化
 - [x] @Configuration配置类和@Bean注解配置
 - [x] 文件上传和文件下载支持
-- [ ] 更加完整正规的AnnotationConfigClassApplicationContext容器
-- [ ] beanPostProcessor 和 beanFactoryPostProcessor实现，以及其容器实现
+- [x] 更加完整正规的`AnnotationConfigClassApplicationContext`容器
+- [ ] `BeanPostProcessor` 和 `BeanFactoryPostProcessor`实现，以及其容器实现
 - [ ] 事务支持
 - [ ] @Around Aop环切实现
 

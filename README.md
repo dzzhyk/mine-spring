@@ -70,8 +70,8 @@ For more examples, check module `mine-spring-example`
 - [x] Simplify to Controller params.
 - [x] @Configuration based Java ConfigClass support
 - [x] MultipartFile upload and download
-- [ ] a tiny AnnotationConfigClassApplicationContext impl
-- [ ] beanPostProcessor and beanFactoryPostProcessor
+- [x] A tiny `AnnotationConfigClassApplicationContext` impl
+- [ ] `BeanPostProcessor` and `BeanFactoryPostProcessor`
 - [ ] transaction support
 - [ ] @Around Aop
 

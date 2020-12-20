@@ -12,18 +12,16 @@ import com.yankaizhang.spring.aop.support.AopAnnotationReader;
 import com.yankaizhang.spring.aop.support.AopUtils;
 import com.yankaizhang.spring.beans.BeanDefinition;
 import com.yankaizhang.spring.beans.BeanWrapper;
-import com.yankaizhang.spring.beans.factory.BeanFactory;
 import com.yankaizhang.spring.beans.factory.annotation.Autowired;
 import com.yankaizhang.spring.beans.factory.config.BeanFactoryPostProcessor;
 import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
-import com.yankaizhang.spring.beans.factory.support.BeanDefinitionRegistry;
 import com.yankaizhang.spring.context.annotation.Configuration;
 import com.yankaizhang.spring.context.annotation.Controller;
 import com.yankaizhang.spring.context.annotation.Service;
 import com.yankaizhang.spring.context.config.AnnotatedBeanDefinitionReader;
 import com.yankaizhang.spring.context.config.ClassPathBeanDefinitionScanner;
 import com.yankaizhang.spring.context.config.ConfigClassReader;
-import com.yankaizhang.spring.context.support.DefaultListableBeanFactory;
+import com.yankaizhang.spring.context.support.GenericApplicationContext;
 import com.yankaizhang.spring.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,10 +49,9 @@ import static com.yankaizhang.spring.util.StringUtils.toLowerCase;
  * @since 2020-12-02 14:55:28
  */
 @SuppressWarnings("all")
-public class AnnotationConfigApplicationContext extends DefaultListableBeanFactory
-        implements BeanFactory, AnnotationConfigRegistry, BeanDefinitionRegistry {
+public class AnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry {
 
-    public static final Logger log = LoggerFactory.getLogger(AnnotationConfigApplicationContext.class);
+    private static final Logger log = LoggerFactory.getLogger(AnnotationConfigApplicationContext.class);
 
     private AnnotatedBeanDefinitionReader reader;
     private ClassPathBeanDefinitionScanner scanner;
@@ -296,6 +293,9 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
             e.printStackTrace();
         }
     }
+
+
+
 
     /**
      * bean实例化过程
@@ -578,21 +578,6 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
         this.scanner.scan(basePackages);
     }
 
-    @Override
-    public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) throws Exception {
-        super.beanDefinitionMap.put(beanName, beanDefinition);
-    }
-
-    @Override
-    public void removeBeanDefinition(String beanName) throws Exception {
-        super.beanDefinitionMap.remove(beanName);
-    }
-
-    @Override
-    public BeanDefinition getBeanDefinition(String beanName) throws Exception {
-        return super.beanDefinitionMap.get(beanName);
-    }
-
     public List<BeanFactoryPostProcessor> getBeanFactoryPostProcessors() {
         return this.beanFactoryPostProcessors;
     }
@@ -601,25 +586,6 @@ public class AnnotationConfigApplicationContext extends DefaultListableBeanFacto
         return this.beanPostProcessors;
     }
 
-    @Override
-    public boolean containsBeanDefinition(String beanName) {
-        return super.beanDefinitionMap.containsKey(beanName);
-    }
-
-    @Override
-    public String[] getBeanDefinitionNames() {
-        return StringUtils.toStringArray(super.beanDefinitionMap.keySet());
-    }
-
-    @Override
-    public int getBeanDefinitionCount() {
-        return super.beanDefinitionMap.size();
-    }
-
-    @Override
-    public boolean isBeanNameInUse(String beanName) {
-        return super.beanDefinitionMap.get(beanName) != null;
-    }
 
     /**
      * 向当前容器中添加BeanFactoryPostProcessor
