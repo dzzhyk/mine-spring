@@ -1,7 +1,9 @@
-package com.yankaizhang.spring.beans.factory.support;
+package com.yankaizhang.spring.beans.factory.impl;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
-import com.yankaizhang.spring.beans.factory.BeanFactory;
+import com.yankaizhang.spring.beans.factory.CompletedBeanFactory;
+import com.yankaizhang.spring.beans.factory.support.AbstractCompletedBeanFactory;
+import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
 import com.yankaizhang.spring.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,15 +15,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * BeanFactory的一个简易实现
- * TODO: 添加中间层实现，拆分这个类的功能
+ * 集成所有功能（遍历、配置、自动装配）的默认实现bean工厂
  * @author dzzhyk
- * @since 2020-12-20 18:19:33
+ * @since 2020-12-21 18:37:52
  */
-public class DefaultListableBeanFactory
-        implements BeanFactory, BeanDefinitionRegistry, Serializable {
+public class DefaultBeanFactory extends AbstractCompletedBeanFactory
+        implements CompletedBeanFactory, BeanDefinitionRegistry, Serializable {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultListableBeanFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultBeanFactory.class);
 
     /** beanDefinitionMap，用来存储注册信息，当做bean定义的缓存 */
     protected final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
@@ -32,23 +33,8 @@ public class DefaultListableBeanFactory
     /** 是否允许覆盖注册同名的beanDefinition */
     private boolean allowBeanDefinitionOverriding = true;
 
-    public DefaultListableBeanFactory() {
+    public DefaultBeanFactory() {
         super();
-    }
-
-    @Override
-    public Object getBean(String beanName) throws Exception {
-        return null;
-    }
-
-    @Override
-    public Object getBean(Class<?> beanClass) throws Exception {
-        return null;
-    }
-
-    @Override
-    public Object getBean(String beanName, Class<?> beanClass) throws Exception {
-        return null;
     }
 
     @Override

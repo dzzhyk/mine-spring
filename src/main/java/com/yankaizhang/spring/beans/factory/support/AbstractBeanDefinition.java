@@ -2,9 +2,10 @@ package com.yankaizhang.spring.beans.factory.support;
 
 
 import com.yankaizhang.spring.beans.BeanDefinition;
-import com.yankaizhang.spring.beans.BeanMetadataAttributeAccessor;
-import com.yankaizhang.spring.beans.MutablePropertyValues;
-import com.yankaizhang.spring.beans.factory.config.ConstructorArgumentValues;
+import com.yankaizhang.spring.beans.accessor.BeanMetadataAttributeAccessor;
+import com.yankaizhang.spring.beans.factory.AutowiredBeanFactory;
+import com.yankaizhang.spring.beans.holder.MutablePropertyValues;
+import com.yankaizhang.spring.beans.holder.ConstructorArgumentValues;
 
 
 /**
@@ -27,10 +28,10 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     /**
      * 自动装配模式
      */
-    public static final int AUTOWIRE_NO = 1;
-    public static final int AUTOWIRE_BY_NAME = 2;
-    public static final int AUTOWIRE_BY_TYPE = 3;
-    public static final int AUTOWIRE_CONSTRUCTOR = 4;
+    public static final int AUTOWIRE_NO = AutowiredBeanFactory.AUTOWIRE_NO;
+    public static final int AUTOWIRE_BY_NAME = AutowiredBeanFactory.AUTOWIRE_BY_NAME;
+    public static final int AUTOWIRE_BY_TYPE = AutowiredBeanFactory.AUTOWIRE_BY_TYPE;
+    public static final int AUTOWIRE_CONSTRUCTOR = AutowiredBeanFactory.AUTOWIRE_CONSTRUCTOR;
 
     /**
      * 使用none模式

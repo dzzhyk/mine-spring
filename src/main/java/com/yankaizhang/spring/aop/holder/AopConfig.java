@@ -1,4 +1,4 @@
-package com.yankaizhang.spring.aop;
+package com.yankaizhang.spring.aop.holder;
 
 /**
  * AOP配置封装类

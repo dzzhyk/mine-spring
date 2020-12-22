@@ -1,4 +1,6 @@
-package com.yankaizhang.spring.beans;
+package com.yankaizhang.spring.beans.holder;
+
+import com.yankaizhang.spring.beans.PropertyValues;
 
 import java.util.ArrayList;
 import java.util.List;

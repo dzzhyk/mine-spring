@@ -1,10 +1,10 @@
-package com.yankaizhang.spring.context.support;
+package com.yankaizhang.spring.context.generic;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
-import com.yankaizhang.spring.beans.factory.support.BeanDefinitionRegistry;
-import com.yankaizhang.spring.beans.factory.support.DefaultListableBeanFactory;
+import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
+import com.yankaizhang.spring.beans.factory.impl.DefaultBeanFactory;
+import com.yankaizhang.spring.context.support.AbstractApplicationContext;
 import com.yankaizhang.spring.util.Assert;
-import com.yankaizhang.spring.util.StringUtils;
 
 /**
  * 通用上下文对象
@@ -15,13 +15,13 @@ import com.yankaizhang.spring.util.StringUtils;
 public class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {
 
     /** 真正的beanFactory对象 */
-    DefaultListableBeanFactory beanFactory;
+    DefaultBeanFactory beanFactory;
 
     public GenericApplicationContext() {
-        this.beanFactory = new DefaultListableBeanFactory();
+        this.beanFactory = new DefaultBeanFactory();
     }
 
-    public GenericApplicationContext(DefaultListableBeanFactory beanFactory) {
+    public GenericApplicationContext(DefaultBeanFactory beanFactory) {
         Assert.notNull(beanFactory, "用于初始化的beanFactory不能为null");
         this.beanFactory = beanFactory;
     }

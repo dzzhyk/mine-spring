@@ -1,4 +1,6 @@
-package com.yankaizhang.spring.beans;
+package com.yankaizhang.spring.beans.holder;
+
+import com.yankaizhang.spring.beans.BeanMetadataElement;
 
 /**
  * bean定义的某个元数据属性的包装类

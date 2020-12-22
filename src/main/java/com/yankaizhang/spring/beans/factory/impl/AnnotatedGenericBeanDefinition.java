@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.yankaizhang.spring.beans.factory.annotation;
+package com.yankaizhang.spring.beans.factory.impl;
 
 
-import com.yankaizhang.spring.beans.factory.support.GenericBeanDefinition;
+import com.yankaizhang.spring.beans.factory.annotation.AnnotatedBeanDefinition;
+import com.yankaizhang.spring.beans.factory.generic.GenericBeanDefinition;
 import com.yankaizhang.spring.core.type.AnnotationMetadata;
 import com.yankaizhang.spring.core.type.MethodMetadata;
 

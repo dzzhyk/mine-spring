@@ -1,7 +1,7 @@
 package com.yankaizhang.spring.aop.support;
 
-import com.yankaizhang.spring.aop.AopConfig;
-import com.yankaizhang.spring.aop.PointCutConfig;
+import com.yankaizhang.spring.aop.holder.AopConfig;
+import com.yankaizhang.spring.aop.holder.PointCutConfig;
 import com.yankaizhang.spring.aop.aspect.AfterReturningAdvice;
 import com.yankaizhang.spring.aop.aspect.AfterThrowingAdvice;
 import com.yankaizhang.spring.aop.aspect.MethodBeforeAdvice;

@@ -1,27 +1,28 @@
-package com.yankaizhang.spring.context;
+package com.yankaizhang.spring.context.impl;
 
-import com.yankaizhang.spring.aop.AopConfig;
+import com.yankaizhang.spring.aop.holder.AopConfig;
 import com.yankaizhang.spring.aop.AopProxy;
-import com.yankaizhang.spring.aop.CglibAopProxy;
-import com.yankaizhang.spring.aop.JdkDynamicAopProxy;
-import com.yankaizhang.spring.aop.aopanno.Aspect;
-import com.yankaizhang.spring.aop.aopanno.PointCut;
+import com.yankaizhang.spring.aop.impl.CglibAopProxy;
+import com.yankaizhang.spring.aop.impl.JdkDynamicAopProxy;
+import com.yankaizhang.spring.aop.annotation.Aspect;
+import com.yankaizhang.spring.aop.annotation.PointCut;
 import com.yankaizhang.spring.aop.support.AdviceSupportComparator;
 import com.yankaizhang.spring.aop.support.AdvisedSupport;
 import com.yankaizhang.spring.aop.support.AopAnnotationReader;
 import com.yankaizhang.spring.aop.support.AopUtils;
 import com.yankaizhang.spring.beans.BeanDefinition;
-import com.yankaizhang.spring.beans.BeanWrapper;
+import com.yankaizhang.spring.beans.holder.BeanWrapper;
 import com.yankaizhang.spring.beans.factory.annotation.Autowired;
 import com.yankaizhang.spring.beans.factory.config.BeanFactoryPostProcessor;
 import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
+import com.yankaizhang.spring.context.AnnotationConfigRegistry;
 import com.yankaizhang.spring.context.annotation.Configuration;
 import com.yankaizhang.spring.context.annotation.Controller;
 import com.yankaizhang.spring.context.annotation.Service;
 import com.yankaizhang.spring.context.config.AnnotatedBeanDefinitionReader;
 import com.yankaizhang.spring.context.config.ClassPathBeanDefinitionScanner;
 import com.yankaizhang.spring.context.config.ConfigClassReader;
-import com.yankaizhang.spring.context.support.GenericApplicationContext;
+import com.yankaizhang.spring.context.generic.GenericApplicationContext;
 import com.yankaizhang.spring.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,19 +67,6 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
      * TODO: 目前还没有更好的替代方案
      */
     private AopAnnotationReader aopAnnotationReader;
-
-    /**
-     * 单例IoC容器
-     * 这个容器一般存放扫描到的Bean单例类对象
-     */
-    private Map<String, Object> singletonIoc = new ConcurrentHashMap<>();
-
-    /**
-     * 通用的IoC容器
-     * 我们最终使用的一般是这个通用的IoC容器
-     * 这个容器中的所有Bean对象应该都是经过增强的包装Bean
-     */
-    private Map<String, BeanWrapper> commonIoc = new ConcurrentHashMap<>();
 
     /**
      * 通用的AOP切面容器
@@ -296,134 +284,6 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 
 
 
-
-    /**
-     * bean实例化过程
-     * 1. 保存原来的OOP对象依赖关系
-     * 2. 利用装饰器BeanWrapper，扩展增强这个类，方便AOP操作
-     */
-    @Override
-    public Object getBean(String beanName) throws Exception {
-        return getBean(beanName, null);
-    }
-
-    @Override
-    public Object getBean(Class<?> beanClass) throws Exception {
-        return getBean(null, beanClass);
-    }
-
-    @Override
-    public Object getBean(String beanName, Class<?> beanClass) throws Exception {
-
-        // 优先使用beanName进行查找
-        if (beanName != null){
-            Object result = doGetBean(beanName);
-            // 如果有类型指定，判断是否为当前类型
-            if (result != null && beanClass != null){
-                if (result.getClass().equals(beanClass)){
-                    return result;
-                }
-                throw new Exception("未找到beanName为" + beanName +"，类型为"+ beanClass.getName() +"的对象");
-            }else if (result != null){
-                return result;
-            }
-            return null;
-        }
-
-        // beanName为null或者使用name没找到的情况，尝试使用beanClass寻找
-        if (beanClass != null){
-            // beanClass不为null
-            Collection<BeanDefinition> values = this.beanDefinitionMap.values();
-
-            // 在bean定义中对比，查找是否有这个类的定义
-            for (BeanDefinition value : values) {
-                if (value.getBeanClassName().equals(beanClass.getName())){
-                    // 如果找到了该类的bean定义，就尝试在容器中找该类的实例
-                    for (Map.Entry<String, BeanWrapper> entry : commonIoc.entrySet()) {
-
-                        // 如果找到了
-                        if (entry.getValue().getWrappedClass().equals(beanClass)) {
-                            if (beanName != null && !beanName.equals(entry.getKey())){
-                                throw new Exception("未找到beanName= " + beanName + "的bean实例");
-                            }
-                            return entry.getValue().getWrappedInstance();
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        throw new Exception("beanName 与 beanClass 均为null，找不到Bean实例");
-    }
-
-    /**
-     * 真正的获取bean对象函数
-     * @param beanName  bean对象名称
-     * @return bean对象 (可能为null)
-     */
-    private Object doGetBean(String beanName){
-        // 检查是否已经有了实例化好的bean
-        if (commonIoc.containsKey(beanName)){
-            return commonIoc.get(beanName).getWrappedInstance();
-        }
-
-        BeanDefinition beanDefinition = super.beanDefinitionMap.get(beanName);
-        if (null == beanDefinition){
-            return null;
-        }
-
-        try {
-            BeanPostProcessor beanPostProcessor = new BeanPostProcessor();
-
-            // 实例化原始bean对象
-            Object instance = instantiateBean(beanDefinition);
-            if (null == instance) return null;
-
-            // 前置处理
-            Object bean = beanPostProcessor.postProcessBeforeInitialization(instance, beanName);
-
-            // 执行定义的init-method
-            invokeInitMethods(bean, beanDefinition);
-
-            // 后置处理
-            bean = beanPostProcessor.postProcessAfterInitialization(bean, beanName);
-
-            // 生成BeanWrapper增强对象
-            BeanWrapper beanWrapper = new BeanWrapper(bean);
-
-            this.commonIoc.put(beanName, beanWrapper);  // beanName可以找到这个实例
-
-            // 返回实例化的bean包装类，等待注入
-            return beanWrapper;
-
-        }catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * 执行bean的定义好的初始化函数
-     * @param bean bean对象
-     * @param beanDefinition bean对象的bean定义
-     */
-    private void invokeInitMethods(Object bean, BeanDefinition beanDefinition) {
-        String initMethodName = beanDefinition.getInitMethodName();
-        if (!StringUtils.isEmpty(initMethodName)){
-            try {
-                Method initMethod = bean.getClass().getMethod(initMethodName);
-                initMethod.invoke(bean, null);
-                log.debug("执行 : "+ bean.getClass() +"对象的初始化方法 : " + initMethod.getName());
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-                log.warn("获取 : "+ bean.getClass() +"对象的初始化方法失败");
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-                log.warn("执行 : " + bean.getClass() + "对象的初始化方法失败");
-            }
-        }
-    }
 
     /**
      * 对bean实例属性进行依赖注入

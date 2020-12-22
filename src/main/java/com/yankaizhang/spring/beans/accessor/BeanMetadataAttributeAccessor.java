@@ -1,6 +1,8 @@
-package com.yankaizhang.spring.beans;
+package com.yankaizhang.spring.beans.accessor;
 
 
+import com.yankaizhang.spring.beans.BeanMetadataElement;
+import com.yankaizhang.spring.beans.holder.BeanMetadataAttribute;
 import com.yankaizhang.spring.core.AttributeAccessorSupport;
 
 /**

@@ -1,7 +1,7 @@
 package com.yankaizhang.spring.context.config;
 
-import com.yankaizhang.spring.beans.factory.support.GenericBeanDefinition;
-import com.yankaizhang.spring.beans.factory.support.BeanDefinitionRegistry;
+import com.yankaizhang.spring.beans.factory.generic.GenericBeanDefinition;
+import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
 import com.yankaizhang.spring.context.annotation.Component;
 import com.yankaizhang.spring.context.annotation.Configuration;
 import com.yankaizhang.spring.context.annotation.Controller;

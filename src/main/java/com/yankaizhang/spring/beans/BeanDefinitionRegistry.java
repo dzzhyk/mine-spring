@@ -1,4 +1,4 @@
-package com.yankaizhang.spring.beans.factory.support;
+package com.yankaizhang.spring.beans;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
 

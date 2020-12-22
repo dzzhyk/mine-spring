@@ -1,4 +1,4 @@
-package com.yankaizhang.spring.beans.factory.config;
+package com.yankaizhang.spring.beans.holder;
 
 
 import com.yankaizhang.spring.beans.BeanMetadataElement;

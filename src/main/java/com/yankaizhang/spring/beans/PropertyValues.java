@@ -1,5 +1,7 @@
 package com.yankaizhang.spring.beans;
 
+import com.yankaizhang.spring.beans.holder.PropertyValue;
+
 import java.util.List;
 
 /**

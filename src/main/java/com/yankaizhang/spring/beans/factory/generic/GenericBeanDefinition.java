@@ -1,6 +1,7 @@
-package com.yankaizhang.spring.beans.factory.support;
+package com.yankaizhang.spring.beans.factory.generic;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
+import com.yankaizhang.spring.beans.factory.support.AbstractBeanDefinition;
 import com.yankaizhang.spring.util.ObjectUtils;
 
 import java.util.Objects;

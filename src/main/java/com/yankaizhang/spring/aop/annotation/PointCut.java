@@ -1,15 +1,15 @@
-package com.yankaizhang.spring.aop.aopanno;
+package com.yankaizhang.spring.aop.annotation;
 
 import java.lang.annotation.*;
 
 /**
- * 返回通知
+ * 切点表达式
  * @author dzzhyk
- * @since 2020-11-28 13:53:33
+ * @since 2020-11-28 13:53:50
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface AfterReturning {
+public @interface PointCut {
     String value() default "";
 }

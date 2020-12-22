@@ -1,8 +1,9 @@
-package com.yankaizhang.spring.beans.factory.support;
+package com.yankaizhang.spring.beans.factory.impl;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
-import com.yankaizhang.spring.beans.MutablePropertyValues;
-import com.yankaizhang.spring.beans.factory.config.ConstructorArgumentValues;
+import com.yankaizhang.spring.beans.holder.MutablePropertyValues;
+import com.yankaizhang.spring.beans.holder.ConstructorArgumentValues;
+import com.yankaizhang.spring.beans.factory.support.AbstractBeanDefinition;
 
 /**
  * RootBeanDefinition是一个实现了AbstractBeanDefinition的实例类

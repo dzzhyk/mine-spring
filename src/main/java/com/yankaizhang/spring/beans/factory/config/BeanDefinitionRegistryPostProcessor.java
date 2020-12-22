@@ -1,6 +1,6 @@
 package com.yankaizhang.spring.beans.factory.config;
 
-import com.yankaizhang.spring.beans.factory.support.BeanDefinitionRegistry;
+import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
 
 /**
  * {@link BeanFactoryPostProcessor}的进一步实现接口，优先级高于BeanFactoryPostProcessor

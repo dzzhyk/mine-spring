@@ -1,4 +1,4 @@
-package com.yankaizhang.spring.aop.aopanno;
+package com.yankaizhang.spring.aop.annotation;
 
 import java.lang.annotation.*;
 

@@ -1,10 +1,11 @@
 package com.yankaizhang.spring.context.support;
 
-import com.yankaizhang.spring.context.ConfigurableApplicationContext;
+import com.yankaizhang.spring.beans.factory.BeanFactory;
+import com.yankaizhang.spring.context.config.ConfigurableApplicationContext;
 
 /**
- * IOC容器实现类的顶层抽象类
- * 只实现了公共方法
+ * 上下文容器实现类的顶层抽象类
+ * 实现了通用的公共方法
  * @author dzzhyk
  * @since 2020-11-28 13:51:08
  */
@@ -13,4 +14,24 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
      * 刷新容器内容
      */
     public void refresh(){}
+
+    @Override
+    public BeanFactory getParentBeanFactory() {
+        return null;
+    }
+
+    @Override
+    public Object getBean(String beanName) throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object getBean(Class<?> beanClass) throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object getBean(String beanName, Class<?> beanClass) throws Exception {
+        return null;
+    }
 }

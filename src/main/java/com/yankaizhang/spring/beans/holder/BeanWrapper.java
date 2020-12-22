@@ -1,4 +1,4 @@
-package com.yankaizhang.spring.beans;
+package com.yankaizhang.spring.beans.holder;
 
 /**
  * bean包装类
