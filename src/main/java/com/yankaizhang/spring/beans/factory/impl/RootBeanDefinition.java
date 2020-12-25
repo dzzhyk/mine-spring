@@ -60,7 +60,6 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
     public RootBeanDefinition(RootBeanDefinition other){
         super(other);
         // 另外赋值RootBeanDefinition特有的一些属性
-
     }
 
     /**

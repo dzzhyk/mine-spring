@@ -83,7 +83,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
     boolean isLazyInit();
 
     /**
-     * 需要先加载的依赖的类名字数组
+     * 需要先加载的依赖的类名列表
      */
     void setDependsOn(String... dependsOn);
     String[] getDependsOn();

@@ -7,21 +7,22 @@ import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
 import com.yankaizhang.spring.beans.factory.config.ConfigurableBeanFactory;
 import com.yankaizhang.spring.beans.factory.impl.RootBeanDefinition;
 import com.yankaizhang.spring.beans.holder.BeanWrapper;
+import com.yankaizhang.spring.util.Assert;
 import com.yankaizhang.spring.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * 顶层的抽象bean工厂对象实现，提供了默认的bean工厂方法，包括配置方法
+ * 顶层的抽象bean工厂实现，提供了默认的bean工厂方法，包括配置方法
  * @author dzzhyk
  * @since 2020-12-21 18:31:52
  */
@@ -49,40 +50,29 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
 
     /**
      * 通用的IoC容器
-     * 我们最终使用的一般是这个通用的IoC容器
+     * 最终使用的一般是这个通用的IoC容器
      * 这个容器中的所有Bean对象应该都是经过增强的包装Bean
      */
     private Map<String, BeanWrapper> commonIoc = new ConcurrentHashMap<>();
 
-
-    /**
-     * 额外的bean定义映射，一般都是用户自定义的bean定义
-     * 注意，全部的bean定义映射在本类的子类中实现，这个只包含merged
-     */
-    private final Map<String, RootBeanDefinition> mergedBeanDefinitions = new ConcurrentHashMap<>(256);
 
     @Override
     public BeanFactory getParentBeanFactory() {
         return this.parentBeanFactory;
     }
 
-    /**
-     * bean实例化的通用实现
-     * 1. 保存原来的OOP对象依赖关系
-     * 2. 利用装饰器BeanWrapper，扩展增强这个类，方便AOP操作
-     */
     @Override
-    public Object getBean(String beanName) {
+    public Object getBean(String beanName) throws RuntimeException  {
         return doGetBean(beanName, null);
     }
 
     @Override
-    public <T> T getBean(Class<T> beanClass) {
+    public <T> T getBean(Class<T> beanClass) throws RuntimeException  {
         return doGetBean(null, beanClass);
     }
 
     @Override
-    public <T> T getBean(String beanName, Class<T> beanClass) {
+    public <T> T getBean(String beanName, Class<T> beanClass) throws RuntimeException  {
         return doGetBean(beanName, beanClass);
     }
 
@@ -95,69 +85,87 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
      * @return bean对象 (可能为null)
      */
     @SuppressWarnings("all")
-    protected <T> T doGetBean(String beanName, Class<T> beanClass){
-
-        // 检查是否已经有了实例化好的单例bean
-//        if (commonIoc.containsKey(beanName)){
-//            return commonIoc.get(beanName).getWrappedInstance();
-//        }
+    protected <T> T doGetBean(String beanName, Class<T> beanClass, Object... args) throws RuntimeException {
 
         Object bean;
 
+        // 检查是否已经有了实例化好的单例bean，或者使用单例工厂获取一个工厂
         Object singletonObject = getSingleton(beanName);
         if (singletonObject != null){
-
             bean = singletonObject;
 
         }else{
 
-            // 单例没找到，检查是否有父类
+            // 单例没找到，检查是否有父类bean工厂
             BeanFactory parentBeanFactory = getParentBeanFactory();
+            // 如果有父类并且本容器中没有bean定义
             if (parentBeanFactory != null && !containsBeanDefinition(beanName)){
-                // 有父类，去父类找
+                // 去父类找
                 if (parentBeanFactory instanceof AbstractConfigurableBeanFactory) {
                     return ((AbstractConfigurableBeanFactory) parentBeanFactory).doGetBean(beanName, beanClass);
                 } else if (beanClass != null) {
-                    // 如果父类不是AbstractConfigurableBeanFactory的子类实现，需要特别判断beanClass!=null的情况
+                    // 如果父类不是AbstractConfigurableBeanFactory抽象类的实现，需要特别判断beanClass!=null的情况
                     return parentBeanFactory.getBean(beanName, beanClass);
                 } else {
                     return (T) parentBeanFactory.getBean(beanName);
                 }
             }
 
-            try {
-                BeanDefinition beanDefinition = getMergedLocalBeanDefinition(beanName);
-                if (null == beanDefinition){
-                    return null;
+            // 没有可创建单例，没有父类，只能自己创建一个bean实例对象了
+            BeanDefinition beanDefinition = getBeanDefinition(beanName);
+            String[] dependsOn = beanDefinition.getDependsOn();
+
+            // 检查依赖情况
+            if (dependsOn != null) {
+                for (String dep : dependsOn) {
+                    // 检查是否有循环依赖
+                    BeanDefinition depBeanDef = getBeanDefinition(dep);
+                    String[] defDependsOn = depBeanDef.getDependsOn();
+                    for (String depdep : defDependsOn) {
+                        if (depdep.equals(beanName)){
+                            throw new RuntimeException("存在循环依赖 => [" + beanName + " <=> " + dep + " ]");
+                        }
+                    }
+                    try {
+                        getBean(dep);
+                    } catch (RuntimeException ex) {
+                        throw new RuntimeException("获取" + beanName + "的依赖bean失败 => " + dep);
+                    }
                 }
-
-                BeanPostProcessor beanPostProcessor = new BeanPostProcessor();
-
-                // 实例化原始bean对象
-                Object instance = instantiateBean(beanDefinition);
-                if (null == instance) return null;
-
-                // 前置处理
-                Object bean = beanPostProcessor.postProcessBeforeInitialization(instance, beanName);
-
-                // 执行定义的init-method
-                invokeInitMethods(bean, beanDefinition);
-
-                // 后置处理
-                bean = beanPostProcessor.postProcessAfterInitialization(bean, beanName);
-
-                // 生成BeanWrapper增强对象
-                BeanWrapper beanWrapper = new BeanWrapper(bean);
-
-                this.commonIoc.put(beanName, beanWrapper);  // beanName可以找到这个实例
-
-                // 返回实例化的bean包装类，等待注入
-                return beanWrapper;
-
-            }catch (Exception e) {
-                e.printStackTrace();
-                return null;
             }
+
+            if (beanDefinition.isSingleton()){
+                // 这里调用子类实现的方法创建完整的单例对象，
+                Object wrappedBean = getSingleton(beanName, () -> createBean(beanName, beanDefinition, args));
+                bean = getObjectForBeanInstance(rawBean, beanName, beanDefinition);
+            }else if (beanDefinition.isPrototype()){
+
+            }else{
+                throw new RuntimeException("目前只支持创建单例、多例对象 => " + beanName);
+            }
+
+            BeanPostProcessor beanPostProcessor = new BeanPostProcessor();
+
+            // 实例化原始bean对象
+            Object instance = instantiateBean(beanDefinition);
+            if (null == instance) return null;
+
+            // 前置处理
+            Object bean = beanPostProcessor.postProcessBeforeInitialization(instance, beanName);
+
+            // 执行定义的init-method
+            invokeInitMethods(bean, beanDefinition);
+
+            // 后置处理
+            bean = beanPostProcessor.postProcessAfterInitialization(bean, beanName);
+
+            // 生成BeanWrapper增强对象
+            BeanWrapper beanWrapper = new BeanWrapper(bean);
+
+            this.commonIoc.put(beanName, beanWrapper);  // beanName可以找到这个实例
+
+            // 返回实例化的bean包装类，等待注入
+            return beanWrapper;
         }
 
         // 最后检查bean实例是否满足beanClass的要求
@@ -167,22 +175,56 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
     }
 
     /**
-     * 从mergedBeanDefinitions和子类的beanDefinitions中获取可能的RootBeanDefinition
+     * 现在拿到手里的已经是准备完成的、前后置处理完成的bean对象
+     * 这个bean对象可能是一个工厂类对象，所以在Spring里面，如果尝试获取一个工厂类bean对象，会返回他的创建后对象
+     * 这个方法就是用来判断工厂对象，如果是工厂对象，返回工厂的产品
+     * @param rawBean 原始bean对象
+     * @param beanName bean名称
+     * @param beanDefinition bean定义
+     * @return 创建好的bean对象
      */
-    protected RootBeanDefinition getMergedLocalBeanDefinition(String beanName) {
-        RootBeanDefinition beanDefinition = this.mergedBeanDefinitions.get(beanName);
-        if (beanDefinition != null){
-            return beanDefinition;
-        }
-        return getMergedBeanDefinition(beanName, getBeanDefinition(beanName));
+    private Object getObjectForBeanInstance(Object rawBean, String beanName, BeanDefinition beanDefinition) {
+        if ()
     }
-
-    /**
-     * 从子类获取的beanDefinition中创建得到RootBeanDefinition
-     */
-    private RootBeanDefinition getMergedBeanDefinition(String beanName, BeanDefinition beanDefinition) {
-        return null;
-    }
+//
+//    /**
+//     * 从mergedBeanDefinitions和子类的beanDefinitions中获取可能的RootBeanDefinition
+//     */
+//    protected RootBeanDefinition getMergedLocalBeanDefinition(String beanName) {
+//        RootBeanDefinition beanDefinition = this.mergedBeanDefinitions.get(beanName);
+//        if (beanDefinition != null){
+//            return beanDefinition;
+//        }
+//        return getMergedBeanDefinition(beanName, getBeanDefinition(beanName));
+//    }
+//
+//    /**
+//     * 从子类获取的beanDefinition中创建得到RootBeanDefinition
+//     */
+//    private RootBeanDefinition getMergedBeanDefinition(String beanName, BeanDefinition beanDefinition) {
+//        synchronized (this.mergedBeanDefinitions) {
+//            RootBeanDefinition mbd = null;
+//            RootBeanDefinition previous = null;
+//            // 二次校验
+//            mbd = this.mergedBeanDefinitions.get(beanName);
+//            if (mbd == null){
+//                previous = mbd;
+//                // 如果该bean定义没有父定义，直接返回一个RootBeanDefinition即可
+//                if (beanDefinition.getParentName() == null){
+//                    return new RootBeanDefinition(beanDefinition);
+//                }
+//            }else{
+//                // 如果该bean定义有父定义，需要和父定义合并
+//                BeanDefinition pbd;
+//                String parentName = beanDefinition.getParentName();
+//                if (!beanName.equals(parentName)){
+//                    pbd = getMergedBeanDefinition(parentName);
+//                }
+//            }
+//
+//            return mbd;
+//        }
+//    }
 
     /**
      * 在容器中获取可能的已经初始化的对象
@@ -248,6 +290,40 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
     }
 
     /**
+     * 使用指定的工厂对象创建单例对象
+     * @param beanName bean名称
+     * @param singletonFactory 指定的单例工厂对象
+     * @return 创建好的单例对象
+     */
+    private Object getSingleton(String beanName, ObjectFactory<?> singletonFactory){
+        Assert.notNull(beanName, "beanName不能为null");
+        synchronized (this.singletonIoc) {
+            Object singletonObject = this.singletonIoc.get(beanName);
+            if (singletonObject == null) {
+                log.debug("创建单例对象 : {}", beanName);
+                boolean newSingleton = false;
+                try {
+                    singletonObject = singletonFactory.getObject();
+                    newSingleton = true;
+                }
+                catch (RuntimeException ex) {
+                    singletonObject = this.singletonIoc.get(beanName);
+                    if (singletonObject == null) {
+                        throw ex;
+                    }
+                }
+                // 如果创建成功，加入容器
+                if (newSingleton) {
+                    synchronized (this.singletonIoc) {
+                        this.singletonIoc.put(beanName, singletonObject);
+                    }
+                }
+            }
+            return singletonObject;
+        }
+    }
+
+    /**
      * 执行bean的定义好的初始化函数
      * @param bean bean对象
      * @param beanDefinition bean对象的bean定义
@@ -308,5 +384,5 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
 
     protected abstract BeanDefinition getBeanDefinition(String beanName) throws RuntimeException;
 
-    protected abstract Object createBean(String beanName, RootBeanDefinition mbd, Object[] args) throws RuntimeException;
+    protected abstract Object createBean(String beanName, BeanDefinition mbd, Object[] args) throws RuntimeException;
 }
