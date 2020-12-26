@@ -21,17 +21,17 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     }
 
     @Override
-    public Object getBean(String beanName) throws Exception {
+    public Object getBean(String beanName) throws RuntimeException {
         return null;
     }
 
     @Override
-    public Object getBean(Class<?> beanClass) throws Exception {
+    public <T> T getBean(Class<T> beanClass) throws RuntimeException {
         return null;
     }
 
     @Override
-    public Object getBean(String beanName, Class<?> beanClass) throws Exception {
+    public <T> T getBean(String beanName, Class<T> beanClass) throws RuntimeException {
         return null;
     }
 }

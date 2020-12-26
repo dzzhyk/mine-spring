@@ -2,9 +2,11 @@ package com.yankaizhang.spring.beans.factory.support;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
 import com.yankaizhang.spring.beans.factory.BeanFactory;
+import com.yankaizhang.spring.beans.factory.FactoryBean;
 import com.yankaizhang.spring.beans.factory.ObjectFactory;
 import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
-import com.yankaizhang.spring.beans.factory.config.ConfigurableBeanFactory;
+import com.yankaizhang.spring.beans.factory.ConfigurableBeanFactory;
+import com.yankaizhang.spring.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import com.yankaizhang.spring.beans.factory.impl.RootBeanDefinition;
 import com.yankaizhang.spring.beans.holder.BeanWrapper;
 import com.yankaizhang.spring.util.Assert;
@@ -14,8 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,9 +34,6 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
 
     /** 父类工厂对象 */
     private BeanFactory parentBeanFactory;
-
-    /** bean处理器 */
-    private final List<BeanPostProcessor> beanPostProcessors = new CopyOnWriteArrayList<>();
 
     /**
      * 单例IoC容器
@@ -54,6 +53,12 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
      * 这个容器中的所有Bean对象应该都是经过增强的包装Bean
      */
     private Map<String, BeanWrapper> commonIoc = new ConcurrentHashMap<>();
+
+    /** bean处理器 */
+    private final List<BeanPostProcessor> beanPostProcessors = new CopyOnWriteArrayList<>();
+
+    /** 初始化bean前置处理器 */
+    private final List<InstantiationAwareBeanPostProcessor> instantiationAware = new ArrayList<>();
 
 
     @Override
@@ -112,13 +117,15 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
             }
 
             // 没有可创建单例，没有父类，只能自己创建一个bean实例对象了
-            BeanDefinition beanDefinition = getBeanDefinition(beanName);
+            // 获取到的可能不是RootBeanDefinition类型，但是在创建的时候需要统一使用RootBeanDefinition
+            BeanDefinition temp = getBeanDefinition(beanName);
+            RootBeanDefinition beanDefinition = new RootBeanDefinition(temp);
             String[] dependsOn = beanDefinition.getDependsOn();
 
             // 检查依赖情况
             if (dependsOn != null) {
                 for (String dep : dependsOn) {
-                    // 检查是否有循环依赖
+                    // 检查是否有循环依赖，否则会死循环
                     BeanDefinition depBeanDef = getBeanDefinition(dep);
                     String[] defDependsOn = depBeanDef.getDependsOn();
                     for (String depdep : defDependsOn) {
@@ -135,56 +142,68 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
             }
 
             if (beanDefinition.isSingleton()){
-                // 这里调用子类实现的方法创建完整的单例对象，
+                // 这里调用子类实现的createBean方法创建完整的单例对象，
                 Object wrappedBean = getSingleton(beanName, () -> createBean(beanName, beanDefinition, args));
-                bean = getObjectForBeanInstance(rawBean, beanName, beanDefinition);
+                bean = getObjectForBeanInstance(wrappedBean, beanName);
             }else if (beanDefinition.isPrototype()){
-
+                Object wrappedBean = createBean(beanName, beanDefinition, args);
+                bean = getObjectForBeanInstance(wrappedBean, beanName);
             }else{
                 throw new RuntimeException("目前只支持创建单例、多例对象 => " + beanName);
             }
 
-            BeanPostProcessor beanPostProcessor = new BeanPostProcessor();
-
-            // 实例化原始bean对象
-            Object instance = instantiateBean(beanDefinition);
-            if (null == instance) return null;
-
-            // 前置处理
-            Object bean = beanPostProcessor.postProcessBeforeInitialization(instance, beanName);
-
-            // 执行定义的init-method
-            invokeInitMethods(bean, beanDefinition);
-
-            // 后置处理
-            bean = beanPostProcessor.postProcessAfterInitialization(bean, beanName);
-
-            // 生成BeanWrapper增强对象
-            BeanWrapper beanWrapper = new BeanWrapper(bean);
-
-            this.commonIoc.put(beanName, beanWrapper);  // beanName可以找到这个实例
-
-            // 返回实例化的bean包装类，等待注入
-            return beanWrapper;
+//            BeanPostProcessor beanPostProcessor = new BeanPostProcessor();
+//
+//            // 实例化原始bean对象
+//            Object instance = instantiateBean(beanDefinition);
+//            if (null == instance) return null;
+//
+//            // 前置处理
+//            Object bean = beanPostProcessor.postProcessBeforeInitialization(instance, beanName);
+//
+//            // 执行定义的init-method
+//            invokeInitMethods(bean, beanDefinition);
+//
+//            // 后置处理
+//            bean = beanPostProcessor.postProcessAfterInitialization(bean, beanName);
+//
+//            // 生成BeanWrapper增强对象
+//            BeanWrapper beanWrapper = new BeanWrapper(bean);
+//
+//            this.commonIoc.put(beanName, beanWrapper);  // beanName可以找到这个实例
+//
+//            // 返回实例化的bean包装类，等待注入
+//            return beanWrapper;
         }
 
         // 最后检查bean实例是否满足beanClass的要求
 
         return (T) bean;
-
     }
 
     /**
      * 现在拿到手里的已经是准备完成的、前后置处理完成的bean对象
      * 这个bean对象可能是一个工厂类对象，所以在Spring里面，如果尝试获取一个工厂类bean对象，会返回他的创建后对象
      * 这个方法就是用来判断工厂对象，如果是工厂对象，返回工厂的产品
-     * @param rawBean 原始bean对象
+     * @param wrappedBean 原始bean对象
      * @param beanName bean名称
-     * @param beanDefinition bean定义
      * @return 创建好的bean对象
      */
-    private Object getObjectForBeanInstance(Object rawBean, String beanName, BeanDefinition beanDefinition) {
-        if ()
+    private Object getObjectForBeanInstance(Object wrappedBean, String beanName) {
+        if (wrappedBean instanceof BeanWrapper){
+            final Object wrappedInstance = ((BeanWrapper) wrappedBean).getWrappedInstance();
+            // 如果是工厂对象
+            if (wrappedInstance instanceof FactoryBean){
+                try {
+                    Object object = ((FactoryBean) wrappedInstance).getObject();
+                    return object;
+                } catch (Exception e) {
+                    log.error("获取工厂对象的产品失败 => {}", beanName);
+                    e.printStackTrace();
+                }
+            }
+        }
+        return wrappedBean;
     }
 //
 //    /**
@@ -384,5 +403,14 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
 
     protected abstract BeanDefinition getBeanDefinition(String beanName) throws RuntimeException;
 
-    protected abstract Object createBean(String beanName, BeanDefinition mbd, Object[] args) throws RuntimeException;
+    protected abstract Object createBean(String beanName, RootBeanDefinition mbd, Object[] args) throws RuntimeException;
+
+
+    public List<InstantiationAwareBeanPostProcessor> getInstantiationAware() {
+        return instantiationAware;
+    }
+
+    protected boolean hasInstantiationAwareBeanPostProcessors() {
+        return instantiationAware.isEmpty();
+    }
 }

@@ -1,7 +1,6 @@
 package com.yankaizhang.spring.beans.factory;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
-import com.yankaizhang.spring.beans.factory.config.ConfigurableBeanFactory;
 import com.yankaizhang.spring.beans.factory.support.AbstractCompletedBeanFactory;
 
 /**

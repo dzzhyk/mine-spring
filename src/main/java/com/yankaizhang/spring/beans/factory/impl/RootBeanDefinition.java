@@ -13,6 +13,13 @@ import com.yankaizhang.spring.beans.factory.support.AbstractBeanDefinition;
  */
 public class RootBeanDefinition extends AbstractBeanDefinition {
 
+    public final Object postProcessingLock = new Object();
+
+    /** 标记MergedBeanDefinitionPostProcessor是否已经应用过 */
+    public boolean postProcessed = false;
+
+    /** 标记是否已经在实例化之前被解析过 */
+    public volatile Boolean beforeInstantiationResolved;
 
     public RootBeanDefinition() {
         super();
@@ -20,12 +27,12 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 
     public RootBeanDefinition(Class<?> beanClass) {
         super();
-        setBeanClass(beanClass);
+        setTargetType(beanClass);
     }
 
     public RootBeanDefinition(Class<?> beanClass, int autowireMode, boolean dependencyCheck){
         super();
-        setBeanClass(beanClass);
+        setTargetType(beanClass);
         setAutowireMode(autowireMode);
         if (dependencyCheck  && getAutowireMode()!=AUTOWIRE_CONSTRUCTOR){
             setDependencyCheck(DEPENDENCY_CHECK_OBJECTS);
@@ -36,7 +43,7 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
                               ConstructorArgumentValues constructorArgumentValues,
                               MutablePropertyValues propertyValues) {
         super(constructorArgumentValues, propertyValues);
-        setBeanClass(beanClass);
+        setTargetType(beanClass);
     }
 
     /**
@@ -60,6 +67,7 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
     public RootBeanDefinition(RootBeanDefinition other){
         super(other);
         // 另外赋值RootBeanDefinition特有的一些属性
+
     }
 
     /**

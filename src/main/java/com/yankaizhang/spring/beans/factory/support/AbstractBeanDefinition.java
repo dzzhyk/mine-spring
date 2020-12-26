@@ -61,7 +61,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
      *  本类的beanClass，实例化的结果就是这个类
      *  这个beanClass可以是Class，也可以是String类型（全类名）
      */
-    private volatile Object beanClass;
+    private volatile String beanClass;
+    private volatile Class<?> targetType;
 
     private String scope = SCOPE_DEFAULT;
     private boolean abstractFlag = false;
@@ -82,6 +83,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     private String destroyMethodName;
     private int role = BeanDefinition.ROLE_APPLICATION;
     private String description;
+    private boolean nonPublicAccessAllowed = true;
 
     public AbstractBeanDefinition() {
         this(null, null);
@@ -110,6 +112,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     public void validate() throws Exception {
         if (this.beanClass == null){
             throw new Exception("bean定义验证失败，缺少beanClass");
+        }else if(this.targetType == null){
+            throw new Exception("bean定义验证失败，缺少targetType");
         }
     }
 
@@ -130,10 +134,6 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     @Override
     public void setBeanClassName(String beanClassName) {
-        this.beanClass = beanClassName;
-    }
-
-    public void setBeanClassName(Class<?> beanClassName) {
         this.beanClass = beanClassName;
     }
 
@@ -184,12 +184,21 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
         return null;
     }
 
-    public Object getBeanClass() {
+    public String getBeanClass() {
         return beanClass;
     }
 
-    public void setBeanClass(Object beanClass) {
+    public void setBeanClass(String beanClass) {
         this.beanClass = beanClass;
+    }
+
+    public Class<?> getTargetType() {
+        return targetType;
+    }
+
+    public void setTargetType(Class<?> targetType) {
+        this.targetType = targetType;
+        this.beanClass = targetType.getName();
     }
 
     @Override
@@ -336,5 +345,13 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     @Override
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isNonPublicAccessAllowed() {
+        return nonPublicAccessAllowed;
+    }
+
+    public void setNonPublicAccessAllowed(boolean nonPublicAccessAllowed) {
+        this.nonPublicAccessAllowed = nonPublicAccessAllowed;
     }
 }

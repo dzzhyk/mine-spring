@@ -55,6 +55,7 @@ public class DefaultBeanFactory extends AbstractCompletedBeanFactory
         }else{
             this.beanDefinitionMap.put(beanName, beanDefinition);
             this.beanDefinitionNames.add(beanName);
+            log.debug("创建bean定义 : ["+ beanName + "] => " + beanDefinition.getBeanClassName());
         }
 
     }
@@ -67,21 +68,6 @@ public class DefaultBeanFactory extends AbstractCompletedBeanFactory
             throw new Exception("未找到准备删除的bean定义 => " + beanName);
         }
         this.beanDefinitionNames.remove(beanName);
-    }
-
-    @Override
-    public BeanDefinition getBeanDefinition(String beanName) throws Exception {
-        Assert.hasText(beanName, "beanName不能为null");
-        BeanDefinition definition = this.beanDefinitionMap.get(beanName);
-        if (definition == null){
-            throw new Exception("未找到bean定义 => " + beanName);
-        }
-        return definition;
-    }
-
-    @Override
-    public boolean containsBeanDefinition(String beanName) {
-        return this.beanDefinitionMap.containsKey(beanName);
     }
 
     @Override
@@ -105,5 +91,24 @@ public class DefaultBeanFactory extends AbstractCompletedBeanFactory
 
     public void setAllowBeanDefinitionOverriding(boolean allowBeanDefinitionOverriding) {
         this.allowBeanDefinitionOverriding = allowBeanDefinitionOverriding;
+    }
+
+    /*
+        必须实现的来自AbstractConfigurableBeanFactory的抽象方法
+     */
+
+    @Override
+    public boolean containsBeanDefinition(String beanName) {
+        return this.beanDefinitionMap.containsKey(beanName);
+    }
+
+    @Override
+    public BeanDefinition getBeanDefinition(String beanName) throws RuntimeException {
+        Assert.hasText(beanName, "beanName不能为null");
+        BeanDefinition definition = this.beanDefinitionMap.get(beanName);
+        if (definition == null){
+            throw new RuntimeException("beanDefinitionMap中未找到bean定义 => " + beanName);
+        }
+        return definition;
     }
 }

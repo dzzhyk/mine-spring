@@ -1,7 +1,8 @@
-package com.yankaizhang.spring.beans.factory.config;
+package com.yankaizhang.spring.beans.factory;
 
 import com.yankaizhang.spring.beans.factory.BeanFactory;
 import com.yankaizhang.spring.beans.factory.HierarchicalBeanFactory;
+import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
 
 /**
  * 可以配置的bean工厂接口实现，继承自{@link HierarchicalBeanFactory}接口
