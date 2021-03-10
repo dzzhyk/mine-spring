@@ -14,8 +14,8 @@ public interface BeanFactoryPostProcessor {
     /**
      * 处理IoC容器中的BeanDefinition，此时所有的BeanDefinition都已经被注册，但是还没有实例化
      * @param beanFactory IoC容器
-     * @throws Exception 处理过程错误
+     * @throws RuntimeException 处理过程错误
      */
-    void postProcessBeanFactory(BeanFactory beanFactory) throws Exception;
+    void postProcessBeanFactory(BeanFactory beanFactory) throws RuntimeException;
 
 }

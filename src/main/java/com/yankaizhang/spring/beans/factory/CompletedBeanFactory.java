@@ -23,8 +23,8 @@ public interface CompletedBeanFactory extends ListableBeanFactory, ConfigurableB
 
     /**
      * 预先实例化需要的单例，一般在BeanFactory初始化的最后一步进行
-     * @throws Exception 实例化过程异常
+     * @throws RuntimeException 实例化过程异常
      */
-    void preInstantiateSingletons() throws Exception;
+    void preInstantiateSingletons() throws RuntimeException;
 
 }

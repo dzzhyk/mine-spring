@@ -19,4 +19,8 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Clos
      */
     CompletedBeanFactory getBeanFactory() throws IllegalStateException;
 
+    /**
+     * 刷新或初始化容器
+     */
+    void refresh();
 }

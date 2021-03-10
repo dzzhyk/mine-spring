@@ -8,10 +8,10 @@ package com.yankaizhang.spring.aop.holder;
 public class AopConfig implements Cloneable {
 
     private String pointCut;
-    /**
-     * 切面类名
-     */
+
+    /** 切面类名 */
     private String aspectClass;
+
     private String aspectBefore;
     private String aspectAfter;
     private String aspectAfterThrow;

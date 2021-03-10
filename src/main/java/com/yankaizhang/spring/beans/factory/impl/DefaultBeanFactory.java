@@ -111,4 +111,9 @@ public class DefaultBeanFactory extends AbstractCompletedBeanFactory
         }
         return definition;
     }
+
+    @Override
+    public Map<String, BeanDefinition> getBeanDefinitionMap() {
+        return beanDefinitionMap;
+    }
 }

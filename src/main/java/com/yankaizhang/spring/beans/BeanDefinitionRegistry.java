@@ -1,6 +1,9 @@
 package com.yankaizhang.spring.beans;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
+import com.yankaizhang.spring.context.annotation.Bean;
+
+import java.util.Map;
 
 /**
  * 这个接口定义了操作BeanDefinition的基本方法
@@ -28,6 +31,11 @@ public interface BeanDefinitionRegistry {
      * 获取BeanDefinition
      */
     BeanDefinition getBeanDefinition(String beanName) throws Exception;
+
+    /**
+     * 获取BeanDefinitionMap
+     */
+    Map<String, BeanDefinition> getBeanDefinitionMap();
 
     /**
      * 根据名称检查是否包含某个BeanDefinition

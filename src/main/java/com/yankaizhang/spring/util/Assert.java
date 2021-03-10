@@ -41,7 +41,7 @@ public class Assert {
     }
 
     public static void hasText(String text, String msg) {
-        if (!StringUtils.isEmpty(text)){
+        if (StringUtils.isEmpty(text)){
             throw new IllegalArgumentException(msg);
         }
     }

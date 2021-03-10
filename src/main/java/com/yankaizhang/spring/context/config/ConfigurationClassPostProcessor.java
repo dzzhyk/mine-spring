@@ -1,34 +1,59 @@
 package com.yankaizhang.spring.context.config;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
+import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
+import com.yankaizhang.spring.beans.factory.BeanFactory;
+import com.yankaizhang.spring.beans.factory.config.BeanDefinitionRegistryPostProcessor;
 import com.yankaizhang.spring.beans.factory.impl.AnnotatedGenericBeanDefinition;
 import com.yankaizhang.spring.beans.factory.support.AbstractBeanDefinition;
-import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
 import com.yankaizhang.spring.context.annotation.Bean;
 import com.yankaizhang.spring.context.annotation.ComponentScan;
+import com.yankaizhang.spring.context.annotation.Configuration;
 import com.yankaizhang.spring.context.annotation.Lazy;
 import com.yankaizhang.spring.context.util.BeanDefinitionRegistryUtils;
 import com.yankaizhang.spring.util.StringUtils;
 
 import java.lang.reflect.Method;
-
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * 配置类解析器
- *
- * TODO: 这个类是在未完成前后置处理器之前对于配置类解析的替代品
+ * 配置类解析器，实现了{@link BeanDefinitionRegistryPostProcessor}接口，在容器创建之后使用
  * @author dzzhyk
- * @since 2020-11-28 13:50:58
  */
+public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPostProcessor {
 
-public class ConfigClassReader {
-
+    private ConfigClassReader configClassReader;
     private BeanDefinitionRegistry registry;
     private ClassPathBeanDefinitionScanner scanner;
 
-    public ConfigClassReader(BeanDefinitionRegistry registry, ClassPathBeanDefinitionScanner scanner) {
+    @Override
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
         this.registry = registry;
-        this.scanner = scanner;
+        this.scanner  = new ClassPathBeanDefinitionScanner(this.registry);
+        this.configClassReader = new ConfigClassReader(this.registry, this.scanner);
+        doProcessAnnotationConfiguration();
+    }
+
+    /**
+     * 预先处理配置类的bean定义
+     * Spring中这里使用的是一个BeanDefinitionRegisterPostProcessor来完成的
+     */
+    private void doProcessAnnotationConfiguration() {
+        try {
+            Map<String, BeanDefinition> temp = new LinkedHashMap<>(registry.getBeanDefinitionMap());
+            for (Map.Entry<String, BeanDefinition> entry : temp.entrySet()) {
+                BeanDefinition definition = entry.getValue();
+                Class<?> configClazz = Class.forName(definition.getBeanClassName());
+                // 如果是配置类，就解析该配置类下的@Bean注册内容
+                if (configClazz.isAnnotationPresent(Configuration.class)) {
+                    configClassReader.parseAnnotationConfigClass(configClazz);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -82,7 +107,7 @@ public class ConfigClassReader {
         boolean lazyInit = (method.getAnnotation(Lazy.class)!=null);
         String factoryMethodName = method.getName();
 
-        if (StringUtils.isEmpty(beanName)){
+        if ("".equals(beanName.trim())){
             beanName = factoryMethodName;
         }
 
@@ -98,5 +123,10 @@ public class ConfigClassReader {
         beanDef.setDestroyMethodName(destroyMethod);
 
         BeanDefinitionRegistryUtils.registerBeanDefinition(registry, beanName, beanDef);
+    }
+
+    @Override
+    public void postProcessBeanFactory(BeanFactory beanFactory) throws RuntimeException {
+
     }
 }

@@ -110,7 +110,7 @@ public class AdvisedSupport implements Cloneable {
                 aspectMethods.put(method.getName(), method);
             }
 
-            for (Method method : targetClass.getDeclaredMethods()) {    // getDeclaredMethods
+            for (Method method : targetClass.getDeclaredMethods()) {
 
                 // 创建pointCut包装类
                 PointCutConfig pointCutConfig = new PointCutConfig(method);

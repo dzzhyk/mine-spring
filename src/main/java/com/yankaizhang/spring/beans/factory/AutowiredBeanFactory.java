@@ -1,5 +1,6 @@
 package com.yankaizhang.spring.beans.factory;
 
+import com.yankaizhang.spring.beans.BeanDefinition;
 import com.yankaizhang.spring.beans.factory.annotation.Autowired;
 import com.yankaizhang.spring.beans.holder.BeanWrapper;
 
@@ -57,7 +58,7 @@ public interface AutowiredBeanFactory extends BeanFactory {
      * 不会检查是否存在一个bean名称为beanName的bean定义，这个名字只是被当做参数传递给前后置处理器的
      * @return 初始化好的bean对象
      */
-    Object initializeBean(Object existingBean, String beanName) throws RuntimeException;
+    Object initializeBean(Object existingBean, String beanName, BeanDefinition beanDefinition) throws RuntimeException;
 
     /**
      * 对某个尚未初始化的bean实例，执行前置处理

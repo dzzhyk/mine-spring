@@ -2,9 +2,16 @@ package com.yankaizhang.spring.context.generic;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
 import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
+import com.yankaizhang.spring.beans.factory.CompletedBeanFactory;
+import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
 import com.yankaizhang.spring.beans.factory.impl.DefaultBeanFactory;
 import com.yankaizhang.spring.context.support.AbstractApplicationContext;
 import com.yankaizhang.spring.util.Assert;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 通用上下文对象
@@ -15,7 +22,7 @@ import com.yankaizhang.spring.util.Assert;
 public class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {
 
     /** 真正的beanFactory对象 */
-    DefaultBeanFactory beanFactory;
+    private final DefaultBeanFactory beanFactory;
 
     public GenericApplicationContext() {
         this.beanFactory = new DefaultBeanFactory();
@@ -61,4 +68,22 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
         return beanFactory.isBeanNameInUse(beanName);
     }
 
+    @Override
+    public CompletedBeanFactory getBeanFactory() throws IllegalStateException {
+        return this.beanFactory;
+    }
+
+    @Override
+    public void close() throws IOException {
+        // 暂时没什么可做的
+    }
+
+    public List<BeanPostProcessor> getBeanPostProcessors(){
+        return beanFactory.getBeanPostProcessors();
+    }
+
+    @Override
+    public Map<String, BeanDefinition> getBeanDefinitionMap() {
+        return beanFactory.getBeanDefinitionMap();
+    }
 }

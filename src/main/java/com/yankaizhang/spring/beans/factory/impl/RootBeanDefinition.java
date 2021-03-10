@@ -1,6 +1,7 @@
 package com.yankaizhang.spring.beans.factory.impl;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
+import com.yankaizhang.spring.beans.factory.generic.GenericBeanDefinition;
 import com.yankaizhang.spring.beans.holder.MutablePropertyValues;
 import com.yankaizhang.spring.beans.holder.ConstructorArgumentValues;
 import com.yankaizhang.spring.beans.factory.support.AbstractBeanDefinition;
@@ -27,12 +28,12 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 
     public RootBeanDefinition(Class<?> beanClass) {
         super();
-        setTargetType(beanClass);
+        setBeanClass(beanClass);
     }
 
     public RootBeanDefinition(Class<?> beanClass, int autowireMode, boolean dependencyCheck){
         super();
-        setTargetType(beanClass);
+        setBeanClass(beanClass);
         setAutowireMode(autowireMode);
         if (dependencyCheck  && getAutowireMode()!=AUTOWIRE_CONSTRUCTOR){
             setDependencyCheck(DEPENDENCY_CHECK_OBJECTS);
@@ -43,7 +44,7 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
                               ConstructorArgumentValues constructorArgumentValues,
                               MutablePropertyValues propertyValues) {
         super(constructorArgumentValues, propertyValues);
-        setTargetType(beanClass);
+        setBeanClass(beanClass);
     }
 
     /**
@@ -51,14 +52,14 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
      * 这里不使用类对象而是使用类名，可以避免类class文件总是提前装载
      */
     public RootBeanDefinition (String beanClassName){
-        setBeanClass(beanClassName);
+        setBeanClassName(beanClassName);
     }
 
     public RootBeanDefinition(String beanClassName,
                               ConstructorArgumentValues constructorArgumentValues,
                               MutablePropertyValues propertyValues) {
         super(constructorArgumentValues, propertyValues);
-        setBeanClass(beanClassName);
+        setBeanClassName(beanClassName);
     }
 
     /**
@@ -67,14 +68,28 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
     public RootBeanDefinition(RootBeanDefinition other){
         super(other);
         // 另外赋值RootBeanDefinition特有的一些属性
-
     }
 
     /**
      * 从另一个BeanDefinition对象创建
      */
-    public RootBeanDefinition(BeanDefinition definition){
+    public RootBeanDefinition(GenericBeanDefinition definition){
         super(definition);
+        try {
+            this.setBeanClassName(definition.getBeanClassName());
+            this.setBeanClass(definition.getBeanClass());
+            this.setLazyInit(definition.isLazyInit());
+            this.setInitMethodName(definition.getInitMethodName());
+            this.setDestroyMethodName(definition.getDestroyMethodName());
+            this.setFactoryBeanName(definition.getFactoryBeanName());
+            this.setFactoryMethodName(definition.getFactoryMethodName());
+            this.setAutowireMode(definition.getAutowireMode());
+            this.setParentName(definition.getParentName());
+            this.setAbstractFlag(definition.isAbstractFlag());
+            this.setScope(definition.getScope());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -69,6 +69,11 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
     void setBeanClassName(String beanClassName);
     String getBeanClassName();
 
+    /**
+     * bean实例的类对象
+     */
+    void setBeanClass(Class<?> beanClass);
+    Class<?> getBeanClass();
 
     /**
      * bean的生命周期

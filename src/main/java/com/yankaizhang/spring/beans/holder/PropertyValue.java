@@ -8,8 +8,9 @@ import java.util.Objects;
  * @since 2020-11-28 13:53:16
  */
 public class PropertyValue {
+
     private String name;
-    private String value;
+    private Object value;
 
     public PropertyValue(String name, String value) {
         this.name = name;
@@ -24,7 +25,7 @@ public class PropertyValue {
         this.name = name;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 

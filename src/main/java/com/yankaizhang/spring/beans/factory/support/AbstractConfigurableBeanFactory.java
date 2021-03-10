@@ -4,9 +4,12 @@ import com.yankaizhang.spring.beans.BeanDefinition;
 import com.yankaizhang.spring.beans.factory.BeanFactory;
 import com.yankaizhang.spring.beans.factory.FactoryBean;
 import com.yankaizhang.spring.beans.factory.ObjectFactory;
+import com.yankaizhang.spring.beans.factory.annotation.AnnotatedBeanDefinition;
 import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
 import com.yankaizhang.spring.beans.factory.ConfigurableBeanFactory;
+import com.yankaizhang.spring.beans.factory.config.DestructionAwareBeanPostProcessor;
 import com.yankaizhang.spring.beans.factory.config.InstantiationAwareBeanPostProcessor;
+import com.yankaizhang.spring.beans.factory.generic.GenericBeanDefinition;
 import com.yankaizhang.spring.beans.factory.impl.RootBeanDefinition;
 import com.yankaizhang.spring.beans.holder.BeanWrapper;
 import com.yankaizhang.spring.util.Assert;
@@ -39,7 +42,7 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
      * 单例IoC容器
      * 这个容器一般存放扫描到的Bean单例类对象
      */
-    private Map<String, Object> singletonIoc = new ConcurrentHashMap<>();
+    private Map<String, Object> singletonIoc = new ConcurrentHashMap<>(256);
 
     /**
      * 单例工厂容器
@@ -47,19 +50,16 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
      */
     private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
-    /**
-     * 通用的IoC容器
-     * 最终使用的一般是这个通用的IoC容器
-     * 这个容器中的所有Bean对象应该都是经过增强的包装Bean
-     */
-    private Map<String, BeanWrapper> commonIoc = new ConcurrentHashMap<>();
+    //
+//    /**
+//     * 通用的IoC容器
+//     * 最终使用的一般是这个通用的IoC容器
+//     * 这个容器中的所有Bean对象应该都是经过增强的包装Bean
+//     */
+//    private Map<String, BeanWrapper> commonIoc = new ConcurrentHashMap<>(256);
 
-    /** bean处理器 */
+    /** bean处理器，目前所有的处理器全部放在一起了 */
     private final List<BeanPostProcessor> beanPostProcessors = new CopyOnWriteArrayList<>();
-
-    /** 初始化bean前置处理器 */
-    private final List<InstantiationAwareBeanPostProcessor> instantiationAware = new ArrayList<>();
-
 
     @Override
     public BeanFactory getParentBeanFactory() {
@@ -99,7 +99,8 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
         if (singletonObject != null){
             bean = singletonObject;
 
-        }else{
+        }
+        else {
 
             // 单例没找到，检查是否有父类bean工厂
             BeanFactory parentBeanFactory = getParentBeanFactory();
@@ -119,7 +120,12 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
             // 没有可创建单例，没有父类，只能自己创建一个bean实例对象了
             // 获取到的可能不是RootBeanDefinition类型，但是在创建的时候需要统一使用RootBeanDefinition
             BeanDefinition temp = getBeanDefinition(beanName);
-            RootBeanDefinition beanDefinition = new RootBeanDefinition(temp);
+            RootBeanDefinition beanDefinition;
+            if (temp instanceof GenericBeanDefinition){
+                beanDefinition = new RootBeanDefinition((GenericBeanDefinition) temp);
+            }else{
+                beanDefinition = ((RootBeanDefinition) temp);
+            }
             String[] dependsOn = beanDefinition.getDependsOn();
 
             // 检查依赖情况
@@ -260,7 +266,9 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
                      ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
                      if (singletonFactory != null) {
                          singletonObject = singletonFactory.getObject();
-                         this.singletonFactories.remove(beanName);
+                         // 创建好后加入单例容器
+                         // this.singletonIoc.put(beanName, singletonObject);
+                         // this.singletonFactories.remove(beanName);
                      }
                  }
              }
@@ -342,47 +350,34 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
         }
     }
 
-    /**
-     * 执行bean的定义好的初始化函数
-     * @param bean bean对象
-     * @param beanDefinition bean对象的bean定义
-     */
-    private void invokeInitMethods(Object bean, BeanDefinition beanDefinition) {
-        String initMethodName = beanDefinition.getInitMethodName();
-        if (!StringUtils.isEmpty(initMethodName)){
-            try {
-                Method initMethod = bean.getClass().getMethod(initMethodName);
-                initMethod.invoke(bean, null);
-                log.debug("执行 : "+ bean.getClass() +"对象的初始化方法 : " + initMethod.getName());
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-                log.warn("获取 : "+ bean.getClass() +"对象的初始化方法失败");
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-                log.warn("执行 : " + bean.getClass() + "对象的初始化方法失败");
-            }
-        }
-    }
-
 
     @Override
     public boolean containsBean(String beanName) {
-        return false;
+        return this.singletonIoc.get(beanName) != null ||
+                (parentBeanFactory != null && this.getParentBeanFactory().containsBean(beanName));
     }
 
     @Override
     public boolean isSingleton(String beanName) throws Exception {
-        return false;
+        Object singletonObject = this.getSingleton(beanName);
+        if (singletonObject == null){
+            return parentBeanFactory != null && getParentBeanFactory().isSingleton(beanName);
+        }
+        return true;
     }
+
+    /*
+        通用bean容器配置方法实现
+     */
 
     @Override
     public void setParentBeanFactory(BeanFactory beanFactory) {
-
+        this.parentBeanFactory = beanFactory;
     }
 
     @Override
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
-
+        this.beanPostProcessors.add(beanPostProcessor);
     }
 
     @Override
@@ -390,9 +385,40 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
         return this.beanPostProcessors.size();
     }
 
+    public List<BeanPostProcessor> getBeanPostProcessors() {
+        return this.beanPostProcessors;
+    }
+
+    public boolean hasInstantiationAwareBeanPostProcessors(){
+        for(BeanPostProcessor bp : beanPostProcessors){
+            if (bp instanceof InstantiationAwareBeanPostProcessor){
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void destroyBean(String beanName, Object beanInstance) {
-
+        BeanDefinition beanDefinition = getBeanDefinition(beanName);
+        String destroyMethodName = beanDefinition.getDestroyMethodName();
+        if(destroyMethodName == null){
+            return;
+        }
+        try {
+            // 先执行销毁处理器
+            // TODO: 注意，这里目前没有区分顺序order
+            for(BeanPostProcessor processor : beanPostProcessors){
+                if(processor instanceof DestructionAwareBeanPostProcessor){
+                    ((DestructionAwareBeanPostProcessor) processor).postProcessBeforeDestruction(beanDefinition, beanName);
+                }
+            }
+            final Class<?> beanInstanceClass = beanInstance.getClass();
+            Method destroyMethod = beanInstanceClass.getMethod(destroyMethodName);
+            destroyMethod.invoke(beanInstance);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*
@@ -405,12 +431,4 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
 
     protected abstract Object createBean(String beanName, RootBeanDefinition mbd, Object[] args) throws RuntimeException;
 
-
-    public List<InstantiationAwareBeanPostProcessor> getInstantiationAware() {
-        return instantiationAware;
-    }
-
-    protected boolean hasInstantiationAwareBeanPostProcessors() {
-        return instantiationAware.isEmpty();
-    }
 }
