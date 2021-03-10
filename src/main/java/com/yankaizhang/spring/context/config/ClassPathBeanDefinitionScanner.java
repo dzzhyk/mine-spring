@@ -1,7 +1,8 @@
 package com.yankaizhang.spring.context.config;
 
-import com.yankaizhang.spring.beans.factory.support.GenericBeanDefinition;
-import com.yankaizhang.spring.context.BeanDefinitionRegistry;
+import com.yankaizhang.spring.beans.factory.generic.GenericBeanDefinition;
+import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
+import com.yankaizhang.spring.beans.factory.impl.RootBeanDefinition;
 import com.yankaizhang.spring.context.annotation.Component;
 import com.yankaizhang.spring.context.annotation.Configuration;
 import com.yankaizhang.spring.context.annotation.Controller;
@@ -111,11 +112,11 @@ public class ClassPathBeanDefinitionScanner {
     public void doRegisterBeanDefinition(Set<AnnotationMetadata> registryBeanClasses) {
 
         for (AnnotationMetadata registryBeanClass : registryBeanClasses) {
-            GenericBeanDefinition beanDef = new GenericBeanDefinition();
+            RootBeanDefinition beanDef = new RootBeanDefinition();
 
             // 这里传入的就是一个String对象
             String className = registryBeanClass.getClassName();
-            beanDef.setBeanClass(className);
+            beanDef.setBeanClassName(className);
 
             // 扫描到的类的默认的名称是 开头小写开头小写的类名
             String beanName = StringUtils.toLowerCase(className.substring(className.lastIndexOf(".")+1));

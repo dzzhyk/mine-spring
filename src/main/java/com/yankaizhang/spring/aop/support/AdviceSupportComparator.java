@@ -11,7 +11,9 @@ import java.util.Comparator;
  * @since 2020-11-28 13:55:04
  */
 public class AdviceSupportComparator implements Comparator<AdvisedSupport> {
+
     public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AdviceSupportComparator.class);
+
     @Override
     public int compare(AdvisedSupport o1, AdvisedSupport o2) {
         String pointCut1 = o1.getAopConfig().getPointCut();

@@ -1,54 +1,64 @@
 package com.yankaizhang.spring.aop.support;
 
-import com.yankaizhang.spring.aop.AopConfig;
-import com.yankaizhang.spring.aop.aopanno.AfterReturning;
-import com.yankaizhang.spring.aop.aopanno.AfterThrowing;
-import com.yankaizhang.spring.aop.aopanno.Before;
+import com.yankaizhang.spring.aop.holder.AopConfig;
+import com.yankaizhang.spring.aop.annotation.AfterReturning;
+import com.yankaizhang.spring.aop.annotation.AfterThrowing;
+import com.yankaizhang.spring.aop.annotation.Before;
+import com.yankaizhang.spring.core.LinkedMultiValueMap;
+import com.yankaizhang.spring.core.MultiValueMap;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * AopAnnotationReader主要完成对AOP切面类的解析
  * @author dzzhyk
- * @since 2020-11-28 13:55:14
+ * @since 2021-03-08 19:26:00
  */
 public class AopAnnotationReader {
 
     public AopAnnotationReader() {}
 
     /**
-     * 切面类和切点表达式的map
+     * 切点表达式的map
+     * key - 切面类对象
+     * value - expression表达式
+     * TODO: 一个切面类可能定义多个pointcut，目前只能定义一个
      */
-    private Map<Class<?>, String> pointCutMap;
+    private Map<Class<?>, String> pointCutMap = new HashMap<>();
 
-    public void setPointCutMap(Map<Class<?>, String> pointCutMap) {
-        this.pointCutMap = pointCutMap;
+
+    public void setPointCut(Class<?> clazz, String execution){
+        pointCutMap.put(clazz, execution);
     }
 
     /**
-     * 解析切面类的注解，返回 *多个* aopConfig
+     * 解析切面类的注解，返回当前切面类的aopConfig包装类
      */
     public List<AdvisedSupport> parseAspect(){
 
         if (pointCutMap.isEmpty()) {
             return null;
         }
-        ArrayList<AdvisedSupport> aopConfigList = new ArrayList<>(pointCutMap.size());
+
+        List<AdvisedSupport> advisedSupports = new ArrayList<>(pointCutMap.size());
 
         for (Map.Entry<Class<?>, String> entry : pointCutMap.entrySet()) {
+            // 当前切面类
+            Class<?> aspectClass = entry.getKey();
             // 当前切点表达式
             String pointCutNow = entry.getValue();
-            // 当前切面类
-            Class<?> aspectClazz = entry.getKey();
 
+            // aopConfig是一个包装类，包含了当前切面的信息
             AopConfig aopConfig = new AopConfig();
             aopConfig.setPointCut(pointCutNow);
-            aopConfig.setAspectClass(aspectClazz.getTypeName());
-            Method[] aspectMethods = aspectClazz.getDeclaredMethods();
+            aopConfig.setAspectClass(aspectClass.getTypeName());
+            Method[] aspectMethods = aspectClass.getDeclaredMethods();
+
             // 处理当前切面类的其他注解
             for (Method method : aspectMethods) {
                 adviceTypes adviceType = getAdvice(method);
@@ -70,10 +80,11 @@ public class AopAnnotationReader {
                 }
             }
 
-            aopConfigList.add(new AdvisedSupport(aopConfig));
+            advisedSupports.add(new AdvisedSupport(aopConfig));
         }
 
-        return aopConfigList;
+        // 返回所有切面类的包装类集合
+        return advisedSupports;
     }
 
     private adviceTypes getAdvice(Method method){

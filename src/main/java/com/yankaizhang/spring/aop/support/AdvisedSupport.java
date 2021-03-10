@@ -1,7 +1,7 @@
 package com.yankaizhang.spring.aop.support;
 
-import com.yankaizhang.spring.aop.AopConfig;
-import com.yankaizhang.spring.aop.PointCutConfig;
+import com.yankaizhang.spring.aop.holder.AopConfig;
+import com.yankaizhang.spring.aop.holder.PointCutConfig;
 import com.yankaizhang.spring.aop.aspect.AfterReturningAdvice;
 import com.yankaizhang.spring.aop.aspect.AfterThrowingAdvice;
 import com.yankaizhang.spring.aop.aspect.MethodBeforeAdvice;
@@ -110,7 +110,7 @@ public class AdvisedSupport implements Cloneable {
                 aspectMethods.put(method.getName(), method);
             }
 
-            for (Method method : targetClass.getDeclaredMethods()) {    // getDeclaredMethods
+            for (Method method : targetClass.getDeclaredMethods()) {
 
                 // 创建pointCut包装类
                 PointCutConfig pointCutConfig = new PointCutConfig(method);

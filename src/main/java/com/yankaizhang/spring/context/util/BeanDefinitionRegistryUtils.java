@@ -1,7 +1,7 @@
 package com.yankaizhang.spring.context.util;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
-import com.yankaizhang.spring.context.BeanDefinitionRegistry;
+import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,17 +19,7 @@ public class BeanDefinitionRegistryUtils {
                                               String beanName,
                                               BeanDefinition beanDefinition){
         try {
-            // 根据beanName注册
-            if (!registry.isBeanNameInUse(beanName)){
-                // 调用容器注册这个定义
-                registry.registerBeanDefinition(beanName, beanDefinition);
-                if (log.isDebugEnabled()){
-                    log.debug("创建bean定义 : ["+ beanName + "] => " + beanDefinition.getBeanClassName());
-                }
-            }else{
-                // 存在重复beanName
-                log.debug("存在重复bean定义 : " + beanName + ", 跳过注册");
-            }
+            registry.registerBeanDefinition(beanName, beanDefinition);
         }catch (Exception e){
             e.printStackTrace();
         }

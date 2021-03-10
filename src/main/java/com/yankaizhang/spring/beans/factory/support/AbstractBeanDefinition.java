@@ -2,9 +2,10 @@ package com.yankaizhang.spring.beans.factory.support;
 
 
 import com.yankaizhang.spring.beans.BeanDefinition;
-import com.yankaizhang.spring.beans.BeanMetadataAttributeAccessor;
-import com.yankaizhang.spring.beans.MutablePropertyValues;
-import com.yankaizhang.spring.beans.factory.config.ConstructorArgumentValues;
+import com.yankaizhang.spring.beans.accessor.BeanMetadataAttributeAccessor;
+import com.yankaizhang.spring.beans.factory.AutowiredBeanFactory;
+import com.yankaizhang.spring.beans.holder.MutablePropertyValues;
+import com.yankaizhang.spring.beans.holder.ConstructorArgumentValues;
 
 
 /**
@@ -14,7 +15,7 @@ import com.yankaizhang.spring.beans.factory.config.ConstructorArgumentValues;
  * BeanMetadataAttributeAccessor包含了操作
  * 另外在这个抽象类里面还定义了所有BeanDefinition都应该具有的属性，结合实现BeanDefinition里面的方法就可以把这些属性暴露出去
  * @author dzzhyk
- * @since 2020-11-28 13:52:11
+ * @since 2021-03-08 17:45:40
  */
 public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccessor
     implements BeanDefinition, Cloneable {
@@ -27,10 +28,10 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     /**
      * 自动装配模式
      */
-    public static final int AUTOWIRE_NO = 1;
-    public static final int AUTOWIRE_BY_NAME = 2;
-    public static final int AUTOWIRE_BY_TYPE = 3;
-    public static final int AUTOWIRE_CONSTRUCTOR = 4;
+    public static final int AUTOWIRE_NO = AutowiredBeanFactory.AUTOWIRE_NO;
+    public static final int AUTOWIRE_BY_NAME = AutowiredBeanFactory.AUTOWIRE_BY_NAME;
+    public static final int AUTOWIRE_BY_TYPE = AutowiredBeanFactory.AUTOWIRE_BY_TYPE;
+    public static final int AUTOWIRE_CONSTRUCTOR = AutowiredBeanFactory.AUTOWIRE_CONSTRUCTOR;
 
     /**
      * 使用none模式
@@ -60,15 +61,18 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
      *  本类的beanClass，实例化的结果就是这个类
      *  这个beanClass可以是Class，也可以是String类型（全类名）
      */
-    private volatile Object beanClass;
+    private volatile String beanClassName;
+    private volatile Class<?> beanClass;
 
     private String scope = SCOPE_DEFAULT;
     private boolean abstractFlag = false;
-    /**
-     * 默认不是懒加载
-     */
+
+    /** 默认不是懒加载 */
     private Boolean lazyInit = false;
+
+    /** 默认不进行自动装配 */
     private int autowireMode = AUTOWIRE_NO;
+
     private int dependencyCheck = DEPENDENCY_CHECK_NONE;
     private String[] dependsOn;
     private boolean autowireCandidate = true;
@@ -81,6 +85,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     private String destroyMethodName;
     private int role = BeanDefinition.ROLE_APPLICATION;
     private String description;
+    private boolean nonPublicAccessAllowed = true;
 
     public AbstractBeanDefinition() {
         this(null, null);
@@ -107,7 +112,9 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
      * 继承的子类可以重写这个方法
      */
     public void validate() throws Exception {
-        if (this.beanClass == null){
+        if (this.beanClassName == null){
+            throw new Exception("bean定义验证失败，缺少beanClassName");
+        }else if(this.beanClass == null){
             throw new Exception("bean定义验证失败，缺少beanClass");
         }
     }
@@ -129,24 +136,17 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     @Override
     public void setBeanClassName(String beanClassName) {
-        this.beanClass = beanClassName;
+        this.beanClassName = beanClassName;
     }
 
-    public void setBeanClassName(Class<?> beanClassName) {
-        this.beanClass = beanClassName;
+    @Override
+    public void setBeanClass(Class<?> beanClass) {
+        this.beanClass = beanClass;
     }
 
-    /**
-     * 这个方法要注意一下，因为在AbstractBeanDefinition里面beanClass可能是Object
-     */
     @Override
     public String getBeanClassName() {
-        Object beanClassObject = this.beanClass;
-        if (beanClassObject instanceof Class){
-            return ((Class<?>) beanClassObject).getName();
-        }else{
-            return (String) beanClassObject;
-        }
+        return this.beanClassName;
     }
 
     @Override
@@ -183,14 +183,6 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
         return null;
     }
 
-    public Object getBeanClass() {
-        return beanClass;
-    }
-
-    public void setBeanClass(Object beanClass) {
-        this.beanClass = beanClass;
-    }
-
     @Override
     public String getScope() {
         return scope;
@@ -216,6 +208,22 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     public int getAutowireMode() {
         return autowireMode;
     }
+
+    @Override
+    public Class<?> getBeanClass() {
+//        if (beanClass == null){
+//            throw new RuntimeException("bean定义的beanClass 为 null");
+//        }
+//        if (!(beanClass instanceof Class)){
+//            throw new Exception("该bean定义的beanClass尚未从beanName解析到实际Class类 => " + this.getBeanClassName());
+//        }
+        return beanClass;
+    }
+
+    public boolean hasBeanClass() {
+        return (this.beanClass instanceof Class);
+    }
+
 
     public void setAutowireMode(int autowireMode) {
         this.autowireMode = autowireMode;
@@ -290,6 +298,9 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     @Override
     public MutablePropertyValues getPropertyValues() {
+        if (this.propertyValues == null){
+            this.propertyValues = new MutablePropertyValues();
+        }
         return propertyValues;
     }
 
@@ -335,5 +346,13 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     @Override
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isNonPublicAccessAllowed() {
+        return nonPublicAccessAllowed;
+    }
+
+    public void setNonPublicAccessAllowed(boolean nonPublicAccessAllowed) {
+        this.nonPublicAccessAllowed = nonPublicAccessAllowed;
     }
 }

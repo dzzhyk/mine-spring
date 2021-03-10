@@ -1,6 +1,7 @@
 package com.yankaizhang.spring.beans;
 
-import com.yankaizhang.spring.beans.factory.config.ConstructorArgumentValues;
+import com.yankaizhang.spring.beans.holder.ConstructorArgumentValues;
+import com.yankaizhang.spring.beans.holder.MutablePropertyValues;
 import com.yankaizhang.spring.core.AttributeAccessor;
 
 
@@ -68,6 +69,11 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
     void setBeanClassName(String beanClassName);
     String getBeanClassName();
 
+    /**
+     * bean实例的类对象
+     */
+    void setBeanClass(Class<?> beanClass);
+    Class<?> getBeanClass();
 
     /**
      * bean的生命周期
@@ -82,7 +88,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
     boolean isLazyInit();
 
     /**
-     * 需要先加载的依赖的类名字数组
+     * 需要先加载的依赖的类名列表
      */
     void setDependsOn(String... dependsOn);
     String[] getDependsOn();

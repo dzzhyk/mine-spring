@@ -1,8 +1,9 @@
 package com.yankaizhang.spring.webmvc.servlet;
 
 import com.yankaizhang.spring.aop.support.AopUtils;
-import com.yankaizhang.spring.beans.BeanWrapper;
-import com.yankaizhang.spring.context.AnnotationConfigApplicationContext;
+import com.yankaizhang.spring.beans.holder.BeanWrapper;
+import com.yankaizhang.spring.context.annotation.Bean;
+import com.yankaizhang.spring.context.impl.AnnotationConfigApplicationContext;
 import com.yankaizhang.spring.context.annotation.Controller;
 import com.yankaizhang.spring.web.ViewResolver;
 import com.yankaizhang.spring.web.method.HandlerMethod;
@@ -96,8 +97,6 @@ public class DispatcherServlet extends FrameworkServlet {
         initViewResolvers(context);                 // 通过viewResolver将逻辑视图解析为具体视图实现
         initFlashMapManager(context);               // 初始化Flash映射管理器
 
-        log.debug("singletonIoC 容器bean个数 : " + String.valueOf(context.getSingletonIoc().size()) + " 个");
-        log.debug("commonsIoC 容器bean个数 : " + String.valueOf(context.getCommonIoc().size()) + " 个");
         log.debug("********** Dispatcher Servlet 初始化完成 **********");
     }
 
@@ -133,8 +132,9 @@ public class DispatcherServlet extends FrameworkServlet {
      * 初始化HandlerMapping
      */
     private void initHandlerMappings(AnnotationConfigApplicationContext context){
-        Map<String, BeanWrapper> ioc = context.getCommonIoc();   // 获取已经存在的实例化好的对象
         try {
+            // 获取已经存在的实例化好的对象
+            Map<String, BeanWrapper> ioc = context.getBeansOfType(BeanWrapper.class);
             for (BeanWrapper beanWrapper : ioc.values()) {
                 Object beanInstance = beanWrapper.getWrappedInstance();
                 // 排除可能有的bean没有在容器中

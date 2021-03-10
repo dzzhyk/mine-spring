@@ -3,6 +3,8 @@ English | [简体中文](./README-CN.md)
 # mine-spring
 A Simple Spring-Framework implementation for learning.
 
+Check project wiki => [mine-spring-wiki](https://github.com/dzzhyk/mine-spring/wiki)
+
 ## Background
 
 mine-spring is a practice product of learning Spring-Framework source code.  
@@ -70,8 +72,8 @@ For more examples, check module `mine-spring-example`
 - [x] Simplify to Controller params.
 - [x] @Configuration based Java ConfigClass support
 - [x] MultipartFile upload and download
-- [ ] a tiny AnnotationConfigClassApplicationContext impl
-- [ ] beanPostProcessor and beanFactoryPostProcessor
+- [x] A tiny `AnnotationConfigClassApplicationContext` impl
+- [ ] `BeanPostProcessor` and `BeanFactoryPostProcessor`
 - [ ] transaction support
 - [ ] @Around Aop
 
