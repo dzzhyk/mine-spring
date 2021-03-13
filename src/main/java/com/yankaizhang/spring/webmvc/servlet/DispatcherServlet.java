@@ -134,66 +134,67 @@ public class DispatcherServlet extends FrameworkServlet {
     private void initHandlerMappings(AnnotationConfigApplicationContext context){
         try {
             // 获取已经存在的实例化好的对象
-            Map<String, BeanWrapper> ioc = context.getBeansOfType(BeanWrapper.class);
-            for (BeanWrapper beanWrapper : ioc.values()) {
-                Object beanInstance = beanWrapper.getWrappedInstance();
-                // 排除可能有的bean没有在容器中
-                if (beanInstance == null) continue;
+            Map<String, Object> ioc = context.getBeanFactory().getSingletonIoc();
+            for (Object beanWrapper : ioc.values()) {
+                if (beanWrapper instanceof BeanWrapper){
+                    Object beanInstance = ((BeanWrapper) beanWrapper).getWrappedInstance();
+                    // 排除可能有的bean没有在容器中
+                    if (beanInstance == null) continue;
 
-                Class<?> clazz = null;
-                // 如果是Aop代理bean对象
-                if (AopUtils.isAopProxy(beanInstance)){
-                    // 如果是代理对象，需要获取到代理对象的最终目标类
-                    clazz = AopUtils.getAopTarget(beanInstance);
-                }else{
-                    clazz = beanInstance.getClass();
-                }
-
-                if (clazz==null || !clazz.isAnnotationPresent(Controller.class)) continue;
-
-
-                String[] baseUrls = {};
-                if (clazz.isAnnotationPresent(RequestMapping.class)){
-                    RequestMapping requestMapping = clazz.getAnnotation(RequestMapping.class);
-                    baseUrls = requestMapping.value();
-                }
-
-                // 获得了controller对象之后，就把方法包装成HandlerMethod对象吧
-                // 将controller标注@RequestMapping的方法加入handlerMapping
-                for (Method method : clazz.getDeclaredMethods()) {
-                    if (!method.isAnnotationPresent(RequestMapping.class)) continue;
-
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                    String[] methodMappings = requestMapping.value();
-
-                    // 这里生成的最终url应该是正则表达式形式
-                    // 允许同一个controller对应多个mapping
-                    if (baseUrls != null && baseUrls.length != 0) {
-                        // 如果存在Controller类的对应
-                        for (String baseUrl : baseUrls) {
-                            for (String methodMapping : methodMappings) {
-                                String url = null;
-                                // 特殊处理一下无后缀"/"的情况
-                                if ("".equals(methodMapping.trim())){
-                                    url = (baseUrl).replaceAll("/+", "/");
-                                }else{
-                                    url = (baseUrl + "/" + methodMapping).replaceAll("/+", "/");
-                                }
-                                Pattern pattern = Pattern.compile(url);
-                                handlerMappings.add(
-                                        new HandlerMapping(beanInstance, new HandlerMethod(beanInstance, method), pattern)
-                                );
-                            }
-                        }
+                    Class<?> clazz = null;
+                    // 如果是Aop代理bean对象
+                    if (AopUtils.isAopProxy(beanInstance)){
+                        // 如果是代理对象，需要获取到代理对象的最终目标类
+                        clazz = AopUtils.getAopTarget(beanInstance);
                     }else{
-                        for (String methodMapping : methodMappings) {
-                            // 如果没有controller根路径，则空路径情况需要避免
-                            if (!"".equals(methodMapping.trim())){
-                                String url = ("/" + methodMapping).replaceAll("/+", "/");
-                                Pattern pattern = Pattern.compile(url);
-                                handlerMappings.add(
-                                        new HandlerMapping(beanInstance, new HandlerMethod(beanInstance, method), pattern)
-                                );
+                        clazz = beanInstance.getClass();
+                    }
+
+                    if (clazz==null || !clazz.isAnnotationPresent(Controller.class)) continue;
+
+                    String[] baseUrls = {};
+                    if (clazz.isAnnotationPresent(RequestMapping.class)){
+                        RequestMapping requestMapping = clazz.getAnnotation(RequestMapping.class);
+                        baseUrls = requestMapping.value();
+                    }
+
+                    // 获得了controller对象之后，就把方法包装成HandlerMethod对象吧
+                    // 将controller标注@RequestMapping的方法加入handlerMapping
+                    for (Method method : clazz.getDeclaredMethods()) {
+                        if (!method.isAnnotationPresent(RequestMapping.class)) continue;
+
+                        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                        String[] methodMappings = requestMapping.value();
+
+                        // 这里生成的最终url应该是正则表达式形式
+                        // 允许同一个controller对应多个mapping
+                        if (baseUrls != null && baseUrls.length != 0) {
+                            // 如果存在Controller类的对应
+                            for (String baseUrl : baseUrls) {
+                                for (String methodMapping : methodMappings) {
+                                    String url = null;
+                                    // 特殊处理一下无后缀"/"的情况
+                                    if ("".equals(methodMapping.trim())){
+                                        url = (baseUrl).replaceAll("/+", "/");
+                                    }else{
+                                        url = (baseUrl + "/" + methodMapping).replaceAll("/+", "/");
+                                    }
+                                    Pattern pattern = Pattern.compile(url);
+                                    handlerMappings.add(
+                                            new HandlerMapping(beanInstance, new HandlerMethod(beanInstance, method), pattern)
+                                    );
+                                }
+                            }
+                        }else{
+                            for (String methodMapping : methodMappings) {
+                                // 如果没有controller根路径，则空路径情况需要避免
+                                if (!"".equals(methodMapping.trim())){
+                                    String url = ("/" + methodMapping).replaceAll("/+", "/");
+                                    Pattern pattern = Pattern.compile(url);
+                                    handlerMappings.add(
+                                            new HandlerMapping(beanInstance, new HandlerMethod(beanInstance, method), pattern)
+                                    );
+                                }
                             }
                         }
                     }

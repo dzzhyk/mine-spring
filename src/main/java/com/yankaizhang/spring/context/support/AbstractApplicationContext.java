@@ -98,10 +98,10 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
             try {
                 for (BeanFactoryPostProcessor bfp : beanFactoryPostProcessors) {
                     if (bfp instanceof BeanDefinitionRegistryPostProcessor){
+                        log.debug("执行BeanDefinitionRegistryPostProcessor : " + bfp.getClass().toString());
                         ((BeanDefinitionRegistryPostProcessor) bfp)
                                 .postProcessBeanDefinitionRegistry((BeanDefinitionRegistry) beanFactory);
                         remainedProcessors.remove(bfp);
-                        log.debug("执行BeanDefinitionRegistryPostProcessor : " + bfp.getClass().toString());
                     }
                 }
             } catch (Exception e) {

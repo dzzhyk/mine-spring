@@ -1,6 +1,6 @@
 package com.yankaizhang.spring.beans.factory.config;
 
-import com.yankaizhang.spring.beans.factory.impl.RootBeanDefinition;
+import com.yankaizhang.spring.beans.factory.generic.GenericBeanDefinition;
 
 /**
  * 这个处理器接口用于在执行所有前置处理器之前，预处理MergedBeanDefinition<br/>
@@ -16,6 +16,6 @@ public interface MergedBeanDefinitionPostProcessor extends BeanPostProcessor {
 	 * @param beanType bean类型
 	 * @param beanName bean名称
 	 */
-	void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName);
+	void postProcessMergedBeanDefinition(GenericBeanDefinition beanDefinition, Class<?> beanType, String beanName);
 
 }

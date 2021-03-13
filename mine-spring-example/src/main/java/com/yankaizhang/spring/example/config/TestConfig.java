@@ -2,6 +2,7 @@ package com.yankaizhang.spring.example.config;
 
 import com.yankaizhang.spring.context.annotation.Bean;
 import com.yankaizhang.spring.context.annotation.Configuration;
+import com.yankaizhang.spring.example.entity.User;
 import com.yankaizhang.spring.web.view.HtmlView;
 import com.yankaizhang.spring.web.ViewResolver;
 import com.yankaizhang.spring.webmvc.multipart.commons.CommonsMultipartResolver;
@@ -31,5 +32,8 @@ public class TestConfig {
         return new CommonsMultipartResolver();
     }
 
-    
+    @Bean
+    public User user(){
+        return new User("cool", "123123");
+    }
 }

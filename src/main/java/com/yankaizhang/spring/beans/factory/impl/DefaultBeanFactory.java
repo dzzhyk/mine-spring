@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +29,7 @@ public class DefaultBeanFactory extends AbstractCompletedBeanFactory
     protected final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
 
     /** bean定义名称的列表 */
-    protected volatile List<String> beanDefinitionNames = new ArrayList<>(256);
+    protected volatile List<String> beanDefinitionNames = new LinkedList<>();
 
     /** 是否允许覆盖注册同名的beanDefinition */
     private boolean allowBeanDefinitionOverriding = true;

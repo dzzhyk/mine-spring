@@ -96,7 +96,8 @@ public class ConfigClassReader {
         beanDef.setLazyInit(lazyInit);
         beanDef.setInitMethodName(initMethod);
         beanDef.setDestroyMethodName(destroyMethod);
-
+        beanDef.setBeanClass(beanClass);
+        beanDef.setBeanClassName(beanClass.getName());
         BeanDefinitionRegistryUtils.registerBeanDefinition(registry, beanName, beanDef);
     }
 }

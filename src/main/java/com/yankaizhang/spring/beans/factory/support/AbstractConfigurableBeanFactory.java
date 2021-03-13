@@ -10,16 +10,13 @@ import com.yankaizhang.spring.beans.factory.ConfigurableBeanFactory;
 import com.yankaizhang.spring.beans.factory.config.DestructionAwareBeanPostProcessor;
 import com.yankaizhang.spring.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import com.yankaizhang.spring.beans.factory.generic.GenericBeanDefinition;
-import com.yankaizhang.spring.beans.factory.impl.RootBeanDefinition;
 import com.yankaizhang.spring.beans.holder.BeanWrapper;
 import com.yankaizhang.spring.util.Assert;
 import com.yankaizhang.spring.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +45,7 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
      * 单例工厂容器
      * 这个容器存放可能的bean单例的工厂对象，通过单例工厂可以创建得到一个单例对象
      */
-    private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
+    private final Map<String, ObjectFactory<?>> singletonFactories = new ConcurrentHashMap<>(16);
 
     //
 //    /**
@@ -60,6 +57,7 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
 
     /** bean处理器，目前所有的处理器全部放在一起了 */
     private final List<BeanPostProcessor> beanPostProcessors = new CopyOnWriteArrayList<>();
+
 
     @Override
     public BeanFactory getParentBeanFactory() {
@@ -92,13 +90,12 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
     @SuppressWarnings("all")
     protected <T> T doGetBean(String beanName, Class<T> beanClass, Object... args) throws RuntimeException {
 
-        Object bean;
+        Object bean = null;
 
         // 检查是否已经有了实例化好的单例bean，或者使用单例工厂获取一个工厂
         Object singletonObject = getSingleton(beanName);
         if (singletonObject != null){
-            bean = singletonObject;
-
+            bean = getObjectForBeanInstance(singletonObject, beanName);
         }
         else {
 
@@ -118,14 +115,19 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
             }
 
             // 没有可创建单例，没有父类，只能自己创建一个bean实例对象了
-            // 获取到的可能不是RootBeanDefinition类型，但是在创建的时候需要统一使用RootBeanDefinition
+            // 获取到的可能不是GenericBeanDefinition类型，在创建的时候需要统一使用GenericBeanDefinition，子类要强转一下
             BeanDefinition temp = getBeanDefinition(beanName);
-            RootBeanDefinition beanDefinition;
-            if (temp instanceof GenericBeanDefinition){
-                beanDefinition = new RootBeanDefinition((GenericBeanDefinition) temp);
-            }else{
-                beanDefinition = ((RootBeanDefinition) temp);
+            GenericBeanDefinition beanDefinition = (GenericBeanDefinition) temp;
+
+            // 如果已经有该bean定义指定的bean对象的单例对象了，就直接获取返回 - 这种情况一般适用于接口对应的实例对象为实现类对象
+            String beanClassName = temp.getBeanClassName();
+            String tempBeanName = StringUtils.toLowerCase(beanClassName.substring(beanClassName.lastIndexOf(".")+1));
+
+            bean = getSingleton(tempBeanName);
+            if (bean != null){
+                return (T) bean;
             }
+
             String[] dependsOn = beanDefinition.getDependsOn();
 
             // 检查依赖情况
@@ -148,8 +150,9 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
             }
 
             if (beanDefinition.isSingleton()){
-                // 这里调用子类实现的createBean方法创建完整的单例对象，
+                // 这里调用子类实现的createBean方法创建完整的单例对象，singletonIoc中保存的都是非包装类的原始对象
                 Object wrappedBean = getSingleton(beanName, () -> createBean(beanName, beanDefinition, args));
+                // 最后要获取一下
                 bean = getObjectForBeanInstance(wrappedBean, beanName);
             }else if (beanDefinition.isPrototype()){
                 Object wrappedBean = createBean(beanName, beanDefinition, args);
@@ -207,11 +210,14 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
                     log.error("获取工厂对象的产品失败 => {}", beanName);
                     e.printStackTrace();
                 }
+            }else{
+                return wrappedInstance;
             }
         }
+        log.warn("收到了非BeanWrapper的对象 => {}", wrappedBean);
         return wrappedBean;
     }
-//
+
 //    /**
 //     * 从mergedBeanDefinitions和子类的beanDefinitions中获取可能的RootBeanDefinition
 //     */
@@ -429,6 +435,10 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
 
     protected abstract BeanDefinition getBeanDefinition(String beanName) throws RuntimeException;
 
-    protected abstract Object createBean(String beanName, RootBeanDefinition mbd, Object[] args) throws RuntimeException;
+    protected abstract Object createBean(String beanName, GenericBeanDefinition mbd, Object[] args) throws RuntimeException;
 
+    @Override
+    public Map<String, Object> getSingletonIoc() {
+        return singletonIoc;
+    }
 }

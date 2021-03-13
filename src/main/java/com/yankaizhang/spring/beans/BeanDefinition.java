@@ -157,7 +157,6 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
     void setDescription(String description);
     String getDescription();
 
-
     // ————————————————————只读属性—————————————————————
 
     boolean isSingleton();

@@ -36,7 +36,7 @@ public interface AutowiredBeanFactory extends BeanFactory {
     /**
      * 实例化并且初始化一个bean对象，相当于autowire加上initializeBean方法的执行结果
      */
-    Object createBean(Class<?> beanClass, int autowireMode, boolean dependencyCheck) throws RuntimeException;
+    Object createBean(Class<?> beanClass, int autowireMode, int dependencyCheck) throws RuntimeException;
 
     /**
      * 实例化一个bean对象

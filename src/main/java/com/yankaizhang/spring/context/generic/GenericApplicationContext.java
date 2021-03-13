@@ -86,4 +86,5 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
     public Map<String, BeanDefinition> getBeanDefinitionMap() {
         return beanFactory.getBeanDefinitionMap();
     }
+
 }

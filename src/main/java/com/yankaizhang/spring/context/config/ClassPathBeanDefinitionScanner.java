@@ -1,8 +1,7 @@
 package com.yankaizhang.spring.context.config;
 
-import com.yankaizhang.spring.beans.factory.generic.GenericBeanDefinition;
 import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
-import com.yankaizhang.spring.beans.factory.impl.RootBeanDefinition;
+import com.yankaizhang.spring.beans.factory.generic.GenericBeanDefinition;
 import com.yankaizhang.spring.context.annotation.Component;
 import com.yankaizhang.spring.context.annotation.Configuration;
 import com.yankaizhang.spring.context.annotation.Controller;
@@ -112,7 +111,7 @@ public class ClassPathBeanDefinitionScanner {
     public void doRegisterBeanDefinition(Set<AnnotationMetadata> registryBeanClasses) {
 
         for (AnnotationMetadata registryBeanClass : registryBeanClasses) {
-            RootBeanDefinition beanDef = new RootBeanDefinition();
+            GenericBeanDefinition beanDef = new GenericBeanDefinition();
 
             // 这里传入的就是一个String对象
             String className = registryBeanClass.getClassName();

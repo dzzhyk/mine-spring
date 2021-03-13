@@ -7,17 +7,20 @@ import com.yankaizhang.spring.util.ObjectUtils;
 import java.util.Objects;
 
 /**
- * 进一步通用的BeanDefinition
- * 实现了{@link AbstractBeanDefinition}抽象类
- * 其实就是在抽象类上添加更多属性和基础实现
+ * 通用的BeanDefinition
+ * 实现了{@link AbstractBeanDefinition}抽象类<br/>
+ * 添加了父bean定义属性
  *
  * 一般定义的BeanDefinition对象都是这个实现类
  * @author dzzhyk
- * @since 2020-11-28 13:52:16
+ * @since 2021-03-13 16:02:19
  */
 public class GenericBeanDefinition extends AbstractBeanDefinition {
 
     private String parentName;
+
+    public Object postProcessingLock = new Object();
+    public boolean postProcessed = false;
 
     public GenericBeanDefinition() {
         super();
@@ -27,6 +30,17 @@ public class GenericBeanDefinition extends AbstractBeanDefinition {
         super(beanDefinition);
     }
 
+    public GenericBeanDefinition(Class<?> beanClass){
+        super();
+        setBeanClass(beanClass);
+    }
+
+    public GenericBeanDefinition(Class<?> beanClass, int autowireMode, int dependencyCheck){
+        super();
+        setBeanClass(beanClass);
+        setAutowireMode(autowireMode);
+        setDependencyCheck(dependencyCheck);
+    }
 
     @Override
     public boolean equals(Object o) {
