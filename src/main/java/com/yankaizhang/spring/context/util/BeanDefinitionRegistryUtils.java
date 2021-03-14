@@ -16,10 +16,10 @@ public class BeanDefinitionRegistryUtils {
     private static final Logger log = LoggerFactory.getLogger(BeanDefinitionRegistryUtils.class);
 
     public static void registerBeanDefinition(BeanDefinitionRegistry registry,
-                                              String beanName,
+                                              String beanDefName,
                                               BeanDefinition beanDefinition){
         try {
-            registry.registerBeanDefinition(beanName, beanDefinition);
+            registry.registerBeanDefinition(beanDefName, beanDefinition);
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -44,9 +44,9 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
     String SCOPE_PROTOTYPE = "prototype";
 
     /**
-     * 这三个常量是这个BeanDefinition所定义的bean对象的角色
-     * 普通应用bean，一般是用户的bean对象
-     * 用于支持的bean对象，一般是某些更加复杂的beanDefinition的支撑部分
+     * 这三个常量是这个BeanDefinition所定义的bean对象的角色<br/>
+     * 普通应用bean，一般是用户的bean对象<br/>
+     * 用于支持的bean对象，一般是某些更加复杂的beanDefinition的支撑部分<br/>
      * Spring内置bean，一般是内部的bean对象
      */
     int ROLE_APPLICATION = 0;

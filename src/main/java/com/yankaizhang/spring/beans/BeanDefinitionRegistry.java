@@ -30,7 +30,7 @@ public interface BeanDefinitionRegistry {
     /**
      * 获取BeanDefinition
      */
-    BeanDefinition getBeanDefinition(String beanName) throws Exception;
+    BeanDefinition getBeanDefinition(String beanDefName) throws Exception;
 
     /**
      * 获取BeanDefinitionMap

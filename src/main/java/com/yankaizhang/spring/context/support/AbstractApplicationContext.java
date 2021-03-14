@@ -59,10 +59,24 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
             finishBeanFactoryInitialization(beanFactory);
 
         }catch (Exception e){
-            log.debug("执行refresh方法失败 => " + e.getMessage());
-            throw new RuntimeException(e);
+
+            log.error("执行refresh方法失败 => " + e.getMessage());
+
+            destroyBeans();
+
         }
 
+    }
+
+    /**
+     * 删除所有bean对象
+     */
+    protected void destroyBeans() {
+        Map<String, Object> singletonIoc = getBeanFactory().getSingletonIoc();
+        for (Map.Entry<String, Object> entry : singletonIoc.entrySet()) {
+            getBeanFactory().destroyBean(entry.getKey(), entry.getValue());
+        }
+        getBeanFactory().destroySingletons();
     }
 
     /**
@@ -93,23 +107,27 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
      * @param beanFactory bean容器
      */
     private void invokeBeanFactoryPostProcessors(CompletedBeanFactory beanFactory) {
-        List<BeanFactoryPostProcessor> remainedProcessors = new ArrayList<>(beanFactoryPostProcessors);
+
+        List<BeanFactoryPostProcessor> usedProcessors = new ArrayList<>(beanFactoryPostProcessors);
         if (beanFactory instanceof BeanDefinitionRegistry){
+            // 先执行系统自带的BeanFactoryPostProcessor，这里可能会通过配置类和扫描添加更多新的进来
             try {
-                for (BeanFactoryPostProcessor bfp : beanFactoryPostProcessors) {
+                for (BeanFactoryPostProcessor bfp : usedProcessors) {
                     if (bfp instanceof BeanDefinitionRegistryPostProcessor){
                         log.debug("执行BeanDefinitionRegistryPostProcessor : " + bfp.getClass().toString());
                         ((BeanDefinitionRegistryPostProcessor) bfp)
                                 .postProcessBeanDefinitionRegistry((BeanDefinitionRegistry) beanFactory);
-                        remainedProcessors.remove(bfp);
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+
+
         // 执行剩余的beanFactoryPostProcessor
-        invokeBeanFactoryPostProcessors(remainedProcessors, beanFactory);
+        invokeBeanFactoryPostProcessors(usedProcessors, beanFactory);
     }
 
     /**

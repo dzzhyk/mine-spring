@@ -19,6 +19,7 @@ import java.util.List;
 /**
  * 代理类bean对象处理器，用于在切面对象bean初始化的时候执行处理
  * @author dzzhyk
+ * @since 2021-03-14 12:36:40
  */
 public class AutoProxyCreator implements InstantiationAwareBeanPostProcessor {
 
@@ -26,6 +27,7 @@ public class AutoProxyCreator implements InstantiationAwareBeanPostProcessor {
 
     private AopAnnotationReader reader = new AopAnnotationReader();
     private List<AdvisedSupport> advisedSupports = null;
+    private boolean aspectParsed = false;
 
     /**
      * 所有切面类被扫描到之后，执行这个方法
@@ -54,6 +56,12 @@ public class AutoProxyCreator implements InstantiationAwareBeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws RuntimeException {
+
+        if (!aspectParsed){
+            parseAspect();
+            aspectParsed = true;
+        }
+
         if (advisedSupports == null || advisedSupports.size() <= 0 || bean == null){
             return bean;
         }

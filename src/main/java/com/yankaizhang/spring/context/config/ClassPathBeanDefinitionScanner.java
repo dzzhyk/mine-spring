@@ -96,9 +96,7 @@ public class ClassPathBeanDefinitionScanner {
                 }
                 if (metadata != null){
                     registryBeanClasses.add(metadata);
-                    if (log.isDebugEnabled()){
-                        log.debug("包扫描命中类 : " + className);
-                    }
+                    log.debug("包扫描命中类 : " + className);
                 }
             }
         }
@@ -122,12 +120,12 @@ public class ClassPathBeanDefinitionScanner {
 
             BeanDefinitionRegistryUtils.registerBeanDefinition(registry, beanName, beanDef);
 
-            // 注册可能的接口对象
-            String[] interfaceNames = registryBeanClass.getInterfaceNames();
-            for (String interfaceName : interfaceNames) {
-                String interfaceBeanName = StringUtils.toLowerCase(interfaceName.substring(interfaceName.lastIndexOf(".")+1));
-                BeanDefinitionRegistryUtils.registerBeanDefinition(registry, interfaceBeanName, beanDef);
-            }
+//            // 注册可能的接口对象
+//            String[] interfaceNames = registryBeanClass.getInterfaceNames();
+//            for (String interfaceName : interfaceNames) {
+//                String interfaceBeanName = StringUtils.toLowerCase(interfaceName.substring(interfaceName.lastIndexOf(".")+1));
+//                BeanDefinitionRegistryUtils.registerBeanDefinition(registry, interfaceBeanName, beanDef);
+//            }
         }
 
     }

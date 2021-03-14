@@ -44,4 +44,10 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory {
      * @return singletonIoc
      */
     Map<String, Object> getSingletonIoc();
+
+
+    /**
+     * 清理所有空间
+     */
+    void destroySingletons();
 }

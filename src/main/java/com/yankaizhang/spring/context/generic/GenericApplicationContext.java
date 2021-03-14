@@ -6,6 +6,7 @@ import com.yankaizhang.spring.beans.factory.CompletedBeanFactory;
 import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
 import com.yankaizhang.spring.beans.factory.impl.DefaultBeanFactory;
 import com.yankaizhang.spring.context.support.AbstractApplicationContext;
+import com.yankaizhang.spring.context.util.BeanDefinitionRegistryUtils;
 import com.yankaizhang.spring.util.Assert;
 
 import java.io.IOException;
@@ -35,7 +36,11 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 
     @Override
     public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) throws Exception {
-        beanFactory.registerBeanDefinition(beanName, beanDefinition);
+        Class<?> beanClass = beanDefinition.getBeanClass();
+        if (beanClass.isInstance(BeanPostProcessor.class)){
+            
+        }
+        BeanDefinitionRegistryUtils.registerBeanDefinition(beanFactory, beanName, beanDefinition);
     }
 
     @Override
@@ -74,8 +79,8 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
     }
 
     @Override
-    public void close() throws IOException {
-        // 暂时没什么可做的
+    public void close() {
+        destroyBeans();
     }
 
     public List<BeanPostProcessor> getBeanPostProcessors(){
