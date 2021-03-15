@@ -481,7 +481,7 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
                 if (bd.isAbstract()){
                     continue;
                 }
-                if (bd.getBeanClass() == type && !ans.contains(beanDefinitionName)){
+                if (type.isAssignableFrom(bd.getBeanClass()) && !ans.contains(beanDefinitionName)){
                     ans.add(beanDefinitionName);
                 }
             }

@@ -15,9 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 上下文容器实现类的顶层抽象类
@@ -108,30 +106,67 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
      */
     private void invokeBeanFactoryPostProcessors(CompletedBeanFactory beanFactory) {
 
-        List<BeanFactoryPostProcessor> usedProcessors = new ArrayList<>(beanFactoryPostProcessors);
+        List<BeanFactoryPostProcessor> currentProcessors = new ArrayList<>(beanFactoryPostProcessors);
+        String[] processorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class);
         if (beanFactory instanceof BeanDefinitionRegistry){
             // 先执行系统自带的BeanFactoryPostProcessor，这里可能会通过配置类和扫描添加更多新的进来
-            try {
-                for (BeanFactoryPostProcessor bfp : usedProcessors) {
-                    if (bfp instanceof BeanDefinitionRegistryPostProcessor){
-                        log.debug("执行BeanDefinitionRegistryPostProcessor : " + bfp.getClass().toString());
-                        ((BeanDefinitionRegistryPostProcessor) bfp)
-                                .postProcessBeanDefinitionRegistry((BeanDefinitionRegistry) beanFactory);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            invokeBeanDefinitionRegistryPostProcessors(currentProcessors, beanFactory);
         }
 
+        // 记录已经执行过的processor的名称，防止后面重复执行
+        Set<String> processedBeans = new HashSet<>(Arrays.asList(processorNames));
+
+        // 执行完系统的之后就清空待执行的内容
+        currentProcessors.clear();
+
+        // 可能扫描到的用户自定义的BeanDefinitionRegistryPostProcessor
+        String[] currentProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class);
+        for (String currentProcessorName : currentProcessorNames) {
+            // 必须保证这些BeanDefinitionRegistryPostProcessor优先被初始化
+            if (!processedBeans.contains(currentProcessorName)){
+                BeanDefinitionRegistryPostProcessor registryPostProcessor =
+                        beanFactory.getBean(currentProcessorName, BeanDefinitionRegistryPostProcessor.class);
+
+                currentProcessors.add(registryPostProcessor);
+            }
+        }
+        // 执行可能的用户自定义的BeanDefinitionRegistryPostProcessor
+        invokeBeanDefinitionRegistryPostProcessors(currentProcessors, beanFactory);
+
+        // 准备执行BeanFactoryPostProcessor
+        currentProcessorNames = beanFactory.getBeanNamesForType(BeanFactoryPostProcessor.class);
+        currentProcessors.clear();
+        for (String processorName : currentProcessorNames) {
+            BeanFactoryPostProcessor processor =
+                    beanFactory.getBean(processorName, BeanFactoryPostProcessor.class);
+            currentProcessors.add(processor);
+        }
+
+        // 执行剩余的BeanFactoryPostProcessor
+        invokeBeanFactoryPostProcessors(currentProcessors, beanFactory);
+    }
 
 
-        // 执行剩余的beanFactoryPostProcessor
-        invokeBeanFactoryPostProcessors(usedProcessors, beanFactory);
+    /**
+     * 执行 BeanDefinitionRegistryPostProcessor#postProcessBeanDefinitionRegistry 方法
+     */
+    private void invokeBeanDefinitionRegistryPostProcessors(List<? extends BeanFactoryPostProcessor> currentProcessors,
+                                                            BeanFactory beanFactory){
+        try {
+            for (BeanFactoryPostProcessor bfp : currentProcessors) {
+                if (bfp instanceof BeanDefinitionRegistryPostProcessor){
+                    log.debug("执行BeanDefinitionRegistryPostProcessor : " + bfp.getClass().toString());
+                    ((BeanDefinitionRegistryPostProcessor) bfp)
+                            .postProcessBeanDefinitionRegistry((BeanDefinitionRegistry) beanFactory);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
-     * 执行BeanFactoryPostProcessor方法
+     * 执行 BeanFactoryPostProcessor#postProcessBeanFactory 方法
      */
     private void invokeBeanFactoryPostProcessors(
             List<? extends BeanFactoryPostProcessor> postProcessors, CompletedBeanFactory beanFactory) {

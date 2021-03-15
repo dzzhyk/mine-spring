@@ -8,6 +8,7 @@ import com.yankaizhang.spring.context.annotation.Controller;
 import com.yankaizhang.spring.context.annotation.Service;
 import com.yankaizhang.spring.context.util.BeanDefinitionRegistryUtils;
 import com.yankaizhang.spring.core.type.AnnotationMetadata;
+import com.yankaizhang.spring.core.type.StandardAnnotationMetadata;
 import com.yankaizhang.spring.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,16 +110,16 @@ public class ClassPathBeanDefinitionScanner {
     public void doRegisterBeanDefinition(Set<AnnotationMetadata> registryBeanClasses) {
 
         for (AnnotationMetadata registryBeanClass : registryBeanClasses) {
-            GenericBeanDefinition beanDef = new GenericBeanDefinition();
+            if (registryBeanClass instanceof StandardAnnotationMetadata){
+                Class<?> clazz = ((StandardAnnotationMetadata) registryBeanClass).getIntrospectedClass();
 
-            // 这里传入的就是一个String对象
-            String className = registryBeanClass.getClassName();
-            beanDef.setBeanClassName(className);
+                GenericBeanDefinition beanDef = new GenericBeanDefinition(clazz);
 
-            // 扫描到的类的默认的名称是 开头小写开头小写的类名
-            String beanName = StringUtils.toLowerCase(className.substring(className.lastIndexOf(".")+1));
+                String className = beanDef.getBeanClassName();
 
-            BeanDefinitionRegistryUtils.registerBeanDefinition(registry, beanName, beanDef);
+                // 扫描到的类的默认的名称是 开头小写开头小写的类名
+                String beanName = StringUtils.toLowerCase(className.substring(className.lastIndexOf(".")+1));
+                BeanDefinitionRegistryUtils.registerBeanDefinition(registry, beanName, beanDef);
 
 //            // 注册可能的接口对象
 //            String[] interfaceNames = registryBeanClass.getInterfaceNames();
@@ -126,6 +127,7 @@ public class ClassPathBeanDefinitionScanner {
 //                String interfaceBeanName = StringUtils.toLowerCase(interfaceName.substring(interfaceName.lastIndexOf(".")+1));
 //                BeanDefinitionRegistryUtils.registerBeanDefinition(registry, interfaceBeanName, beanDef);
 //            }
+            }
         }
 
     }

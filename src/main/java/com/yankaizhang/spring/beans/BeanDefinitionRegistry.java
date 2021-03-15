@@ -19,8 +19,7 @@ public interface BeanDefinitionRegistry {
     /**
      * 注册一个BeanDefinition
      */
-    void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
-            throws Exception;
+    void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) throws Exception;
 
     /**
      * 移除一个BeanDefinition

@@ -2,6 +2,7 @@ package com.yankaizhang.spring.beans.factory.impl;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
 import com.yankaizhang.spring.beans.factory.CompletedBeanFactory;
+import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
 import com.yankaizhang.spring.beans.factory.support.AbstractCompletedBeanFactory;
 import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
 import com.yankaizhang.spring.util.Assert;

@@ -168,7 +168,7 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
             }
 
             if (bean != null && beanClass != null){
-                if (bean.getClass().equals(beanClass)){
+                if (beanClass.isAssignableFrom(bean.getClass())){
                     return (T) bean;
                 }
                 throw new RuntimeException("未找到beanName为 " + beanName + " , 类型为 " + beanClass.getName() + " 的bean对象");
@@ -181,7 +181,7 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
             List<Object> ans = new ArrayList<>(16);
             for (Map.Entry<String, Object> entry : this.singletonIoc.entrySet()) {
                 BeanWrapper wrapper = (BeanWrapper) entry.getValue();
-                if (wrapper.getWrappedClass().equals(beanClass)){
+                if (beanClass.isAssignableFrom(wrapper.getWrappedClass())){
                     ans.add(wrapper.getWrappedInstance());
                 }
             }

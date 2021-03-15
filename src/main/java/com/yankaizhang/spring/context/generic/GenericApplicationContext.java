@@ -8,6 +8,8 @@ import com.yankaizhang.spring.beans.factory.impl.DefaultBeanFactory;
 import com.yankaizhang.spring.context.support.AbstractApplicationContext;
 import com.yankaizhang.spring.context.util.BeanDefinitionRegistryUtils;
 import com.yankaizhang.spring.util.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -21,6 +23,8 @@ import java.util.Map;
  * @since 2020-12-20 18:06:33
  */
 public class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {
+
+    private static final Logger log = LoggerFactory.getLogger(GenericApplicationContext.class);
 
     /** 真正的beanFactory对象 */
     private final DefaultBeanFactory beanFactory;
@@ -36,10 +40,6 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 
     @Override
     public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) throws Exception {
-        Class<?> beanClass = beanDefinition.getBeanClass();
-        if (beanClass.isInstance(BeanPostProcessor.class)){
-            
-        }
         BeanDefinitionRegistryUtils.registerBeanDefinition(beanFactory, beanName, beanDefinition);
     }
 

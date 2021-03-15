@@ -33,6 +33,7 @@ public class GenericBeanDefinition extends AbstractBeanDefinition {
     public GenericBeanDefinition(Class<?> beanClass){
         super();
         setBeanClass(beanClass);
+        setBeanClassName(beanClass.getName());
     }
 
     public GenericBeanDefinition(Class<?> beanClass, int autowireMode, int dependencyCheck){

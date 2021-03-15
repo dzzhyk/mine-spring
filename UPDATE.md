@@ -2,6 +2,13 @@
 
 ---
 
+- 2021年3月15日 23:12:10
+
+1. 完成IoC容器的bean对象生命周期的各种阶段处理器功能
+2. 一些问题：Component对象现在还不能指定初始化和销毁方法，目前尚未实现InitializingBean和DisposableBean这两个接口
+
+---
+
 - 2021年3月13日 17:02:09
 
 1. 删除RootBeanDefinition，简化BeanDefinition的接口实现结构，现在比较简洁
