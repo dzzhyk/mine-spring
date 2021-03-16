@@ -1,7 +1,7 @@
 package com.yankaizhang.spring.beans.holder;
 
 /**
- * bean包装类
+ * bean包装类<br/>
  * 用来封装创建后的bean对象实例，代理对象或者原生对象都由这个BeanWrapper来保存
  * @author dzzhyk
  * @since 2020-11-28 13:53:07

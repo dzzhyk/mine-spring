@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * MultipartRequest接口的抽象实现类，主要是提取了一些对于上传文件对象的公共操作
+ * MultipartRequest接口的抽象实现类，主要是提取了一些对于上传文件对象的公共操作<br/>
  * 提供对预生成的MultipartFile实例的管理
  * @author dzzhyk
  * @since 2020-11-28 13:41:39

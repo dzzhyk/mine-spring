@@ -4,9 +4,9 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 
 /**
- * ListableBeanFactory 是 BeanFactory接口的进一步具体化接口
- * 该类为bean工厂对象提供了遍历所有bean实例的能力，从而不用每次都进行遍历查询某个bean实例
- * 如果该类的实现同时实现了{@link HierarchicalBeanFactory}接口，那么在遍历的时候不会包括其父类工厂的bean实例对象
+ * ListableBeanFactory 是 BeanFactory接口的进一步具体化接口<br/>
+ * 该类为bean工厂对象提供了遍历所有bean实例的能力，从而不用每次都进行遍历查询某个bean实例<br/>
+ * 如果该类的实现同时实现了{@link HierarchicalBeanFactory}接口，那么在遍历的时候不会包括其父类工厂的bean实例对象<br/>
  * 如果想要在遍历中包括其父类工厂的实例对象，需要进行额外处理
  * @author dzzhyk
  * @since 2020-12-21 18:06:01

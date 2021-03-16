@@ -4,7 +4,6 @@ import com.yankaizhang.spring.beans.factory.annotation.Autowired;
 import com.yankaizhang.spring.context.annotation.Controller;
 import com.yankaizhang.spring.example.entity.Result;
 import com.yankaizhang.spring.example.entity.User;
-import com.yankaizhang.spring.example.service.TestService;
 import com.yankaizhang.spring.example.service.impl.TestServiceImpl;
 import com.yankaizhang.spring.webmvc.annotation.RequestBody;
 import com.yankaizhang.spring.webmvc.annotation.RequestMapping;

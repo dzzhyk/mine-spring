@@ -29,7 +29,7 @@ import java.util.*;
 
 
 /**
- * 具有全部功能的bean工厂抽象类
+ * 具有全部功能的bean工厂抽象类<br/>
  * 继承自{@link AbstractConfigurableBeanFactory}抽象类<br/>
  * 额外实现了全功能接口{@link CompletedBeanFactory}，添加了默认的自动装配功能实现、默认的遍历功能实现
  * @author dzzhyk

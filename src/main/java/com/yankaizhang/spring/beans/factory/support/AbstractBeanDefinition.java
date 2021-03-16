@@ -9,10 +9,10 @@ import com.yankaizhang.spring.beans.holder.ConstructorArgumentValues;
 
 
 /**
- * AbstractBeanDefinition抽象实现
- * 把bean的元数据和bean的定义接口联系起来了，数据和操作结合了
- * BeanDefinition包含了数据
- * BeanMetadataAttributeAccessor包含了操作
+ * AbstractBeanDefinition抽象实现<br/>
+ * 把bean的元数据和bean的定义接口联系起来了，数据和操作结合了<br/>
+ * BeanDefinition包含了数据<br/>
+ * BeanMetadataAttributeAccessor包含了操作<br/>
  * 另外在这个抽象类里面还定义了所有BeanDefinition都应该具有的属性，结合实现BeanDefinition里面的方法就可以把这些属性暴露出去
  * @author dzzhyk
  * @since 2021-03-08 17:45:40

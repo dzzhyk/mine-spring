@@ -19,12 +19,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * BeanDefinition扫描器，就是用来扫描包的，每根据包路径扫描到一个类class，就为这个类生成全类名并且加入registryBeanClasses
- * 光是扫描到包下所有的类名还不够，需要遍历所有的类，看看他是不是用注解定义的组件才行
- * 比如@Component，@Repository，@Service，@Controller
- * 这样过滤之后，再注册所有的结果，返回注册后的BeanDefinition列表
- *
- * 这个类在原有的Spring里面也存在继承关系，比较复杂
+ * BeanDefinition扫描器，就是用来扫描包的，每根据包路径扫描到一个类class，就为这个类生成全类名并且加入registryBeanClasses<br/>
+ * 光是扫描到包下所有的类名还不够，需要遍历所有的类，看看他是不是用注解定义的组件才行<br/>
+ * 比如@Component，@Repository，@Service，@Controller<br/>
+ * 这样过滤之后，再注册所有的结果，返回注册后的BeanDefinition列表<br/>
+ * <br/>
+ * 这个类在原有的Spring里面也存在继承关系，比较复杂<br/>
  * 因为我们目前只向实现Java配置类的容器和解析实现，这里我将简化实现这个扫描类，所以后面还可以继续改进和拓展
  * @author dzzhyk
  * @since 2020-11-28 13:50:53

@@ -4,7 +4,7 @@ package com.yankaizhang.spring.context.annotation;
 import java.lang.annotation.*;
 
 /**
- * 元注解
+ * 组件注解
  * @author dzzhyk
  * @since 2020-11-28 13:47:56
  */

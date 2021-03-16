@@ -23,7 +23,7 @@ import com.yankaizhang.spring.core.type.AnnotationMetadata;
 import com.yankaizhang.spring.core.type.MethodMetadata;
 
 /**
- * {@link GenericBeanDefinition}的注解拓展对象
+ * {@link GenericBeanDefinition}的注解拓展对象<br/>
  * 通过实现AnnotatedBeanDefinition接口拥有了注解元数据访问的能力
  * @author dzzhyk
  * @since 2020-11-28 13:51:52

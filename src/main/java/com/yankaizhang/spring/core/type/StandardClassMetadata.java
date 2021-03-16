@@ -4,9 +4,9 @@ package com.yankaizhang.spring.core.type;
 import java.lang.reflect.Modifier;
 
 /**
- * 类的元数据接口的一个标准实现
- *
- * 创建这个对象需要制定某个类Class，然后使用标准反射创建StandardClassMetadata
+ * 类的元数据接口的一个标准实现<br/>
+ *<br/>
+ * 创建这个对象需要制定某个类Class，然后使用标准反射创建StandardClassMetadata<br/>
  * @author dzzhyk
  * @since 2020-11-28 13:47:04
  */

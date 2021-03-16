@@ -4,8 +4,8 @@ import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
 
 /**
  * {@link BeanFactoryPostProcessor}的进一步实现接口，优先级高于BeanFactoryPostProcessor<br/>
- * 允许在BeanFactoryPostProcessor执行之前添加新的Bean定义
- * 配置类{@link com.yankaizhang.spring.context.annotation.Configuration}中定义的Bean就是使用这个方式注入的
+ * 允许在BeanFactoryPostProcessor执行之前添加新的Bean定义<br/>
+ * 配置类{@link com.yankaizhang.spring.context.annotation.Configuration}中定义的Bean就是使用这个方式注入的<br/>
  * @author dzzhyk
  * @since 2020-12-02 14:45:31
  */

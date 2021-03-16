@@ -15,9 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
- * 处理请求传递的参数和controller中方法参数的对应
- * 以及数值转换工作
- * TODO: 这个类目前还是扁平的，如果要拆分各种功能并且提高扩展性，需要改为接口，并且逐层实现
+ * 处理请求传递的参数解析到controller中的方法
  * @author dzzhyk
  * @since 2020-11-28 13:39:53
  */

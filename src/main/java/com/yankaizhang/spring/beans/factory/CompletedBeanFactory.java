@@ -4,9 +4,9 @@ import com.yankaizhang.spring.beans.BeanDefinition;
 import com.yankaizhang.spring.beans.factory.support.AbstractCompletedBeanFactory;
 
 /**
- * 实现了三种功能接口的综合接口
- * Completed意味着"完全的"，包括了配置、遍历、自动装配全部三个功能
- * 作者认为，该接口存在主要是保证了可扩展性，不然直接返回{@link AbstractCompletedBeanFactory}抽象类的实现类效果相同
+ * 实现了三种功能接口的综合接口<br/>
+ * Completed意味着"完全的"，包括了配置、遍历、自动装配全部三个功能<br/>
+ * 作者认为，该接口存在主要是保证了可扩展性，不然直接返回{@link AbstractCompletedBeanFactory}抽象类的实现类效果相同<br/>
  * 一般不直接使用该接口，而是将使用该接口类接收返回值，以便提供完全的beanFactory操作能力
  * @author dzzhyk
  * @since 2020-12-21 20:55:38

@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Iterator;
 
 /**
- * 实现这个接口代表是一个文件上传请求request
+ * 实现这个接口代表是一个文件上传请求request<br/>
  * DefaultMultipartRequest是这个接口的具体实现类
  * @author dzzhyk
  * @since 2020-11-28 13:42:09

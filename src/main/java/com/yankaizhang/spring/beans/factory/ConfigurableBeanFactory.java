@@ -7,8 +7,8 @@ import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
 import java.util.Map;
 
 /**
- * 可以配置的bean工厂接口实现，继承自{@link HierarchicalBeanFactory}接口
- * 实现该接口的bean工厂对象具有可配置的功能，同时提供了一些对于bean实例的进一步管理方法
+ * 可以配置的bean工厂接口实现，继承自{@link HierarchicalBeanFactory}接口<br/>
+ * 实现该接口的bean工厂对象具有可配置的功能，同时提供了一些对于bean实例的进一步管理方法<br/>
  * @author dzzhyk
  * @since 2020-12-21 18:30:28
  */

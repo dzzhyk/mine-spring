@@ -1,9 +1,8 @@
 English | [简体中文](./README-CN.md)
 
 # mine-spring
-A Simple Spring-Framework implementation for learning.
 
-Check project wiki => [mine-spring-wiki](https://github.com/dzzhyk/mine-spring/wiki)
+A Simple Spring-Framework implementation for learning.
 
 ## Background
 

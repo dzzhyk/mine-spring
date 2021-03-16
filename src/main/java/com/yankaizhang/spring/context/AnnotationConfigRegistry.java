@@ -1,9 +1,11 @@
 package com.yankaizhang.spring.context;
 
 /**
- * 这个类定义了注解配置注册的基本操作
- * 1. 扫描注解
- * 2. 注册
+ * 这个类定义了注解配置注册的基本操作<br/>
+ * <br/>
+ * 1. 扫描注解<br/>
+ * 2. 注册<br/>
+ * <br/>
  * @author dzzhyk
  * @since 2020-11-28 13:51:29
  */

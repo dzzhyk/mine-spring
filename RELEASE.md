@@ -11,10 +11,10 @@
 5. 功能上对于前面版本的一些内容做了取舍，比如：现在起不能使用接口类对象接受`@Autowired`注解的自动注入，当然，这可能会带来一些不便
     ```java
        @Autowired
-       TestServiceImpl service;        // correct
+       TestServiceImpl service;    // correct
    
        @Autowired
-       TestService service;            // wrong
+       TestService service;        // wrong
     ```
 6. 使用容器的getBean方法获取对象不需要接受异常了，因为实在是太麻烦了
 7. 请注意：如果要编译运行mine-spring项目，JDK版本 >= 8 并且开启javac参数 `-parameters`，否则可能导致请求参数解析为null的情况

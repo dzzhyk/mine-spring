@@ -5,17 +5,17 @@ import com.yankaizhang.spring.util.AnnotationUtils;
 import java.lang.annotation.Annotation;
 
 /**
- * 原来我们在获取注解信息的时候，需要使用反射获取
- * 这个接口实现了一些常用的获取注解类型信息的方法default实现，只要实现这个接口，每次就可以省掉自己写下面的反射语句了。
- *
+ * 原来我们在获取注解信息的时候，需要使用反射获取<br/>
+ * 这个接口实现了一些常用的获取注解类型信息的方法default实现，只要实现这个接口，每次就可以省掉自己写下面的反射语句了。<br/>
+ *<br/><br/>
  * {@code
  * 		Annotation annotation = getClass().getAnnotation(Component.class);
  * }
+ *<br/><br/>
+ * 什么东西实现这个接口有用呢？在Spring里面显然Class对象和Method对象的元数据类型实现这个接口最合适<br/>
+ * 这样在元数据中就直接加入了获取注解信息的功能<br/>
  *
- * 什么东西实现这个接口有用呢？在Spring里面显然Class对象和Method对象的元数据类型实现这个接口最合适
- * 这样在元数据中就直接加入了获取注解信息的功能
- *
- * 当然，为了方便，这个类我简化过了，去掉了复杂的包装类，所以使用起来还不是"太方便"
+ * 当然，为了方便，这个类我简化过了，去掉了复杂的包装类，所以使用起来还不是"太方便"<br/>
  * @author dzzhyk
  * @since 2020-11-28 13:46:42
  */

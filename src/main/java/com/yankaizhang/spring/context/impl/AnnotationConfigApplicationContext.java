@@ -1,7 +1,5 @@
 package com.yankaizhang.spring.context.impl;
 
-import com.yankaizhang.spring.beans.factory.config.BeanFactoryPostProcessor;
-import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
 import com.yankaizhang.spring.context.AnnotationConfigRegistry;
 import com.yankaizhang.spring.context.config.AnnotatedBeanDefinitionReader;
 import com.yankaizhang.spring.context.config.ClassPathBeanDefinitionScanner;
@@ -9,20 +7,12 @@ import com.yankaizhang.spring.context.generic.GenericApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 
 /**
- * 真正使用到的IOC容器，直接接触用户
- * 继承了DefaultListableBeanFactory，并且把里面的refresh方法实现了
- * 实现了BeanFactory接口，实现了getBean()方法
- * 完成IoC、DI、AOP的衔接
- * AnnotationConfigApplicationContext是专门用来解析注解配置类的容器对象
- *
- * 实现了AnnotationConfigRegistry接口，说明拥有基本的两个方法scan和register
- *
- * TODO: 这里其实对于AnnotationConfigApplicationContext而言，在这一层实现了多个功能，其实是简化过后的
+ * 真正使用到的IOC容器，直接接触用户<br/>s
+ * 继承自{@link GenericApplicationContext}，并且实现了refresh方法<br/>
+ * AnnotationConfigApplicationContext是专门用来解析注解配置类的容器对象<br/>
+ * 实现了{@link AnnotationConfigRegistry}接口，说明拥有基本的两个方法scan和register<br/>
  * @author dzzhyk
  * @since 2021-03-08 10:38:18
  */

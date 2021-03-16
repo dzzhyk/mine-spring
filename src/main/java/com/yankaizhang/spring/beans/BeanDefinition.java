@@ -6,24 +6,23 @@ import com.yankaizhang.spring.core.AttributeAccessor;
 
 
 /**
- * Bean定义的接口
- *
- *
- * 我们的bean定义得有来源BeanMetadataElement，得可以操作属性AttributeAccessor。
- * 比如我给你一个类，你要将他转换成bean，你到知道他的一些信息吧，不然等于什么都没有，别说获取注解什么的了，
- * 当然同时可能这些信息不够，所以这只是一个接口，还要扩展。
- *
- * A BeanDefinition describes a bean instance, which has property values,
- * constructor argument values, and further information supplied by
- * concrete implementations.
- *
- * BeanDefinition描述了一个bean实例，包含了该实例的属性信息，构造函数信息，以及更多信息。
- *
- * This is just a minimal interface: The main intention is to allow a
- * BeanFactoryPostProcessor to introspect and modify property values
- * and other bean metadata.
- *
- * 这个接口存在的目的主要是允许BeanFactoryPostProcessor这个BeanDefinition后置处理器介入处理这个对象，
+ * Bean定义的接口<br/>
+ * <br/>
+ * 我们的bean定义得有来源BeanMetadataElement，得可以操作属性AttributeAccessor。<br/>
+ * 比如我给你一个类，你要将他转换成bean，你到知道他的一些信息吧，不然等于什么都没有，别说获取注解什么的了，<br/>
+ * 当然同时可能这些信息不够，所以这只是一个接口，还要扩展。<br/>
+ *<br/>
+ * A BeanDefinition describes a bean instance, which has property values,<br/>
+ * constructor argument values, and further information supplied by<br/>
+ * concrete implementations.<br/>
+ *<br/>
+ * BeanDefinition描述了一个bean实例，包含了该实例的属性信息，构造函数信息，以及更多信息。<br/>
+ *<br/>
+ * This is just a minimal interface: The main intention is to allow a<br/>
+ * BeanFactoryPostProcessor to introspect and modify property values<br/>
+ * and other bean metadata.<br/>
+ *<br/>
+ * 这个接口存在的目的主要是允许BeanFactoryPostProcessor这个BeanDefinition后置处理器介入处理这个对象，<br/>
  * 从而达到了提供对BeanDefinition自定义功能（modify）
  * @author dzzhyk
  * @since 2020-11-28 13:52:49

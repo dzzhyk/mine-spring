@@ -4,9 +4,9 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 
 /**
- * 注解的元数据接口定义，定义了一些访问注解内容的接口方法
- *
- * 注解本身也是类实现，所以继承了ClassMetadata
+ * 注解的元数据接口定义，定义了一些访问注解内容的接口方法<br/>
+ *<br/>
+ * 注解本身也是类实现，所以继承了ClassMetadata<br/>
  * 注解可以有注解，因此继承了AnnotatedTypeMetadata
  * @author dzzhyk
  * @since 2020-11-28 13:46:46

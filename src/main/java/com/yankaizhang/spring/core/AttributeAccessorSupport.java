@@ -23,11 +23,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 一个属性访问器的抽象实现，主要就是可以对属性进行增删改查操作的定义
- * Support class for {@link AttributeAccessor AttributeAccessors}, providing
- * a base implementation of all methods. To be extended by subclasses.
- *
- * <p>{@link Serializable} if subclasses and all attribute values are {@link Serializable}.
+ * 一个属性访问器的抽象实现，主要就是可以对属性进行增删改查操作的定义<br/>
+ * Support class for {@link AttributeAccessor AttributeAccessors}, providing<br/>
+ * a base implementation of all methods. To be extended by subclasses.<br/>
+ *<br/>
+ * <p>{@link Serializable} if subclasses and all attribute values are {@link Serializable}.<br/>
  * @author dzzhyk
  * @since 2020-11-28 13:47:16
  */

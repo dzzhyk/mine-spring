@@ -3,8 +3,8 @@ package com.yankaizhang.spring.beans.factory.config;
 import com.yankaizhang.spring.beans.PropertyValues;
 
 /**
- * {@link BeanPostProcessor}的一个子接口，提供了在bean实例化前后的处理
- * Instantiation	表示实例化，对象还未生成
+ * {@link BeanPostProcessor}的一个子接口，提供了在bean实例化前后的处理<br/>
+ * Instantiation 表示实例化，对象还未生成
  * @author dzzhyk
  * @since 2021-03-08 17:27:33
  */

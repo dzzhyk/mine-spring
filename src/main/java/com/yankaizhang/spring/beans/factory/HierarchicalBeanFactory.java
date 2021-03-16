@@ -1,7 +1,7 @@
 package com.yankaizhang.spring.beans.factory;
 
 /**
- * 可继承的 BeanFactory，是BeanFactory的进一步实现接口
+ * 可继承的 BeanFactory，是BeanFactory的进一步实现接口<br/>
  * 实现了该接口的工厂对象可以获取父类工厂对象
  * @author dzzhyk
  * @since 2020-12-21 18:25:02

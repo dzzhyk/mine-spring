@@ -1,8 +1,8 @@
 package com.yankaizhang.spring.beans.factory.config;
 
 /**
- * bean初始化处理器接口
- * 实现这个处理器，从而可以对bean对象实例化的过程进行处理
+ * bean初始化处理器接口<br/>
+ * 实现这个处理器，从而可以对bean对象实例化的过程进行处理<br/>
  * Initialization 表示初始化,对象已经生成
  * @author dzzhyk
  * @since 2021-03-08 18:19:09

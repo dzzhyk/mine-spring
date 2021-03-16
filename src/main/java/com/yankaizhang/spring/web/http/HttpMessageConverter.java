@@ -5,9 +5,9 @@ import javax.servlet.ServletResponse;
 import java.util.List;
 
 /**
- * Http参数的策略接口，用于处理
+ * Http参数的策略接口，用于处理<br/>
  * {@link com.yankaizhang.spring.webmvc.annotation.RequestBody}与
- * {@link com.yankaizhang.spring.webmvc.annotation.ResponseBody}
+ * {@link com.yankaizhang.spring.webmvc.annotation.ResponseBody}<br/>
  * @author dzzhyk
  * @param <T> 模板类型
  * @since 2020-11-28 13:45:05

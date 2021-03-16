@@ -6,12 +6,12 @@ import com.yankaizhang.spring.beans.holder.BeanMetadataAttribute;
 import com.yankaizhang.spring.core.AttributeAccessorSupport;
 
 /**
- * bean元数据属性访问器
- *
- * 继承了{@link AttributeAccessorSupport}这个抽象类
- * 实现了{@link BeanMetadataElement}这个接口
- *
- * 因此这个类既可以获取元数据，也可以提供属性访问
+ * bean元数据属性访问器<br/>
+ *<br/>
+ * 继承了{@link AttributeAccessorSupport}这个抽象类<br/>
+ * 实现了{@link BeanMetadataElement}这个接口<br/>
+ *<br/>
+ * 因此这个类既可以获取元数据，也可以提供属性访问<br/>
  * 这里的属性全部都是{@link BeanMetadataAttribute}类型
  * @author dzzhyk
  * @since 2020-11-28 13:52:58

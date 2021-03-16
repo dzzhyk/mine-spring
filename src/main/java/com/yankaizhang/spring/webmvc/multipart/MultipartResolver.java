@@ -16,12 +16,14 @@
 
 package com.yankaizhang.spring.webmvc.multipart;
 
+import com.yankaizhang.spring.webmvc.multipart.commons.CommonsMultipartResolver;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 文件上传解析器接口
- * CommonsMultipartResolver 是其实现类
- * 其实现使用了apache开源的 commons-fileupload 和 commons-io 包
+ * 文件上传解析器接口<br/>
+ * {@link CommonsMultipartResolver} 是其实现类<br/>
+ * 其实现使用了apache开源的 commons-fileupload 和 commons-io 包<br/>
  * @author dzzhyk
  * @since 2020-11-28 13:42:18
  */

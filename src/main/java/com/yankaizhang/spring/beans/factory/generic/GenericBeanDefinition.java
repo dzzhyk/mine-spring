@@ -7,11 +7,11 @@ import com.yankaizhang.spring.util.ObjectUtils;
 import java.util.Objects;
 
 /**
- * 通用的BeanDefinition
+ * 通用的BeanDefinition<br/>
  * 实现了{@link AbstractBeanDefinition}抽象类<br/>
- * 添加了父bean定义属性
- *
- * 一般定义的BeanDefinition对象都是这个实现类
+ * 添加了父bean定义属性<br/>
+ *<br/>
+ * 一般定义的BeanDefinition对象都是这个实现类<br/>
  * @author dzzhyk
  * @since 2021-03-13 16:02:19
  */
