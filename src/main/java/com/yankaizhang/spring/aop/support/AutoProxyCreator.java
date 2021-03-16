@@ -19,19 +19,20 @@ import java.util.List;
 /**
  * 代理类bean对象处理器，用于在切面对象bean初始化的时候执行处理
  * @author dzzhyk
+ * @since 2021-03-14 12:36:40
  */
 public class AutoProxyCreator implements InstantiationAwareBeanPostProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(AutoProxyCreator.class);
 
     private AopAnnotationReader reader = new AopAnnotationReader();
-    private List<AdvisedSupport> advisedSupports = null;
+    private List<AdvisedSupport> advisedSupports = new ArrayList<>();
 
     /**
      * 所有切面类被扫描到之后，执行这个方法
      */
     public void parseAspect(){
-        advisedSupports = reader.parseAspect();
+        advisedSupports.addAll(reader.parseAspect());
         if (advisedSupports != null){
             // 保证所有切面按照切点表达式顺序执行
             advisedSupports.sort(new AdviceSupportComparator());
@@ -40,9 +41,11 @@ public class AutoProxyCreator implements InstantiationAwareBeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws RuntimeException {
-        // 收集切面类信息
+        // 在实例化所有bean对象之前收集可能的注册切面类信息
+        System.out.println("ASPECTJ : 收集到 => " + beanName);
         if (beanClass.isAnnotationPresent(Aspect.class)){
             postProcessAdvice(beanClass);
+            System.out.println("ASPECTJ :    已注册切面 => " + beanName);
         }
         return null;
     }
@@ -54,35 +57,34 @@ public class AutoProxyCreator implements InstantiationAwareBeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws RuntimeException {
+
+        parseAspect();
+
         if (advisedSupports == null || advisedSupports.size() <= 0 || bean == null){
             return bean;
         }
 
         // 如果有代理类需要执行
         for (AdvisedSupport aopConfig : advisedSupports) {
-
-            Object wrappedInstance = null;
-            Class<?> wrappedClass = null;
-            if (bean instanceof BeanWrapper) {
-                wrappedInstance = ((BeanWrapper) bean).getWrappedInstance();
-                wrappedClass = ((BeanWrapper) bean).getWrappedClass();
+            Class<?> beanClass = null;
+            if (AopUtils.isAopProxy(bean)){
+                beanClass = AopUtils.getAopTarget(bean);
             }else{
-                wrappedInstance = new BeanWrapper(bean);
-                wrappedClass = ((BeanWrapper) wrappedInstance).getWrappedClass();
+                beanClass = bean.getClass();
             }
 
             AdvisedSupport myConfig = null;
 
             try {
                 // 这里将原有的aopConfig为每个代理类扩增，防止java内存赋值
-                myConfig = getProxyAopConfig(aopConfig, wrappedInstance, wrappedClass);
+                myConfig = getProxyAopConfig(aopConfig, bean, beanClass);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             if (myConfig.pointCutMatch()) {
                 Object proxy = createProxy(myConfig).getProxy();
-                bean = new BeanWrapper(proxy);
+                bean = proxy;
                 log.debug("为" + AopUtils.getAopTarget(proxy).getSimpleName() + "创建代理对象 : " + proxy.getClass());
             }
 
@@ -107,7 +109,7 @@ public class AutoProxyCreator implements InstantiationAwareBeanPostProcessor {
             if (method.isAnnotationPresent(PointCut.class)) {
                 // 如果定义了切点类，保存切点表达式，一个切面类
                 String execution = method.getAnnotation(PointCut.class).value().trim();
-                reader.setPointCut(aspectClazz, execution);
+                reader.addPointCut(aspectClazz, execution);
                 break;
             }
         }

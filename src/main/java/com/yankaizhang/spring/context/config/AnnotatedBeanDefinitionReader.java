@@ -14,12 +14,15 @@ import com.yankaizhang.spring.util.StringUtils;
 public class AnnotatedBeanDefinitionReader {
 
     private BeanDefinitionRegistry registry;
+    private final String CONFIGURATION_CLASS_POST_PROCESSOR = "internalConfigurationClassPostProcessor";
 
     /**
      * 通过构造方法获取从ApplicationContext传入的locations路径，然后解析扫描和保存相关所有的类并且提供统一的访问入口
      */
     public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry) {
         this.registry = registry;
+        // TODO: 在这里将ConfigurationClassPostProcessor的bean定义加入
+        registerBean(ConfigurationClassPostProcessor.class, CONFIGURATION_CLASS_POST_PROCESSOR);
     }
 
     /**

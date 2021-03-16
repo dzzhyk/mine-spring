@@ -13,8 +13,8 @@ Through this project, you can understand the simple implementation ways of sprin
 ## Features
 
 1. Simple Spring IoC container implementation.
-2. Simple yet functional springMVC function.
-3. Annotation based AOP programming support.
+2. AOP programming support.
+3. Simple yet functional springMVC function. 
 4. Almost the same annotation usage as Spring-Framework.
 5. JavaConfig Class `@Configuration` support
 6. MultipartFile upload and download `MultipartFile`
@@ -31,7 +31,7 @@ create an empty web project, then add `mine-spring` maven dependency:
 <dependency>
     <groupId>com.yankaizhang</groupId>
     <artifactId>mine-spring</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 
@@ -43,7 +43,7 @@ create an empty web project, then add `mine-spring` maven dependency:
 public class TestController {
 
     @Autowired
-    TestService testService;
+    TestServiceImpl testService;
 
     @RequestMapping("/index")
     public String index(){
@@ -65,17 +65,17 @@ For more examples, check module `mine-spring-example`
 
 ## TODO
 
-- [ ] Simple Spring JDBC.
-- [x] Multi-Aspect AOP support.
-- [ ] Simple ORM like Spring Data JPA.
-- [x] @ResponseBody and JSON parser.
-- [x] Simplify to Controller params.
-- [x] @Configuration based Java ConfigClass support
-- [x] MultipartFile upload and download
-- [x] A tiny `AnnotationConfigClassApplicationContext` impl
-- [ ] `BeanPostProcessor` and `BeanFactoryPostProcessor`
+- [x] Spring IoC Container implementation
+- [x] `BeanPostProcessor` and `BeanFactoryPostProcessor`
+- [x] `@Configuration` and `@Bean` based Java Config support
+- [x] Annotation Based AOP support `@Aspect`
+- [x] `@ResponseBody` and JSON parser
+- [x] `@Autowired` property injection
+- [x] MultipartFile upload and download support
+- [ ] `@Around` Aspect
+- [ ] Simple Spring JDBC
 - [ ] transaction support
-- [ ] @Around Aop
+- [ ] Simple ORM like Spring Data JPA
 
 ## Known Bugs
 

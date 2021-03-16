@@ -39,5 +39,21 @@
 
   <build>
     <finalName>mine-spring-example</finalName>
+    <plugins>
+      <!-- compile -->
+      <!-- 请务必使用该组件添加-parameters编译选项，否则可能造成反射解析参数获取异常 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgument>-parameters</compilerArgument>
+          <testCompilerArgument>-parameters</testCompilerArgument>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
+
+
 </project>

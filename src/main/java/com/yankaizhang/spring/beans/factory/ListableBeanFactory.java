@@ -51,10 +51,10 @@ public interface ListableBeanFactory extends BeanFactory {
     /**
      * 获取拥有某注解的bean实例集合
      * @param annotationType 注解类型
-     * @return 一个Map对象，key是bean名称，value是名称对应的bean实例对象
-     * @throws Exception 获取过程异常
+     * @return 一个Map对象，key是bean定义名称，value是名称对应的bean实例对象
+     * @throws RuntimeException 获取过程异常
      */
-    Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws Exception;
+    Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws RuntimeException;
 
     /**
      * 获取某个bean对象上的某类型注解

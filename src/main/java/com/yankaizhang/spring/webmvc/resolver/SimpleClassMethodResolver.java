@@ -28,11 +28,13 @@ public class SimpleClassMethodResolver implements ArgumentResolver {
             return null;
         }
 
+
+
         Object result;
         try {
-            result = parameterType.newInstance();
+            result = BeanUtils.instantiateClass(parameterType);
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new Exception("创建 " + parameterType.getName() + " 类型的方法参数失败 => ");
+            throw new Exception("创建 " + parameterType.getName() + " 类型的方法参数失败 => " + parameter.getParameterName());
         }
         return result;
     }

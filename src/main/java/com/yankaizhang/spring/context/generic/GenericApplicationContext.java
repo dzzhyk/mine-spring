@@ -6,7 +6,10 @@ import com.yankaizhang.spring.beans.factory.CompletedBeanFactory;
 import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
 import com.yankaizhang.spring.beans.factory.impl.DefaultBeanFactory;
 import com.yankaizhang.spring.context.support.AbstractApplicationContext;
+import com.yankaizhang.spring.context.util.BeanDefinitionRegistryUtils;
 import com.yankaizhang.spring.util.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -20,6 +23,8 @@ import java.util.Map;
  * @since 2020-12-20 18:06:33
  */
 public class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {
+
+    private static final Logger log = LoggerFactory.getLogger(GenericApplicationContext.class);
 
     /** 真正的beanFactory对象 */
     private final DefaultBeanFactory beanFactory;
@@ -35,7 +40,7 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 
     @Override
     public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) throws Exception {
-        beanFactory.registerBeanDefinition(beanName, beanDefinition);
+        BeanDefinitionRegistryUtils.registerBeanDefinition(beanFactory, beanName, beanDefinition);
     }
 
     @Override
@@ -74,8 +79,8 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
     }
 
     @Override
-    public void close() throws IOException {
-        // 暂时没什么可做的
+    public void close() {
+        destroyBeans();
     }
 
     public List<BeanPostProcessor> getBeanPostProcessors(){
@@ -86,4 +91,5 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
     public Map<String, BeanDefinition> getBeanDefinitionMap() {
         return beanFactory.getBeanDefinitionMap();
     }
+
 }

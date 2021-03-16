@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class JspView extends AbstractView {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(JspView.class);
 
     public JspView() {}
 

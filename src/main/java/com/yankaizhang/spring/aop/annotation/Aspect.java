@@ -11,5 +11,4 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Aspect {
-    String value() default "";
 }

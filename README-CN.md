@@ -14,15 +14,15 @@ mine-spring是本人学习spring框架原理和学习spring源码的练习产物
 
 ## 现有功能
 
-1. springIoC容器实现
-2. 简单又不失功能的springMVC功能
-3. AOP编程
-4. 几乎和Spring相同的注解用法
-5. 使用Java注解配置类 `@Configuration` 配置Bean对象
+1. spring IoC 容器实现
+2. AOP 面向切面编程支持
+3. 简单又不失功能的springMVC功能
+4. 使用Java注解配置类 `@Configuration` 配置Bean对象
+5. 几乎和Spring相同的注解用法
 6. 文件上传和文件下载支持
-7. 支持Jsp模板和内置HTML解析模板
-8. `@RequestBody`和`@ResponseBody`请求体和响应体解析
-9. 自动装配`@Autowired`
+7. 支持Jsp模板、自建了一个内置HTML解析模板
+8. `@RequestBody`和`@ResponseBody`请求体和响应体自动解析
+9. 自动装配`@Autowired`功能
 10. 还有更多...
 
 ## 使用mine-spring
@@ -33,7 +33,7 @@ mine-spring是本人学习spring框架原理和学习spring源码的练习产物
 <dependency>
     <groupId>com.yankaizhang</groupId>
     <artifactId>mine-spring</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 
@@ -47,7 +47,7 @@ mine-spring是本人学习spring框架原理和学习spring源码的练习产物
 public class TestController {
 
     @Autowired
-    TestService testService;
+    TestServiceImpl testService;
 
     @RequestMapping("/index")
     public String index(){
@@ -67,17 +67,17 @@ public class TestController {
 
 ## TODO
 
-- [ ] springJDBC实现
-- [x] 多切面AOP支持
-- [ ] 类似JPA的简易orm框架实现
-- [x] @ResponseBody注解和json解析支持
-- [x] Controller参数简化
-- [x] @Configuration配置类和@Bean注解配置
-- [x] 文件上传和文件下载支持
-- [x] 更加完整正规的`AnnotationConfigClassApplicationContext`容器
-- [ ] `BeanPostProcessor` 和 `BeanFactoryPostProcessor`实现，以及其容器实现
+- [x] Spring IoC 容器实现
+- [x] `BeanPostProcessor` 与 `BeanFactoryPostProcessor` bean生命周期处理器实现
+- [x] `@Configuration` 和 `@Bean` 支持的Java配置类解析功能
+- [x] 基于注解配置的AOP面向切面编程 `@Aspect`
+- [x] `@RequestBody`和`@ResponseBody`请求体和响应体自动解析
+- [x] `@Autowired` 自动属性注入
+- [x] 文件上传下载支持
+- [ ] `@Around` 环绕通知
+- [ ] 简易 Spring JDBC 实现
 - [ ] 事务支持
-- [ ] @Around Aop环切实现
+- [ ] 简易 ORM 框架实现
 
 ## 已知问题
 

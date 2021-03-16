@@ -32,7 +32,7 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
      *
      * @param bean 待处理bean对象
      * @param beanName bean名称
-     * @return 如果返回false，初始化过程中不会执行自动属性注入，postProcessProperties被忽略不执行<br/>
+     * @return 如果返回false，初始化过程中不会执行自动属性注入 @Autowired和postProcessProperties被忽略不执行<br/>
      *         如果返回true，初始化过程中会执行自动属性注入，postProcessProperties会执行
      * @throws RuntimeException 处理过程异常
      */
@@ -49,6 +49,6 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
      * @throws RuntimeException 处理过程异常
      */
     default PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws RuntimeException {
-        return null;
+        return pvs;
     }
 }

@@ -13,10 +13,13 @@ import com.yankaizhang.spring.webmvc.*;
 import com.yankaizhang.spring.webmvc.annotation.RequestMapping;
 import com.yankaizhang.spring.webmvc.multipart.MultipartRequest;
 import com.yankaizhang.spring.webmvc.multipart.MultipartResolver;
+import com.yankaizhang.spring.webmvc.multipart.commons.CommonsMultipartResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -110,7 +113,8 @@ public class DispatcherServlet extends FrameworkServlet {
             // 尝试从容器中获取
             multipartResolver = (MultipartResolver) context.getBean(MULTIPART_RESOLVER_BEAN_NAME);
         }catch (Exception e){
-            e.printStackTrace();
+            this.multipartResolver = new CommonsMultipartResolver();
+            log.warn("容器中未配置 [MultipartResolver] 对象，已创建默认实现对象 : CommonsMultipartResolver");
         }
         if (multipartResolver != null){
             this.multipartResolver = multipartResolver;
@@ -134,12 +138,10 @@ public class DispatcherServlet extends FrameworkServlet {
     private void initHandlerMappings(AnnotationConfigApplicationContext context){
         try {
             // 获取已经存在的实例化好的对象
-            Map<String, BeanWrapper> ioc = context.getBeansOfType(BeanWrapper.class);
-            for (BeanWrapper beanWrapper : ioc.values()) {
-                Object beanInstance = beanWrapper.getWrappedInstance();
+            Map<String, Object> ioc = context.getBeanFactory().getSingletonIoc();
+            for (Object beanInstance : ioc.values()) {
                 // 排除可能有的bean没有在容器中
                 if (beanInstance == null) continue;
-
                 Class<?> clazz = null;
                 // 如果是Aop代理bean对象
                 if (AopUtils.isAopProxy(beanInstance)){
@@ -150,7 +152,6 @@ public class DispatcherServlet extends FrameworkServlet {
                 }
 
                 if (clazz==null || !clazz.isAnnotationPresent(Controller.class)) continue;
-
 
                 String[] baseUrls = {};
                 if (clazz.isAnnotationPresent(RequestMapping.class)){
@@ -263,7 +264,6 @@ public class DispatcherServlet extends FrameworkServlet {
                 buffer.append(stackTraceElement).append("\n");
             }
             resp.getWriter().write(buffer.toString());
-            e.printStackTrace();
         }
     }
 
@@ -281,12 +281,16 @@ public class DispatcherServlet extends FrameworkServlet {
         HandlerMapping handlerMapping = getHandlerMapping(processedRequest);
         if (null == handlerMapping){
             // 如果没有这个controller，返回404页面
-            throw new Exception("没有该请求对应的 HandlerMapping 实现 => \"" + requestURI + "\"");
+            log.warn("没有对应的 HandlerMapping => \"{}\", 尝试寻找路径为该URI的静态资源", requestURI);
+
+            // 可能是静态资源，尝试发送到defaultDispatcher
+            RequestDispatcher defaultDispatcher = getServletContext().getNamedDispatcher("default");
+            defaultDispatcher.forward(req, resp);
         }
 
         HandlerAdapter handlerAdapter = getHandlerAdapter(handlerMapping);
         if (handlerAdapter == null){
-            throw new Exception("没有该请求对应的 HandlerAdapter 实现 => \"" + requestURI + "\"");
+            throw new Exception("没有对应的 HandlerAdapter 实现 => \"" + requestURI + "\"");
         }
 
         ModelAndView mv = handlerAdapter.handle(processedRequest, resp, handlerMapping);
@@ -414,7 +418,7 @@ public class DispatcherServlet extends FrameworkServlet {
     private HandlerAdapter getHandlerAdapter(HandlerMapping handlerMapping){
         if (handlerAdapterMap.isEmpty()) return null;
         HandlerAdapter handlerAdapter = handlerAdapterMap.get(handlerMapping);
-        if (handlerAdapter.supports(handlerMapping)){
+        if (handlerAdapter != null && handlerAdapter.supports(handlerMapping)){
             return handlerAdapter;
         }
         return null;
@@ -437,6 +441,7 @@ public class DispatcherServlet extends FrameworkServlet {
                 return handler;
             }
         }
+
         return null;
     }
 }

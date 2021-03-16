@@ -3,7 +3,7 @@ package com.yankaizhang.spring.beans.factory.config;
 import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
 
 /**
- * {@link BeanFactoryPostProcessor}的进一步实现接口，优先级高于BeanFactoryPostProcessor
+ * {@link BeanFactoryPostProcessor}的进一步实现接口，优先级高于BeanFactoryPostProcessor<br/>
  * 允许在BeanFactoryPostProcessor执行之前添加新的Bean定义
  * 配置类{@link com.yankaizhang.spring.context.annotation.Configuration}中定义的Bean就是使用这个方式注入的
  * @author dzzhyk

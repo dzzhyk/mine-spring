@@ -5,6 +5,7 @@ import com.yankaizhang.spring.context.annotation.Controller;
 import com.yankaizhang.spring.example.entity.Result;
 import com.yankaizhang.spring.example.entity.User;
 import com.yankaizhang.spring.example.service.TestService;
+import com.yankaizhang.spring.example.service.impl.TestServiceImpl;
 import com.yankaizhang.spring.webmvc.annotation.RequestBody;
 import com.yankaizhang.spring.webmvc.annotation.RequestMapping;
 import com.yankaizhang.spring.webmvc.annotation.RequestParam;
@@ -27,9 +28,10 @@ import java.util.UUID;
 @Slf4j
 public class TestController {
 
-    /** 自动注入例子 */
+    /** 自动注入属性 */
     @Autowired
-    TestService testService;
+    private TestServiceImpl testService;
+
 
     @RequestMapping({"/", "/index"})
     public String index(HttpServletRequest request){
@@ -37,22 +39,26 @@ public class TestController {
         return "index";
     }
 
+
     @RequestMapping("/hello")
     @ResponseBody
     public String hello(@RequestParam("name") String name){
         return testService.sayHello(name);
     }
 
+
     @RequestMapping("/json1")
     public @ResponseBody User json1(){
         return new User("dzzhyk", "123");
     }
+
 
     @RequestMapping("/json2")
     @ResponseBody
     public User json2(){
         return new User("dzzhyk", "123");
     }
+
 
     /**
      * 文件上传并且返回json响应体
@@ -61,6 +67,7 @@ public class TestController {
     @ResponseBody
     public Result upload(@RequestParam("file") MultipartFile file,
                          @RequestParam("username") String name){
+        if (file == null) return Result.failed();
         String fileName = file.getName();
         log.info("文件名 : " + fileName);
         log.info("参数username : " + name);
@@ -91,6 +98,7 @@ public class TestController {
         return Result.success();
     }
 
+
     /**
      * 获取request和response对象的示例
      */
@@ -100,6 +108,7 @@ public class TestController {
         response.addCookie(new Cookie("myCookie", name));
         return "index";
     }
+
 
     /**
      * 测试请求体
@@ -123,6 +132,7 @@ public class TestController {
         return Result.success();
     }
 
+
     @RequestMapping("/char")
     @ResponseBody
     public Result body(@RequestParam("ch") Character ch){
@@ -134,15 +144,16 @@ public class TestController {
 
     }
 
+
     /**
-     * 检查对于未标记@RequestParam的参数处理
-     * mine-spring会为其尽量创建对象，如果是接口类型为null
+     * 检查对于未标记@RequestParam的参数，会尝试创建一个新的默认对象传入
+     * 如果是接口类型，则为null
      */
     @RequestMapping("/commons")
     public void commons(User user, List<Integer> commonList){
         System.out.println(user);
         if (commonList == null){
-            System.out.println("commonList不是具体类型，为null");
+            System.out.println("commonList是接口类型，mine-spring无法为你创建具体对象");
         }
     }
 }

@@ -11,6 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface AfterThrowing {
-    String value() default "";
+
     String exception() default "java.lang.Exception";
+
 }

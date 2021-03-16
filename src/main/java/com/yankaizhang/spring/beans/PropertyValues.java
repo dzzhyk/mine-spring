@@ -17,6 +17,14 @@ public interface PropertyValues {
      */
     List<PropertyValue> getPropertyValues();
 
+
+    /**
+     * 判断是否包含某个属性
+     * @param propertyName 属性名称
+     * @return 判断结果
+     */
+    boolean contains(String propertyName);
+
     /**
      * 根据名称获取某个属性值
      * @param propertyName 属性名称
