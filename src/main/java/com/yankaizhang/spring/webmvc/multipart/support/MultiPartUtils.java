@@ -36,7 +36,7 @@ public class MultiPartUtils {
      */
     public static boolean isMultipartArgument(MethodParameter parameter) {
         Class<?> paramType = parameter.getParameterType();
-        return MultipartFile.class == paramType;
+        return MultipartFile.class.isAssignableFrom(paramType);
     }
 
 }

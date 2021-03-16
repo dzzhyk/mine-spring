@@ -6,6 +6,8 @@ import com.yankaizhang.spring.aop.annotation.AfterThrowing;
 import com.yankaizhang.spring.aop.annotation.Before;
 import com.yankaizhang.spring.core.LinkedMultiValueMap;
 import com.yankaizhang.spring.core.MultiValueMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -21,6 +23,8 @@ import java.util.Map;
  */
 public class AopAnnotationReader {
 
+    private static final Logger log = LoggerFactory.getLogger(AopAnnotationReader.class);
+
     public AopAnnotationReader() {}
 
     /**
@@ -31,8 +35,12 @@ public class AopAnnotationReader {
      */
     private Map<Class<?>, String> pointCutMap = new HashMap<>();
 
+    private List<Class<?>> parsedAspectClass = new ArrayList<>(16);
 
-    public void setPointCut(Class<?> clazz, String execution){
+    public void addPointCut(Class<?> clazz, String execution){
+        if (pointCutMap.containsKey(clazz)){
+            log.warn("重复的Aspect切面类定义，前面的切点表达式可能被覆盖 => {}", clazz);
+        }
         pointCutMap.put(clazz, execution);
     }
 
@@ -50,6 +58,10 @@ public class AopAnnotationReader {
         for (Map.Entry<Class<?>, String> entry : pointCutMap.entrySet()) {
             // 当前切面类
             Class<?> aspectClass = entry.getKey();
+            if (parsedAspectClass.contains(aspectClass)){
+                continue;
+            }
+
             // 当前切点表达式
             String pointCutNow = entry.getValue();
 
@@ -81,6 +93,7 @@ public class AopAnnotationReader {
             }
 
             advisedSupports.add(new AdvisedSupport(aopConfig));
+            parsedAspectClass.add(aspectClass);
         }
 
         // 返回所有切面类的包装类集合

@@ -25,7 +25,6 @@ public class AfterThrowingAdvice extends AbstractAspectjAdvice implements Advice
         try {
             return methodInvocation.proceed();
         }catch (Throwable ex){
-
             // 在方法调用过程中拦截异常
             invokeAdviceMethod(methodInvocation, null, ex);
             throw ex;

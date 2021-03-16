@@ -19,7 +19,6 @@ public class AfterReturningAdvice extends AbstractAspectjAdvice implements Advic
     }
 
 
-
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         Object returnValue = methodInvocation.proceed();

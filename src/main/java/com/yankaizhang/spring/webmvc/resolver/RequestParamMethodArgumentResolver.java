@@ -34,9 +34,7 @@ public class RequestParamMethodArgumentResolver implements ArgumentResolver {
         if (MultiPartUtils.isMultipartArgument(parameter)){
 
             // 如果是文件请求，应该是已经被解析过了
-
-            DefaultMultipartRequest multipartRequest =
-                    new DefaultMultipartRequest((HttpServletRequest) webRequest.getRequest());
+            DefaultMultipartRequest multipartRequest = (DefaultMultipartRequest) webRequest.getRequest();
             return multipartRequest.getFile(paramName);
 
         } else {

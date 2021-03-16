@@ -15,6 +15,7 @@ import com.yankaizhang.spring.beans.holder.PropertyValue;
 import com.yankaizhang.spring.context.annotation.Component;
 import com.yankaizhang.spring.context.annotation.Controller;
 import com.yankaizhang.spring.context.annotation.Service;
+import com.yankaizhang.spring.util.AnnotationUtils;
 import com.yankaizhang.spring.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +112,7 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
                 result = ((InstantiationAwareBeanPostProcessor) bp).postProcessBeforeInstantiation(beanClass, beanName);
             }
         }
-        log.debug("执行 :" + beanName + "的实例化bean对象前置处理器");
+        log.debug("执行 :" + beanName + " 的实例化bean对象前置处理器");
         return result;
     }
 
@@ -132,10 +133,8 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
         }
 
         // 实例化bean对象
-        BeanWrapper instanceWrapper = null;
-        instanceWrapper = createBeanInstance(beanName, beanDef, args);
-        Object bean = instanceWrapper.getWrappedInstance();
-        Class<?> beanType = instanceWrapper.getWrappedClass();
+        Object bean = createBeanInstance(beanName, beanDef, args);
+        Class<?> beanType = bean.getClass();
 
         // 执行MergedBean处理器
         synchronized (beanDef.postProcessingLock) {
@@ -152,13 +151,13 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
 
         // 注入bean对象的属性
         log.debug("开始注入bean对象的属性 : {}", beanName);
-        populateBean(beanName, beanDef, instanceWrapper);
+        populateBean(beanName, beanDef, bean);
 
         // 初始化对象
         log.debug("开始初始化bean对象 : {}", beanName);
         bean = initializeBean(bean, beanName, beanDef);
 
-        return instanceWrapper;
+        return bean;
     }
 
     /**
@@ -181,9 +180,9 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
      * @param beanName bean名称
      * @param beanDef bean定义
      * @param args 额外参数
-     * @return {@link BeanWrapper}包装类对象
+     * @return 创建好的bean对象
      */
-    protected BeanWrapper createBeanInstance(String beanName, GenericBeanDefinition beanDef, Object[] args) throws Exception {
+    protected Object createBeanInstance(String beanName, GenericBeanDefinition beanDef, Object[] args) throws Exception {
 
         Class<?> beanClass = beanDef.getBeanClass();
 
@@ -200,9 +199,9 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
      * 实例化的结果是单例IoC中的Bean对象
      * com.yankaizhang.test.service.impl.TestServiceImpl -> TestServiceImpl@1024
      */
-    private BeanWrapper instantiateBean(GenericBeanDefinition beanDefinition) throws RuntimeException {
+    private Object instantiateBean(GenericBeanDefinition beanDefinition) throws RuntimeException {
 
-        BeanWrapper instance = null;
+        Object instance = null;
 
         String factoryMethodName = beanDefinition.getFactoryMethodName();
         String beanClassName = beanDefinition.getBeanClassName();
@@ -217,13 +216,12 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
             try {
                 if (containsBean(beanName)){
                     // 如果已经有了该beanDefinition的单例实例缓存，直接获取
-                    instance = (BeanWrapper) getBean(beanName);
+                    instance = getBean(beanName);
                 } else {
 
                     // TODO: 这里可以改为使用策略模式
                     Class<?> clazz = beanDefinition.getBeanClass();
-                    Object ins = clazz.newInstance();
-                    instance = new BeanWrapper(ins);
+                    instance = clazz.newInstance();
 
                 }
             }catch (InstantiationException | IllegalAccessException e){
@@ -252,9 +250,9 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
                 Class<?> factoryClazz = factoryBeanInUse.getClass();
                 Method factoryMethod = null;
                 try {
+
                     factoryMethod = factoryClazz.getMethod(factoryMethodName);
-                    Object ins = factoryMethod.invoke(factoryBeanInUse);
-                    instance = new BeanWrapper(ins);
+                    instance = factoryMethod.invoke(factoryBeanInUse);
 
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                     throw new RuntimeException("使用工厂创建bean实例失败 => "+beanClassName, e);
@@ -273,10 +271,7 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
      * 对bean实例属性进行属性注入
      * TODO: 目前只支持手动使用@Autowired注入属性，所有bean对象默认不进行属性注入
      */
-    private void populateBean(String beanName, GenericBeanDefinition beanDef, BeanWrapper beanWrapper) throws Exception{
-
-        // 获取待属性注入的对象的真正实例
-        Object instance = beanWrapper.getWrappedInstance();
+    private void populateBean(String beanName, GenericBeanDefinition beanDef, Object instance) throws Exception{
 
         if (instance == null){
             if (beanDef.hasPropertyValues()){
@@ -393,18 +388,17 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
     public Object initializeBean(Object existingBean, String beanName, BeanDefinition beanDef) throws RuntimeException {
 
         // 执行初始化前处理器
-        Object wrappedBean = existingBean;
-        applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
+        Object bean = applyBeanPostProcessorsBeforeInitialization(existingBean, beanName);
 
         try {
-            invokeInitMethods(wrappedBean, beanDef);
+            invokeInitMethods(bean, beanDef);
         }catch (Exception e){
             throw new RuntimeException("执行bean对象的初始化方法异常 => " + beanName);
         }
 
         // 执行初始化后处理器
-        applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
-        return wrappedBean;
+        bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
+        return bean;
     }
 
 
@@ -506,17 +500,21 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
     }
 
     @Override
-    public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws Exception {
+    public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws RuntimeException {
         Map<String, Object> ans = new LinkedHashMap<>();
         String[] beanDefinitionNames = getBeanDefinitionNames();
-        for (String beanDefinitionName : beanDefinitionNames) {
-            BeanDefinition bd = getBeanDefinition(beanDefinitionName);
-            if (bd != null && !bd.isAbstract() && findAnnotationOnBean(beanDefinitionName, annotationType) != null){
-                Object bean = getBean(beanDefinitionName);
-                if (bean != null){
-                    ans.put(beanDefinitionName, bean);
-                }
+        try {
+            for (String beanDefinitionName : beanDefinitionNames) {
+                BeanDefinition bd = getBeanDefinition(beanDefinitionName);
+                    if (bd != null && !bd.isAbstract() && findAnnotationOnBean(beanDefinitionName, annotationType) != null){
+                        Object bean = getBean(beanDefinitionName);
+                        if (bean != null){
+                            ans.put(beanDefinitionName, bean);
+                        }
+                    }
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return ans;
     }
@@ -528,7 +526,8 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
             Class<?> beanClass = beanDefinition.getBeanClass();
             Annotation[] annotations = beanClass.getAnnotations();
             for (Annotation annotation : annotations) {
-                if (annotation.annotationType() == annotationType){
+                Class<?> annotationClazz = AnnotationUtils.getAnnotationJdkProxyTarget(annotation);
+                if (annotationClazz.equals(annotationType)){
                     return (A) annotation;
                 }
             }

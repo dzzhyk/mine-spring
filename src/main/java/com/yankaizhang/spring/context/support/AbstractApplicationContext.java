@@ -1,5 +1,6 @@
 package com.yankaizhang.spring.context.support;
 
+import com.yankaizhang.spring.aop.annotation.Aspect;
 import com.yankaizhang.spring.beans.BeanDefinition;
 import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
 import com.yankaizhang.spring.beans.factory.BeanFactory;
@@ -96,6 +97,11 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
      * @param beanFactory bean容器
      */
     private void finishBeanFactoryInitialization(DefaultBeanFactory beanFactory) {
+
+        // 首先初始化可能的切面类
+        beanFactory.getBeansWithAnnotation(Aspect.class);
+
+        // 初始化其他单例
         beanFactory.preInstantiateSingletons();
     }
 
@@ -230,7 +236,7 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     }
 
     @Override
-    public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws Exception {
+    public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws RuntimeException {
         return getBeanFactory().getBeansWithAnnotation(annotationType);
     }
 

@@ -201,29 +201,33 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
      * 现在拿到手里的已经是准备完成的、前后置处理完成的bean对象
      * 这个bean对象可能是一个工厂类对象，所以在Spring里面，如果尝试获取一个工厂类bean对象，会返回他的创建后对象
      * 这个方法就是用来判断工厂对象，如果是工厂对象，返回工厂的产品
-     * @param wrappedBean 原始bean对象
+     * @param bean 原始bean对象
      * @param beanName bean名称
      * @return 创建好的bean对象
      */
     @SuppressWarnings("all")
-    private Object getObjectForBeanInstance(Object wrappedBean, String beanName) {
-        if (wrappedBean instanceof BeanWrapper){
-            final Object wrappedInstance = ((BeanWrapper) wrappedBean).getWrappedInstance();
+    private Object getObjectForBeanInstance(Object bean, String beanName) {
+        Object wrappedInstance = bean;
+        if (bean instanceof BeanWrapper){
+            wrappedInstance = ((BeanWrapper) bean).getWrappedInstance();
             // 如果是工厂对象
             if (wrappedInstance instanceof FactoryBean){
-                try {
-                    Object object = ((FactoryBean) wrappedInstance).getObject();
-                    return object;
-                } catch (Exception e) {
-                    log.error("获取工厂对象的产品失败 => {}", beanName);
-                    e.printStackTrace();
-                }
-            }else{
-                return wrappedInstance;
+                return getObjectFactoryProduct(((FactoryBean) wrappedInstance), beanName);
             }
+        }else if (bean instanceof FactoryBean){
+            return getObjectFactoryProduct(((FactoryBean) bean), beanName);
         }
-        log.warn("收到了非BeanWrapper的对象 => {}", wrappedBean);
-        return wrappedBean;
+        return wrappedInstance;
+    }
+
+    private Object getObjectFactoryProduct(FactoryBean<?> factoryBean, String beanName){
+        try {
+            return factoryBean.getObject();
+        } catch (Exception e) {
+            log.error("获取工厂对象的产品失败 => {}", beanName);
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

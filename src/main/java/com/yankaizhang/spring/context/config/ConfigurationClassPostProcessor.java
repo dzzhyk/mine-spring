@@ -5,16 +5,16 @@ import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
 import com.yankaizhang.spring.beans.factory.BeanFactory;
 import com.yankaizhang.spring.beans.factory.config.BeanDefinitionRegistryPostProcessor;
 import com.yankaizhang.spring.beans.factory.impl.AnnotatedGenericBeanDefinition;
-import com.yankaizhang.spring.beans.factory.support.AbstractBeanDefinition;
 import com.yankaizhang.spring.context.annotation.*;
 import com.yankaizhang.spring.context.util.BeanDefinitionRegistryUtils;
+import com.yankaizhang.spring.util.AnnotationUtils;
 import com.yankaizhang.spring.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 配置类解析器，实现了{@link BeanDefinitionRegistryPostProcessor}接口，在容器创建之后使用
@@ -71,7 +71,6 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 
 
     private void doParseAnnotationConfigClass(Class<?> configClass) {
-
         // 解析@ComponentScan注解
         ComponentScan componentScanAnnotation = configClass.getAnnotation(ComponentScan.class);
         if (componentScanAnnotation!=null){
@@ -81,21 +80,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
         }
 
         // 解析@Import注解
-        Import importAnnotation = configClass.getAnnotation(Import.class);
-        if (importAnnotation != null){
-            Class<?>[] classes = importAnnotation.value();
-            for (Class<?> clazz : classes) {
-                AnnotatedGenericBeanDefinition beanDef = new AnnotatedGenericBeanDefinition(clazz);
-                String beanClassName = beanDef.getBeanClassName();
-                String beanName = StringUtils.toLowerCase(beanClassName.substring(beanClassName.lastIndexOf(".")+1));
-                BeanDefinitionRegistryUtils.registerBeanDefinition(registry, beanName, beanDef);
-
-                // 如果Import之后是个配置类，就继续解析配置类
-                if (clazz.isAnnotationPresent(Configuration.class)){
-                    parseAnnotationConfigClass(clazz);
-                }
-            }
-        }
+        Set<Class<?>> visitedSet = new LinkedHashSet<>();
+        parseImport(configClass, visitedSet);
 
         // 解析@Bean注解
         Method[] declaredMethods = configClass.getDeclaredMethods();
@@ -106,6 +92,38 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
             }
         }
     }
+
+
+    /**
+     * 递归地解析配置类所标注的所有Import注解
+     */
+    private void parseImport(Class<?> configClass, Set<Class<?>> visitedSet){
+        // 使用set来避免一直递归
+        if (visitedSet.add(configClass)){
+            for (Annotation annotation : configClass.getAnnotations()) {
+                Class<?> annotationClazz = AnnotationUtils.getAnnotationJdkProxyTarget(annotation);
+                if (Import.class.isAssignableFrom(annotationClazz)){
+                    Import importAnnotation = ((Import) annotation);
+                    Class<?>[] classes = importAnnotation.value();
+                    for (Class<?> clazz : classes) {
+                        AnnotatedGenericBeanDefinition beanDef = new AnnotatedGenericBeanDefinition(clazz);
+                        String beanClassName = beanDef.getBeanClassName();
+                        String beanName = StringUtils.toLowerCase(beanClassName.substring(beanClassName.lastIndexOf(".")+1));
+                        BeanDefinitionRegistryUtils.registerBeanDefinition(registry, beanName, beanDef);
+
+                        // 如果Import之后是个配置类，就继续解析配置类
+                        if (clazz.isAnnotationPresent(Configuration.class)){
+                            parseAnnotationConfigClass(clazz);
+                        }
+                    }
+                }else{
+                    // 递归地查找所有注解里面的@Import注解
+                    parseImport(annotationClazz, visitedSet);
+                }
+            }
+        }
+    }
+
 
     /**
      * 解析BeanMethod
