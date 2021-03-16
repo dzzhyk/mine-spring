@@ -2,6 +2,30 @@
 
 ---
 
+- 2021年3月16日 17:23:02
+
+1. 通过bean后置处理器，现在mine-spring拥有了切面编程AOP的能力，使用`@EnableAspectJAutoProxy`注解开启这项功能，同时支持Jdk Proxy与CGLib
+2. 完善了示例项目，现在使用jsp做演示
+3. 静态资源现在可以访问，如果找不到对应的handler，会转发到服务器默认handler（tomcat为default）
+4. 现在可以使用`@Import`注解在配置类导入特定的bean定义到容器中，这会在配置类解析的时候完成
+
+---
+
+- 2021年3月15日 23:12:10
+
+1. 完成IoC容器的bean对象生命周期的各种阶段处理器功能
+2. 一些问题：Component对象现在还不能指定初始化和销毁方法，目前尚未实现InitializingBean和DisposableBean这两个接口
+
+---
+
+- 2021年3月13日 17:02:09
+
+1. 删除RootBeanDefinition，简化BeanDefinition的接口实现结构，现在比较简洁
+2. `@Qualifier`注解允许为属性指定特定的beanName，从而避免bean类型冲突
+3. 修正Bug
+
+---
+
 - 2021年03月08日18:55:36
 
 1. 好久不见，即将完成0.0.3
@@ -30,7 +54,7 @@
 
 - 2020年11月28日14:12:12
 
-1. 添加了@ResponseBody和@RequestBody注解解析
+1. 添加了`@ResponseBody`和`@RequestBody`注解解析
 2. 重构了webmvc部分代码，把一些通用模块拆分出web包
 3. bean实例化过程中的前后置顺序处理有问题，因为目前还没有真正实现前后置处理器所以影响不大，已经更正
 4. 给所有类加了时间戳和author，方便后面维护
@@ -56,7 +80,7 @@
 - 2020年11月19日19:15:31
 
 1. 把测试项目独立出来了project-test，这个项目不参与打包和部署
-2. 现在@RequestMapping可以同时对应多个映射地址了
+2. 现在`@RequestMapping`可以同时对应多个映射地址了
 3. 添加了jsp模板支持，现在可以使用suffix配置项自定义模板后缀了，默认为.html
 4. 为DispatcherServlet添加了抽象父类FrameworkServlet，准备进一步剥离通用部分
 5. 优化了一下返回的异常处理页面，现在会有统一返回的异常页面
@@ -90,7 +114,7 @@
 
 1. 更新了context容器之后，更新了webmvc的策略，现在webmvc也可用了
 2. 模仿Spring添加了元数据支持，在scanner扫描包路径的时候会将内容扫描为元数据
-3. 添加了一个@ComponentScan注解，现在可以在配置类上添加额外的扫描包路径了
+3. 添加了一个`@ComponentScan`注解，现在可以在配置类上添加额外的扫描包路径了
 4. 研究了一下发现启动方式还不能完全抛弃配置文件，目前还需要一个basePackage属性来告诉容器在启动的时候扫描哪个基础路径
 5. 简化了一下aop部分创建aop对象的代码，现在代理类不会代理Object的一些原生方法或者final方法
 6. 在test模块做了一下测试，mvc和aop可以正常工作
@@ -111,7 +135,7 @@
 
 1. 更新的beans模块的设计，对标Spring
 2. 更新context容器模块，拆分功能，同时还有更加规范的实现
-3. 现在，基本支持了Java配置类的解析和使用，同时可以使用@Lazy注解
+3. 现在，基本支持了Java配置类的解析和使用，同时可以使用`@Lazy`注解
 4. property文件配置方式被弃用，目前暂时只保留Java配置类配置方式
 
 ---
@@ -120,13 +144,13 @@
 
 1. 文件上传和文件下载支持
 2. 在test模块中TestController中提供了文件上传和下载的实例
-3. 简化文件上传实现，目前为止全部是手写代码！
+3. 简化文件上传实现
 
 ---
 
 - 2020年11月04日18:51:11
 
-1. @Configuration和@Bean注解支持
+1. `@Configuration`和`@Bean`注解支持
 2. 现在可以脱离mvc使用IoC容器了
 3. BeanDefinition属性扩充
 4. 目前支持2种Bean对象实例化方式

@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public class HtmlView extends AbstractView {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(HtmlView.class);
 
     private static final String EL_PATTERN = "\\$\\{[^}]+}";
 

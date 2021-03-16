@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * 断言工具类
- * 简单写了几个常用的s
+ * 简单写了几个常用的
  * @author dzzhyk
  */
 public class Assert {

@@ -15,11 +15,11 @@ public interface CompletedBeanFactory extends ListableBeanFactory, ConfigurableB
 
     /**
      * 通过beanName获取BeanDefinition
-     * @param beanName bean名称
+     * @param beanDefName bean名称
      * @return beanName对应的bean定义
      * @throws Exception 处理异常
      */
-    BeanDefinition getBeanDefinition(String beanName) throws Exception;
+    BeanDefinition getBeanDefinition(String beanDefName) throws Exception;
 
     /**
      * 预先实例化需要的单例，一般在BeanFactory初始化的最后一步进行

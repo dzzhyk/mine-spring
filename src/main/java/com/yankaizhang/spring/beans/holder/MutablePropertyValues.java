@@ -32,9 +32,6 @@ public class MutablePropertyValues implements PropertyValues {
         }
     }
 
-    public boolean contains(String propertyName){
-        return getPropertyValue(propertyName) != null;
-    }
 
     public void removePropertyValue(PropertyValue propertyValue){
         this.propertyValuesList.remove(propertyValue);
@@ -57,6 +54,11 @@ public class MutablePropertyValues implements PropertyValues {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean contains(String propertyName){
+        return getPropertyValue(propertyName) != null;
     }
 
     @Override

@@ -1,18 +1,21 @@
 package com.yankaizhang.spring.beans.factory.support;
 
 import com.yankaizhang.spring.beans.BeanDefinition;
+import com.yankaizhang.spring.beans.PropertyValues;
 import com.yankaizhang.spring.beans.factory.CompletedBeanFactory;
 import com.yankaizhang.spring.beans.factory.annotation.Autowired;
+import com.yankaizhang.spring.beans.factory.annotation.Qualifier;
 import com.yankaizhang.spring.beans.factory.config.BeanPostProcessor;
 import com.yankaizhang.spring.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import com.yankaizhang.spring.beans.factory.config.MergedBeanDefinitionPostProcessor;
-import com.yankaizhang.spring.beans.factory.impl.RootBeanDefinition;
+import com.yankaizhang.spring.beans.factory.generic.GenericBeanDefinition;
 import com.yankaizhang.spring.beans.holder.BeanWrapper;
-import com.yankaizhang.spring.context.annotation.Bean;
+import com.yankaizhang.spring.beans.holder.MutablePropertyValues;
+import com.yankaizhang.spring.beans.holder.PropertyValue;
 import com.yankaizhang.spring.context.annotation.Component;
 import com.yankaizhang.spring.context.annotation.Controller;
 import com.yankaizhang.spring.context.annotation.Service;
-import com.yankaizhang.spring.util.CollectionUtils;
+import com.yankaizhang.spring.util.AnnotationUtils;
 import com.yankaizhang.spring.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +27,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-import static com.yankaizhang.spring.beans.BeanDefinition.SCOPE_PROTOTYPE;
-import static com.yankaizhang.spring.util.StringUtils.toLowerCase;
 
 /**
  * 具有全部功能的bean工厂抽象类
@@ -39,23 +40,6 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
 
     private static final Logger log = LoggerFactory.getLogger(AbstractCompletedBeanFactory.class);
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T createBean(Class<T> beanClass) throws RuntimeException {
-        // Use prototype bean definition, to avoid registering bean as dependent bean.
-        RootBeanDefinition bd = new RootBeanDefinition(beanClass);
-        bd.setScope(SCOPE_PROTOTYPE);
-        return (T) createBean(beanClass.getName(), bd, null);
-    }
-
-    @Override
-    public Object createBean(Class<?> beanClass, int autowireMode, boolean dependencyCheck) throws RuntimeException {
-        // Use prototype bean definition, to avoid registering bean as dependent bean.
-        RootBeanDefinition bd = new RootBeanDefinition(beanClass, autowireMode, dependencyCheck);
-        bd.setScope(SCOPE_PROTOTYPE);
-        return createBean(beanClass.getName(), bd, null);
-    }
-
     /**
      * 创建bean对象方法
      * 主要的过程有实例化、应用处理器、属性注入
@@ -67,7 +51,7 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
      * @throws RuntimeException 创建时异常
      */
     @Override
-    protected Object createBean(String beanName, RootBeanDefinition beanDef, Object[] args) throws RuntimeException {
+    protected Object createBean(String beanName, GenericBeanDefinition beanDef, Object[] args) throws RuntimeException {
         // 1. 允许InstantiationAwareBeanPostProcessor返回一个不为Null的代理对象来替代这个bean
         try {
             Object bean = resolveBeforeInstantiation(beanName, beanDef);
@@ -99,18 +83,16 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
      * @param beanDef bean定义
      * @return 可能的代理对象
      */
-    private Object resolveBeforeInstantiation(String beanName, RootBeanDefinition beanDef) throws Exception {
+    private Object resolveBeforeInstantiation(String beanName, GenericBeanDefinition beanDef) throws Exception {
         Object bean = null;
-        if (beanDef.beforeInstantiationResolved == null || beanDef.beforeInstantiationResolved.equals(Boolean.TRUE)){
-            if (hasInstantiationAwareBeanPostProcessors()){
-                Class<?> targetType = beanDef.getBeanClass();
-                // 如果beanDef已经指定了需要的Type才创建
-                if (targetType != null) {
-                    bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);
-                    if (bean != null) {
-                        // 如果实例化处理器返回了自定义代理对象，就直接进入对象创建结束环节
-                        bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
-                    }
+        if (hasInstantiationAwareBeanPostProcessors()){
+            Class<?> targetType = beanDef.getBeanClass();
+            // 如果beanDef已经指定了需要的Type才创建
+            if (targetType != null) {
+                bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);
+                if (bean != null) {
+                    // 如果实例化处理器返回了自定义代理对象，就直接进入对象创建结束环节
+                    bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
                 }
             }
         }
@@ -130,7 +112,7 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
                 result = ((InstantiationAwareBeanPostProcessor) bp).postProcessBeforeInstantiation(beanClass, beanName);
             }
         }
-        log.debug("执行 :" + beanName + "的实例化bean对象前置处理器");
+        log.debug("执行 :" + beanName + " 的实例化bean对象前置处理器");
         return result;
     }
 
@@ -141,20 +123,18 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
      * @param args 额外参数
      * @return 创建好的bean对象的包装对象
      */
-    private Object doCreateBean(String beanName, RootBeanDefinition beanDef, Object[] args) throws Exception {
+    private Object doCreateBean(String beanName, GenericBeanDefinition beanDef, Object[] args) throws Exception {
 
-        // 如果当前bean定义是第一次创建对象，应该还没有Class对象
+        // 如果当前bean定义没有Class对象
         if (beanDef.getBeanClass() == null){
             String beanClassName = beanDef.getBeanClassName();
             Class<?> clazz = Class.forName(beanClassName);
             beanDef.setBeanClass(clazz);
         }
 
-        // 首先实例化bean对象
-        BeanWrapper instanceWrapper = null;
-        instanceWrapper = createBeanInstance(beanName, beanDef, args);
-        Object bean = instanceWrapper.getWrappedInstance();
-        Class<?> beanType = instanceWrapper.getWrappedClass();
+        // 实例化bean对象
+        Object bean = createBeanInstance(beanName, beanDef, args);
+        Class<?> beanType = bean.getClass();
 
         // 执行MergedBean处理器
         synchronized (beanDef.postProcessingLock) {
@@ -169,19 +149,15 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
             }
         }
 
-        // 初始化创建的bean实例
-        Object exposedObject = bean;
-        try {
-            // 注入bean对象的属性
-            populateBean(beanName, beanDef, instanceWrapper);
-            // 初始化对象
-            exposedObject = initializeBean(exposedObject, beanName, beanDef);
-        }
-        catch (Exception e) {
-            throw new RuntimeException("初始化 bean 实例过程失败 => " + beanName);
-        }
+        // 注入bean对象的属性
+        log.debug("开始注入bean对象的属性 : {}", beanName);
+        populateBean(beanName, beanDef, bean);
 
-        return exposedObject;
+        // 初始化对象
+        log.debug("开始初始化bean对象 : {}", beanName);
+        bean = initializeBean(bean, beanName, beanDef);
+
+        return bean;
     }
 
     /**
@@ -190,7 +166,7 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
      * @param beanType bean类型
      * @param beanName bean名称
      */
-    private void applyMergedBeanDefinitionPostProcessors(RootBeanDefinition beanDef, Class<?> beanType, String beanName) {
+    private void applyMergedBeanDefinitionPostProcessors(GenericBeanDefinition beanDef, Class<?> beanType, String beanName) {
         for (BeanPostProcessor bp : getBeanPostProcessors()) {
             if (bp instanceof MergedBeanDefinitionPostProcessor){
                 ((MergedBeanDefinitionPostProcessor) bp).postProcessMergedBeanDefinition(beanDef, beanType, beanName);
@@ -204,9 +180,9 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
      * @param beanName bean名称
      * @param beanDef bean定义
      * @param args 额外参数
-     * @return {@link BeanWrapper}包装类对象
+     * @return 创建好的bean对象
      */
-    protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition beanDef, Object[] args) throws Exception {
+    protected Object createBeanInstance(String beanName, GenericBeanDefinition beanDef, Object[] args) throws Exception {
 
         Class<?> beanClass = beanDef.getBeanClass();
 
@@ -223,12 +199,13 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
      * 实例化的结果是单例IoC中的Bean对象
      * com.yankaizhang.test.service.impl.TestServiceImpl -> TestServiceImpl@1024
      */
-    private BeanWrapper instantiateBean(RootBeanDefinition beanDefinition) throws RuntimeException {
+    private Object instantiateBean(GenericBeanDefinition beanDefinition) throws RuntimeException {
 
-        BeanWrapper instance = null;
+        Object instance = null;
 
         String factoryMethodName = beanDefinition.getFactoryMethodName();
         String beanClassName = beanDefinition.getBeanClassName();
+        String beanName = StringUtils.toLowerCase(beanClassName.substring(beanClassName.lastIndexOf(".")+1));
 
         // 根据factoryMethodName是否为null来区分反射实例和工厂实例
         if (null == factoryMethodName){
@@ -237,21 +214,14 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
             // 使用beanClassName实例化对象 标准反射
 
             try {
-                if (containsBean(beanClassName)){
+                if (containsBean(beanName)){
                     // 如果已经有了该beanDefinition的单例实例缓存，直接获取
-                    instance = (BeanWrapper) getBean(beanClassName);
+                    instance = getBean(beanName);
                 } else {
 
                     // TODO: 这里可以改为使用策略模式
                     Class<?> clazz = beanDefinition.getBeanClass();
-                    Object ins = clazz.newInstance();
-                    instance = new BeanWrapper(ins);
-
-//                    // 注解AOP支持
-//                    if (clazz.isAnnotationPresent(Aspect.class)){
-//                        // 如果是切面类，加入切面容器
-//                        aspectBeanInstanceCache.add(clazz);
-//                    }
+                    instance = clazz.newInstance();
 
                 }
             }catch (InstantiationException | IllegalAccessException e){
@@ -271,19 +241,18 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
                 }
 
                 // 使用工厂对象创建Bean对象并且加入
-                BeanWrapper wrappedFactoryBean = (BeanWrapper) getBean(factoryBeanName);
+                Object factoryBeanInUse = getBean(factoryBeanName);
 
-                if (null == wrappedFactoryBean){
+                if (null == factoryBeanInUse){
                     throw new RuntimeException("bean实例化错误：获取对象工厂bean失败");
                 }
 
-                Object factoryBeanInUse = wrappedFactoryBean.getWrappedInstance();
                 Class<?> factoryClazz = factoryBeanInUse.getClass();
                 Method factoryMethod = null;
                 try {
+
                     factoryMethod = factoryClazz.getMethod(factoryMethodName);
-                    Object ins = factoryMethod.invoke(factoryBeanInUse);
-                    instance = new BeanWrapper(ins);
+                    instance = factoryMethod.invoke(factoryBeanInUse);
 
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                     throw new RuntimeException("使用工厂创建bean实例失败 => "+beanClassName, e);
@@ -299,9 +268,10 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
 
 
     /**
-     * 对bean实例属性进行依赖注入
+     * 对bean实例属性进行属性注入
+     * TODO: 目前只支持手动使用@Autowired注入属性，所有bean对象默认不进行属性注入
      */
-    private void populateBean(String beanName, RootBeanDefinition beanDef, BeanWrapper instance) throws Exception{
+    private void populateBean(String beanName, GenericBeanDefinition beanDef, Object instance) throws Exception{
 
         if (instance == null){
             if (beanDef.hasPropertyValues()){
@@ -315,107 +285,120 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
         // 执行bean实例化处理器的after方法
         for (BeanPostProcessor bp : getBeanPostProcessors()) {
             if (bp instanceof InstantiationAwareBeanPostProcessor){
-                if (!((InstantiationAwareBeanPostProcessor) bp).postProcessAfterInstantiation(instance.getWrappedInstance(), beanName)){
+                if (!((InstantiationAwareBeanPostProcessor) bp).postProcessAfterInstantiation(instance, beanName)){
                     return;
                 }
             }
         }
 
-        if (beanDef.getAutowireMode() == AUTOWIRE_NO){
-            return;
+        if (beanDef.getAutowireMode() == AUTOWIRE_BY_NAME || beanDef.getAutowireMode() == AUTOWIRE_BY_TYPE){
+            log.warn("只支持显式地使用@Autowired注入属性，其他bean属性对象默认不进行属性注入");
         }
 
+        // 为@Autowired注解标记的属性进行注入
+        applyAutowiredBeanProperties(instance);
+
+        // 注入用户自定义的属性进行
+        applyBeanPropertyValues(instance, beanName);
+    }
+
+    @Override
+    public void applyAutowiredBeanProperties(Object bean) throws Exception {
+
         // 目前只能给组件类中显式标注了@Autowired注解的属性执行自动属性注入
-        Class<?> clazz = instance.getClass();
+        Class<?> clazz = bean.getClass();
         if (!(clazz.isAnnotationPresent(Controller.class) ||
-                clazz.isAnnotationPresent(Service.class)) ||
-                clazz.isAnnotationPresent(Component.class)) {
+                clazz.isAnnotationPresent(Service.class) ||
+                clazz.isAnnotationPresent(Component.class))) {
             return;
         }
 
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
+
             if (!field.isAnnotationPresent(Autowired.class)) {
                 continue;
             }
 
-            Autowired autowired = field.getAnnotation(Autowired.class);
+            // @Autowired注解默认按照类型注入
+            Class<?> type = field.getType();
+            Map<String, ?> beansOfType = getBeansOfType(type);
+            if(beansOfType.size() <= 0){
+                log.warn("IoC容器未找到相应的bean对象 ==> " + type);
+                continue;
+            }
 
-            // 获取待注入bean的beanName   - 改为全类名
-            String autowiredBeanName = autowired.value().trim();
-            if ("".equals(autowiredBeanName)){
-                // 如果没有，找到这个注解标记的属性的全类名，注入全类名
-                Class<?> type = field.getType();
-                autowiredBeanName = toLowerCase(type.getSimpleName());
+            Object toAutowiredInstance = null;
+            if (beansOfType.size() == 1){
+                for (Map.Entry<String, ?> entry : beansOfType.entrySet()) {
+                    toAutowiredInstance = entry.getValue();
+                }
+            }else{
+                // 可能会有多个同类型对象
+                Qualifier qualifier = field.getAnnotation(Qualifier.class);
+                if (qualifier == null) {
+                    throw new Exception("存在多个相同类型的bean对象，无法执行属性注入类型，尝试使用@Qualifier注解指定bean名称 => " + type);
+                }
+
+                String autowiredBeanName = qualifier.value();
+                // 获取装配目标对象
+                toAutowiredInstance = getBean(autowiredBeanName);
             }
 
             field.setAccessible(true);
-            Object toAutowiredInstanceWrapper = null;
 
-            // 默认使用name进行自动装配
-            toAutowiredInstanceWrapper = getBean(autowiredBeanName);
-
-            if (null == toAutowiredInstanceWrapper){
-                // 如果没有找到按照name装配的bean，寻找按照type装配的bean
-                autowiredBeanName = field.getName();
-                toAutowiredInstanceWrapper = getBean(autowiredBeanName);
-            }
-            if (null == toAutowiredInstanceWrapper){
-                throw new Exception("IoC容器未找到相应的bean对象 ==> " + autowiredBeanName);
-            }
-
-            Object wrappedInstance = ((BeanWrapper) toAutowiredInstanceWrapper).getWrappedInstance();
-
-            if (null == wrappedInstance){
-                throw new Exception("BeanWrapper代理instance对象不存在 ==> " + autowiredBeanName);
+            if (null == toAutowiredInstance){
+                log.warn("IoC容器未找到相应的bean对象 ==> " + type);
+                continue;
             }
 
             // 将获取的包装类对象装配上去
-            field.set(instance, wrappedInstance);
+            field.set(bean, toAutowiredInstance);
         }
     }
 
     @Override
-    public void autowireBean(Object existingBean) throws Exception {
+    public void applyBeanPropertyValues(Object bean, String beanName) throws Exception {
 
-    }
+        BeanDefinition beanDef = getBeanDefinition(beanName);
+        PropertyValues pvs = beanDef.getPropertyValues();
 
-    @Override
-    public Object configureBean(Object existingBean, String beanName) throws Exception {
-        return null;
-    }
+        for (BeanPostProcessor bp : getBeanPostProcessors()) {
+            if (bp instanceof InstantiationAwareBeanPostProcessor){
+                pvs = ((InstantiationAwareBeanPostProcessor) bp).postProcessProperties(pvs, bean, beanName);
+            }
+        }
 
-    @Override
-    public Object autowire(Class<?> beanClass, int autowireMode, boolean dependencyCheck) throws RuntimeException {
-        return null;
-    }
+        if (pvs.isEmpty()){
+            return;
+        }
 
-    @Override
-    public void autowireBeanProperties(Object existingBean, int autowireMode, boolean dependencyCheck) throws RuntimeException {
-
-    }
-
-    @Override
-    public void applyBeanPropertyValues(Object existingBean, String beanName) throws RuntimeException {
-
+        Class<?> clazz = bean.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        // 这里可能会覆盖上面使用@Autowired注入的对象
+        for (Field field : fields) {
+            String fieldName = field.getName();
+            if (pvs.contains(fieldName)){
+                field.set(bean, pvs.getPropertyValue(fieldName).getValue());
+            }
+        }
     }
 
     @Override
     public Object initializeBean(Object existingBean, String beanName, BeanDefinition beanDef) throws RuntimeException {
 
         // 执行初始化前处理器
-        Object wrappedBean = existingBean;
-        applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
+        Object bean = applyBeanPostProcessorsBeforeInitialization(existingBean, beanName);
 
         try {
-            invokeInitMethods(wrappedBean, beanDef);
+            invokeInitMethods(bean, beanDef);
         }catch (Exception e){
             throw new RuntimeException("执行bean对象的初始化方法异常 => " + beanName);
         }
 
         // 执行初始化后处理器
-        applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
-        return wrappedBean;
+        bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
+        return bean;
     }
 
 
@@ -471,11 +454,6 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
     }
 
     @Override
-    public void destroyBean(Object existingBean) {
-
-    }
-
-    @Override
     public void preInstantiateSingletons() throws RuntimeException {
         String[] beanDefinitionNames = getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
@@ -497,7 +475,7 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
                 if (bd.isAbstract()){
                     continue;
                 }
-                if (bd.getBeanClass() == type){
+                if (type.isAssignableFrom(bd.getBeanClass()) && !ans.contains(beanDefinitionName)){
                     ans.add(beanDefinitionName);
                 }
             }
@@ -522,29 +500,34 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
     }
 
     @Override
-    public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws Exception {
+    public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws RuntimeException {
         Map<String, Object> ans = new LinkedHashMap<>();
         String[] beanDefinitionNames = getBeanDefinitionNames();
-        for (String beanDefinitionName : beanDefinitionNames) {
-            BeanDefinition bd = getBeanDefinition(beanDefinitionName);
-            if (bd != null && !bd.isAbstract() && findAnnotationOnBean(beanDefinitionName, annotationType) != null){
-                Object bean = getBean(beanDefinitionName);
-                if (bean != null){
-                    ans.put(beanDefinitionName, bean);
-                }
+        try {
+            for (String beanDefinitionName : beanDefinitionNames) {
+                BeanDefinition bd = getBeanDefinition(beanDefinitionName);
+                    if (bd != null && !bd.isAbstract() && findAnnotationOnBean(beanDefinitionName, annotationType) != null){
+                        Object bean = getBean(beanDefinitionName);
+                        if (bean != null){
+                            ans.put(beanDefinitionName, bean);
+                        }
+                    }
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return ans;
     }
 
     @Override
-    public <A extends Annotation> A findAnnotationOnBean(String beanName, Class<A> annotationType) throws Exception {
-        if (containsBeanDefinition(beanName)){
-            BeanDefinition beanDefinition = getBeanDefinition(beanName);
+    public <A extends Annotation> A findAnnotationOnBean(String beanDefName, Class<A> annotationType) throws Exception {
+        if (containsBeanDefinition(beanDefName)){
+            BeanDefinition beanDefinition = getBeanDefinition(beanDefName);
             Class<?> beanClass = beanDefinition.getBeanClass();
             Annotation[] annotations = beanClass.getAnnotations();
             for (Annotation annotation : annotations) {
-                if (annotation.annotationType() == annotationType){
+                Class<?> annotationClazz = AnnotationUtils.getAnnotationJdkProxyTarget(annotation);
+                if (annotationClazz.equals(annotationType)){
                     return (A) annotation;
                 }
             }

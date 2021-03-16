@@ -45,10 +45,15 @@ public class ViewResolver {
 
     /** 内置的默认view对象 */
     private static final View UNRESOLVED_VIEW = new View() {
+
         @Override
         public void render(ModelAndView mav, HttpServletRequest req, HttpServletResponse resp){}
+
         @Override
-        public String getContentType() {return null;}
+        public String getContentType() {
+            return null;
+        }
+
     };
 
 

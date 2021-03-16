@@ -1,8 +1,8 @@
 package com.yankaizhang.spring.beans.factory;
 
 /**
- * 工厂bean对象的接口，目前暂时没用上
- * TODO: 仿照Spring实现完整内容
+ * 工厂bean对象的接口<br/>
+ * 实现这个接口的bean对象会被当做工厂对象使用，而不能作为单纯的bean对象而使用了
  * @author dzzhyk
  * @since 2020-11-28 13:52:41
  */
