@@ -189,7 +189,7 @@ public class ClassUtils {
      * 分离字符串
      * com.yankaizhang.springframework.test.service.impl.*.*(*)
      */
-    public static String[] dividePackageClassMethodParamsString(String ss) throws Exception{
+    public static String[] dividePackageClassMethodParamsString(String ss) throws RuntimeException {
         String[] strings = new String[4];
         String temp = ss.substring(0, ss.lastIndexOf("("));
         String[] split = temp.split("\\.");
@@ -211,7 +211,7 @@ public class ClassUtils {
             strings[1] = split[split.length-2]; // className
             strings[2] = split[split.length-1]; // methodName
         }else{
-            throw new Exception("切点表达式部分\""+ ss +"\"有误 ==> 不完整的包名/类名/方法名信息");
+            throw new RuntimeException("切点表达式部分\""+ ss +"\"有误 ==> 不完整的包名/类名/方法名信息");
         }
         strings[3] = ss.substring(ss.lastIndexOf("(")+1, ss.lastIndexOf(")"));
         return strings;

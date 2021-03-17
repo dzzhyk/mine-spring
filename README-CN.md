@@ -31,7 +31,7 @@ mine-spring是本人学习spring框架原理和学习spring源码的练习产物
 <dependency>
     <groupId>com.yankaizhang</groupId>
     <artifactId>mine-spring</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 </dependency>
 ```
 

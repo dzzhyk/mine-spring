@@ -5,6 +5,7 @@ import com.yankaizhang.spring.aop.holder.PointCutConfig;
 import com.yankaizhang.spring.aop.aspect.AfterReturningAdvice;
 import com.yankaizhang.spring.aop.aspect.AfterThrowingAdvice;
 import com.yankaizhang.spring.aop.aspect.MethodBeforeAdvice;
+import com.yankaizhang.spring.util.BeanUtils;
 import com.yankaizhang.spring.util.ClassUtils;
 
 import java.lang.reflect.Method;
@@ -44,9 +45,6 @@ public class AdvisedSupport implements Cloneable {
 
     public void setTargetClass(Class<?> targetClass) throws Exception {
         this.targetClass = targetClass;
-        if (null != targetClass) {
-            parseMethod();    // 设置了新的目标代理类之后需要执行解析切入方法操作
-        }
     }
 
     public Object getTarget() {
@@ -100,7 +98,7 @@ public class AdvisedSupport implements Cloneable {
     /**
      * 解析切点表达式方法
      */
-    private void parseMethod() throws Exception{
+    public void parseMethod() {
 
         try {
             Class<?> aspectClazz = Class.forName(aopConfig.getAspectClass());

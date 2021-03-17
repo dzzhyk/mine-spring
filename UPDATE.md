@@ -2,6 +2,13 @@
 
 ---
 
+- 2021年03月17日11:28:14
+
+1. 修复一个bug，该Bug导致属性注入时会强制扫描所有成员并且创建包装类AopConfig
+2. 解决AutoProxyCreator的日志输出问题
+
+---
+
 - 2021年3月16日 17:23:02
 
 1. 通过bean后置处理器，现在mine-spring拥有了切面编程AOP的能力，使用`@EnableAspectJAutoProxy`注解开启这项功能，同时支持Jdk Proxy与CGLib

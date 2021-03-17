@@ -42,10 +42,9 @@ public class AutoProxyCreator implements InstantiationAwareBeanPostProcessor {
     @Override
     public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws RuntimeException {
         // 在实例化所有bean对象之前收集可能的注册切面类信息
-        System.out.println("ASPECTJ : 收集到 => " + beanName);
         if (beanClass.isAnnotationPresent(Aspect.class)){
             postProcessAdvice(beanClass);
-            System.out.println("ASPECTJ :    已注册切面 => " + beanName);
+            log.debug("已注册切面 : {} ", beanName);
         }
         return null;
     }
@@ -83,6 +82,8 @@ public class AutoProxyCreator implements InstantiationAwareBeanPostProcessor {
             }
 
             if (myConfig.pointCutMatch()) {
+                // 如果切点符合，首先解析被代理对象的方法
+                myConfig.parseMethod();
                 Object proxy = createProxy(myConfig).getProxy();
                 bean = proxy;
                 log.debug("为" + AopUtils.getAopTarget(proxy).getSimpleName() + "创建代理对象 : " + proxy.getClass());

@@ -30,7 +30,7 @@ create an empty web project, then add `mine-spring` maven dependency:
 <dependency>
     <groupId>com.yankaizhang</groupId>
     <artifactId>mine-spring</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 </dependency>
 ```
 

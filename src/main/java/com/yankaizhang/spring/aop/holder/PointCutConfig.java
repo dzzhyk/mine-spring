@@ -87,7 +87,7 @@ public class PointCutConfig {
      * public * com.yankaizhang.springframework.test.service.impl.*.*(*)
      * 注意：切点表达式暂时不支持 声明异常类型匹配
      */
-    public boolean matches(String pointCut) throws Exception {
+    public boolean matches(String pointCut) {
 
         // 排除异常类型声明
         String temp = pointCut;

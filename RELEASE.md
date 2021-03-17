@@ -1,5 +1,12 @@
 # Release
 
+--- 
+
+- 0.0.4
+
+1. 解决了AutoProxyCreator的日志输出问题
+2. 一些Bug修复
+
 ---
 
 - 0.0.3
