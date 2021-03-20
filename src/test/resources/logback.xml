@@ -9,7 +9,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.yankaizhang.spring" level="INFO" />
+    <logger name="com.yankaizhang.spring" level="DEBUG" />
 
     <root level="INFO">
         <appender-ref ref="console" />

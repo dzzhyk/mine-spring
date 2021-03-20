@@ -163,9 +163,4 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
         beanDef.setDestroyMethodName(destroyMethod);
         BeanDefinitionRegistryUtils.registerBeanDefinition(registry, beanName, beanDef);
     }
-
-    @Override
-    public void postProcessBeanFactory(BeanFactory beanFactory) throws RuntimeException {
-
-    }
 }

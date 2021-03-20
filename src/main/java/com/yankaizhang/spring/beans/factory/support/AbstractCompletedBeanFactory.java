@@ -67,6 +67,7 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
         // 2. 需要代理的情况已经解决了，现在正式创建bean对象
         Object beanInstance = null;
         try {
+
             beanInstance = doCreateBean(beanName, beanDef, args);
             log.debug("成功完成bean对象的创建和初始化 : {}", beanName);
         } catch (Exception e) {
@@ -132,7 +133,7 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
             beanDef.setBeanClass(clazz);
         }
 
-        // 实例化bean对象
+        // 实例化bean对象，目前使用反射，这里相当于new
         Object bean = createBeanInstance(beanName, beanDef, args);
         Class<?> beanType = bean.getClass();
 
@@ -149,15 +150,53 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
             }
         }
 
+        // 将半实例化后的bean对象加入缓存，从而解决循环依赖问题
+        // mine-spring默认允许setter注入时存在循环依赖
+        boolean earlySingletonExposure = (beanDef.isSingleton() && isSingletonCurrentlyInCreation(beanName));
+        if (earlySingletonExposure) {
+            addSingletonFactory(beanName, () -> applyEarlyBeanReference(bean, beanName));
+        }
+
+        Object exposedObject = bean;
+
         // 注入bean对象的属性
         log.debug("开始注入bean对象的属性 : {}", beanName);
         populateBean(beanName, beanDef, bean);
 
         // 初始化对象
         log.debug("开始初始化bean对象 : {}", beanName);
-        bean = initializeBean(bean, beanName, beanDef);
+        exposedObject = initializeBean(exposedObject, beanName, beanDef);
 
-        return bean;
+        // 解决循环依赖中的aop问题，
+        if (earlySingletonExposure){
+            Object earlySingletonReference = getSingleton(beanName, false);
+            if (earlySingletonReference != null) {
+                //如果二级缓存获取到了，则说明提前执行了aop
+                if (exposedObject == bean) {
+                    //exposedObject就是要放入单例池中的对象，如果提前执行了aop，则将exposedObject对象替换为aop以后的对象
+                    exposedObject = earlySingletonReference;
+                }
+            }
+        }
+
+        // 最后返回初始化好的bean对象，或者是aop处理后的代理对象
+        return exposedObject;
+    }
+
+    /**
+     * 执行所有{@link InstantiationAwareBeanPostProcessor}的getEarlyBeanReference方法<br/>
+     * 从而处理早期的半实例化bean对象
+     */
+    private Object applyEarlyBeanReference(Object bean, String beanName){
+        Object ans = bean;
+        if(hasInstantiationAwareBeanPostProcessors()){
+            for (BeanPostProcessor bp : getBeanPostProcessors()) {
+                if(bp instanceof InstantiationAwareBeanPostProcessor){
+                    ans = ((InstantiationAwareBeanPostProcessor) bp).getEarlyBeanReference(bean, beanName);
+                }
+            }
+        }
+        return ans;
     }
 
     /**

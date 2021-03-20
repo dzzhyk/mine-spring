@@ -1,6 +1,7 @@
 package com.yankaizhang.spring.context.support;
 
 import com.yankaizhang.spring.aop.annotation.Aspect;
+import com.yankaizhang.spring.aop.support.AutoProxyCreator;
 import com.yankaizhang.spring.beans.BeanDefinition;
 import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
 import com.yankaizhang.spring.beans.factory.BeanFactory;
@@ -99,7 +100,14 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     private void finishBeanFactoryInitialization(DefaultBeanFactory beanFactory) {
 
         // 首先初始化可能的切面类
+        // TODO: 在这里容器保证首先初始化所有切面类
         beanFactory.getBeansWithAnnotation(Aspect.class);
+
+        // 如果可能，执行解析所有切面类的操作
+        if (beanFactory.containsBean("autoProxyCreator")){
+            AutoProxyCreator proxyCreator = beanFactory.getBean("autoProxyCreator", AutoProxyCreator.class);
+            proxyCreator.parseAspect();
+        }
 
         // 初始化其他单例
         beanFactory.preInstantiateSingletons();

@@ -4,6 +4,10 @@ English | [简体中文](./README-CN.md)
 
 A Simple Spring-Framework implementation for learning.
 
+- api document for `mine-spring`: [mine-spring-api-document](http://mine-spring-api.yankaizhang.com/)
+
+- Example project for mine-spring: [short-link-server](https://github.com/dzzhyk/short-link-server)
+
 ## Background
 
 mine-spring is a practice product of learning Spring-Framework source code.  

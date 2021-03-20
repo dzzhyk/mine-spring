@@ -10,6 +10,17 @@ import com.yankaizhang.spring.beans.PropertyValues;
  */
 public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 
+
+    /**
+     * 这个方法允许处理早期暴露的半成品bean实例，目前的用途是解决循环依赖问题
+     * @param bean 半成品bean实例对象
+     * @param beanName bean名称
+     * @return 处理后的bean对象
+     */
+    default Object getEarlyBeanReference(Object bean, String beanName) {
+        return bean;
+    }
+
     /**
      * 在bean实例化之前执行的方法
      * 我们可以返回任何类型的值。
