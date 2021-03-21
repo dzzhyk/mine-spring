@@ -344,7 +344,7 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
     @Override
     public void applyAutowiredBeanProperties(Object bean) throws Exception {
 
-        // 目前只能给组件类中显式标注了@Autowired注解的属性执行自动属性注入
+        // 只能给组件类中显式标注了@Autowired注解的属性执行自动属性注入
         Class<?> clazz = bean.getClass();
         if (!(clazz.isAnnotationPresent(Controller.class) ||
                 clazz.isAnnotationPresent(Service.class) ||

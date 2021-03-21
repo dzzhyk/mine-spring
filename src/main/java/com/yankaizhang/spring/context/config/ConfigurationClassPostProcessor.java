@@ -16,6 +16,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import static com.yankaizhang.spring.beans.BeanDefinition.SCOPE_SINGLETON;
+
 /**
  * 配置类解析器，实现了{@link BeanDefinitionRegistryPostProcessor}接口，在容器创建之后使用
  * @author dzzhyk
@@ -146,6 +148,12 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
         String initMethod = beanAnno.initMethod();
         String destroyMethod = beanAnno.destroyMethod();
         boolean lazyInit = (method.getAnnotation(Lazy.class)!=null);
+        // 解析bean作用域，默认为单例
+        String scopeName = SCOPE_SINGLETON;
+        Scope scope = method.getAnnotation(Scope.class);
+        if(scope != null){
+            scopeName = scope.value();
+        }
         String factoryMethodName = method.getName();
 
         if (StringUtils.isEmpty(beanName)){
@@ -161,6 +169,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
         beanDef.setLazyInit(lazyInit);
         beanDef.setInitMethodName(initMethod);
         beanDef.setDestroyMethodName(destroyMethod);
+        beanDef.setScope(scopeName);
         BeanDefinitionRegistryUtils.registerBeanDefinition(registry, beanName, beanDef);
     }
 }

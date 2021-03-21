@@ -7,7 +7,7 @@ import java.lang.annotation.*;
  * @author dzzhyk
  * @since 2020-11-28 13:49:03
  */
-@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Lazy {

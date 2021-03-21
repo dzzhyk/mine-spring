@@ -10,6 +10,7 @@ import com.yankaizhang.spring.beans.factory.config.DestructionAwareBeanPostProce
 import com.yankaizhang.spring.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import com.yankaizhang.spring.beans.factory.generic.GenericBeanDefinition;
 import com.yankaizhang.spring.beans.holder.BeanWrapper;
+import com.yankaizhang.spring.core.LinkedMultiValueMap;
 import com.yankaizhang.spring.util.Assert;
 import com.yankaizhang.spring.util.StringUtils;
 import org.slf4j.Logger;
@@ -47,9 +48,12 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
     /** 半实例化的bean对象，用于解决循环依赖 */
     private final Map<String, Object> earlySingletonObjects = new ConcurrentHashMap<>(16);
 
-    /** 正在创建的bean对象名称集合 */
+    /** 正在创建的单例对象名称集合 */
     private final Set<String> singletonsCurrentlyInCreation =
             Collections.newSetFromMap(new ConcurrentHashMap<>(16));
+
+    /** 正在创建的原型对象名称集合 */
+    private final ThreadLocal<Object> prototypesCurrentlyInCreation = new ThreadLocal<>();
 
     /** bean处理器，目前所有的处理器全部放在一起了 */
     private final List<BeanPostProcessor> beanPostProcessors = new CopyOnWriteArrayList<>();
@@ -102,6 +106,11 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
             }
             else {
 
+                // 如果是原型对象，并且是循环依赖的，直接抛出异常，因为mine-spring不处理原型循环依赖
+                if (isPrototypeCurrentlyInCreation(beanName)){
+                    throw new RuntimeException("原型对象可能存在循环引用，请检查代码 => " + beanName);
+                }
+
                 // 单例没找到，检查是否有父类bean工厂
                 BeanFactory parentBeanFactory = getParentBeanFactory();
                 // 如果有父类并且本容器中没有bean定义
@@ -147,12 +156,18 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
                     bean = getObjectForBeanInstance(wrappedBean, beanName);
 
                 }else if (beanDefinition.isPrototype()){
-
-                    Object wrappedBean = createBean(beanName, beanDefinition, args);
-                    bean = getObjectForBeanInstance(wrappedBean, beanName);
+                    Object prototypeInstance = null;
+                    try {
+                        beforePrototypeCreation(beanName);
+                        prototypeInstance = createBean(beanName, beanDefinition, args);
+                    }
+                    finally {
+                        afterPrototypeCreation(beanName);
+                    }
+                    bean = getObjectForBeanInstance(prototypeInstance, beanName);
 
                 }else{
-                    throw new RuntimeException("目前只支持创建单例、多例对象 => " + beanName);
+                    throw new RuntimeException("目前只支持创建单例、原型对象 => " + beanName);
                 }
 
             }
@@ -342,7 +357,7 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
     }
 
     @Override
-    public void destroyBean(String beanName, Object wrappedBean) {
+    public void destroyBean(String beanName, Object beanInstance) {
         BeanDefinition beanDefinition = getBeanDefinition(beanName);
         String destroyMethodName = beanDefinition.getDestroyMethodName();
         if(StringUtils.isEmpty(destroyMethodName)){
@@ -357,9 +372,9 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
                 }
             }
 
-            Class<?> beanInstanceClass = ((BeanWrapper) wrappedBean).getWrappedClass();
+            Class<?> beanInstanceClass = beanInstance.getClass();
             Method destroyMethod = beanInstanceClass.getMethod(destroyMethodName);
-            destroyMethod.invoke(((BeanWrapper) wrappedBean).getWrappedInstance());
+            destroyMethod.invoke(beanInstance);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -411,13 +426,18 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
         }
     }
 
+    /**
+     * 在单例对象创建之前，标记单例对象正在处于创建状态
+     */
     protected void beforeSingletonCreation(String beanName) throws RuntimeException {
         if (!this.singletonsCurrentlyInCreation.add(beanName)) {
             throw new RuntimeException("单例Bean对象 " + beanName + " 当前正在被创建");
         }
     }
 
-
+    /**
+     * 在单例对象创建之后，将单例对象从正在创建状态删除
+     */
     protected void afterSingletonCreation(String beanName) throws RuntimeException {
         if (!this.singletonsCurrentlyInCreation.remove(beanName)) {
             throw new RuntimeException("单例Bean对象 " + beanName + " 当前没有被创建");
@@ -426,5 +446,53 @@ public abstract class AbstractConfigurableBeanFactory implements ConfigurableBea
 
     protected boolean isSingletonCurrentlyInCreation(String beanName){
         return this.singletonsCurrentlyInCreation.contains(beanName);
+    }
+
+    /**
+     * 在原型对象创建之前，标记该原型对象正在被创建<br/>
+     * 因为每个线程从容器中获取原型对象的时候都需要分别记录当前线程的创建情况<br/>
+     * 因此这里保存当前线程的原型创建情况的容器是{@link ThreadLocal}线程本地变量<br/>
+     * 使用{@link ThreadLocal}，相当于在每个线程本地，都记录了各自的原型对象创建情况
+     */
+    protected void beforePrototypeCreation(String beanName) {
+        Object curVal = this.prototypesCurrentlyInCreation.get();
+        if (curVal == null) {
+            this.prototypesCurrentlyInCreation.set(beanName);
+        }
+        else if (curVal instanceof String) {
+            // 如果当前线程创建了超过两种原型对象，就转换为set记录所有beanName
+            Set<String> beanNameSet = new HashSet<>(2);
+            beanNameSet.add((String) curVal);
+            beanNameSet.add(beanName);
+            this.prototypesCurrentlyInCreation.set(beanNameSet);
+        }
+        else {
+            Set<String> beanNameSet = (Set<String>) curVal;
+            beanNameSet.add(beanName);
+        }
+    }
+
+    /**
+     * 在创建原型对象之后，标记该原型对象创建完成，从记录中移除
+     */
+    protected void afterPrototypeCreation(String beanName) {
+        Object curVal = this.prototypesCurrentlyInCreation.get();
+        if (curVal instanceof String) {
+            this.prototypesCurrentlyInCreation.remove();
+        }
+        else if (curVal instanceof Set) {
+            Set<String> beanNameSet = (Set<String>) curVal;
+            beanNameSet.remove(beanName);
+            if (beanNameSet.isEmpty()) {
+                // 如果全部移除了，一定要显式地调用ThreadLocal的remove方法清除线程本地变量，否则可能会内存泄漏
+                this.prototypesCurrentlyInCreation.remove();
+            }
+        }
+    }
+
+    protected boolean isPrototypeCurrentlyInCreation(String beanName) {
+        Object curVal = this.prototypesCurrentlyInCreation.get();
+        return (curVal != null &&
+                (curVal.equals(beanName) || (curVal instanceof Set && ((Set<?>) curVal).contains(beanName))));
     }
 }
