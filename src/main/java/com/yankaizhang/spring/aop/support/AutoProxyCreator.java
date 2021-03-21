@@ -14,6 +14,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -28,6 +30,9 @@ public class AutoProxyCreator implements InstantiationAwareBeanPostProcessor {
     private AopAnnotationReader reader = new AopAnnotationReader();
     private List<AdvisedSupport> advisedSupports = new ArrayList<>();
 
+    /** 记录早期aop处理的对象，后面就不用再次处理了 */
+    private Map<String, Object> earlyProcessedObjects = new ConcurrentHashMap<>(16);
+
     /**
      * 所有切面类被扫描到之后，执行这个方法
      */
@@ -38,6 +43,20 @@ public class AutoProxyCreator implements InstantiationAwareBeanPostProcessor {
             advisedSupports.sort(new AdviceSupportComparator());
         }
     }
+
+
+    /**
+     * aop处理需要早期暴露的变成品bean实例
+     * @param bean 半成品bean实例对象
+     * @param beanName bean名称
+     * @return aop代理后的对象
+     */
+    @Override
+    public Object getEarlyBeanReference(Object bean, String beanName) {
+        earlyProcessedObjects.put(beanName, bean);
+        return postProcessAfterInitialization(bean, beanName);
+    }
+
 
     @Override
     public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws RuntimeException {
@@ -57,9 +76,12 @@ public class AutoProxyCreator implements InstantiationAwareBeanPostProcessor {
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws RuntimeException {
 
-        parseAspect();
-
         if (advisedSupports == null || advisedSupports.size() <= 0 || bean == null){
+            return bean;
+        }
+
+        // 如果是早期aop已经处理过了，就不再次处理了
+        if (this.earlyProcessedObjects.remove(beanName) == bean){
             return bean;
         }
 
@@ -86,7 +108,7 @@ public class AutoProxyCreator implements InstantiationAwareBeanPostProcessor {
                 myConfig.parseMethod();
                 Object proxy = createProxy(myConfig).getProxy();
                 bean = proxy;
-                log.debug("为" + AopUtils.getAopTarget(proxy).getSimpleName() + "创建代理对象 : " + proxy.getClass());
+                log.debug("创建代理对象 : [{}] => [{}]", proxy.getClass(), AopUtils.getAopTarget(proxy).getSimpleName());
             }
 
         }

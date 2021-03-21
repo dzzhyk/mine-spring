@@ -4,6 +4,10 @@ English | [简体中文](./README-CN.md)
 
 A Simple Spring-Framework implementation for learning.
 
+- api document for `mine-spring`: [mine-spring-api-document](http://mine-spring-api.yankaizhang.com/)
+
+- Example project for `mine-spring`: [short-link-server](https://github.com/dzzhyk/short-link-server)
+
 ## Background
 
 mine-spring is a practice product of learning Spring-Framework source code.  
@@ -30,7 +34,7 @@ create an empty web project, then add `mine-spring` maven dependency:
 <dependency>
     <groupId>com.yankaizhang</groupId>
     <artifactId>mine-spring</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
 </dependency>
 ```
 
@@ -52,7 +56,7 @@ public class TestController {
 }
 ```
 
-For more examples, check module `mine-spring-example`
+For more examples, check module `mine-spring-example` and example project [short-link-server](https://github.com/dzzhyk/short-link-server)
 
 ## Related Efforts
 
@@ -80,6 +84,7 @@ For more examples, check module `mine-spring-example`
 
 - [x] ~~The Controller's method cannot be accessed by the AOP aspect.~~
 - [x] ~~Repeated registration when registering HandlerMapping.~~
+- [x] ~~Circular Reference for singleton and prototype beans~~
 
 ## Maintainer
 
@@ -113,3 +118,30 @@ If you like this repository, why not star 🌟 or fork ✈️ it ? I'm working h
 ## License
 
 - [MIT](./LICENSE) © dzzhyk
+
+
+## Inheritance relationship
+
+- BeanDefinition
+
+<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321135946207.png" alt="image-20210321135946207" style="zoom:150%;" />
+
+
+
+- BeanFactory
+
+<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321140051848.png" alt="image-20210321140051848" style="zoom:150%;" />
+
+
+
+- ApplicationContext
+
+<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321140144404.png" alt="image-20210321140144404" style="zoom:150%;" />
+
+
+
+- AopProxy
+
+<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321140304290.png" alt="image-20210321140304290" style="zoom:50%;" />
+
+<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321140322045.png" alt="image-20210321140322045" style="zoom:50%;" />

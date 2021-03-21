@@ -39,7 +39,6 @@ public interface AutowiredBeanFactory extends BeanFactory {
 
     /**
      * 对某个尚未初始化的bean实例，执行前置处理
-     * @return {@link BeanWrapper}包装类对象
      */
     Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) throws RuntimeException;
 

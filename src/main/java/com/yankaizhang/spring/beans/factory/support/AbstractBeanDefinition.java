@@ -23,7 +23,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     /**
      * 默认是单例
      */
-    public static final String SCOPE_DEFAULT = "";
+    public static final String SCOPE_DEFAULT = SCOPE_SINGLETON;
 
     /**
      * 自动装配模式
@@ -161,7 +161,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     @Override
     public boolean isSingleton() {
-        return SCOPE_SINGLETON.equals(this.scope) || SCOPE_DEFAULT.equals(this.scope);
+        return SCOPE_SINGLETON.equals(this.scope);
     }
 
     @Override

@@ -2,10 +2,7 @@ package com.yankaizhang.spring.context.config;
 
 import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
 import com.yankaizhang.spring.beans.factory.generic.GenericBeanDefinition;
-import com.yankaizhang.spring.context.annotation.Component;
-import com.yankaizhang.spring.context.annotation.Configuration;
-import com.yankaizhang.spring.context.annotation.Controller;
-import com.yankaizhang.spring.context.annotation.Service;
+import com.yankaizhang.spring.context.annotation.*;
 import com.yankaizhang.spring.context.util.BeanDefinitionRegistryUtils;
 import com.yankaizhang.spring.core.type.AnnotationMetadata;
 import com.yankaizhang.spring.core.type.StandardAnnotationMetadata;
@@ -14,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
@@ -116,6 +114,12 @@ public class ClassPathBeanDefinitionScanner {
                 GenericBeanDefinition beanDef = new GenericBeanDefinition(clazz);
 
                 String className = beanDef.getBeanClassName();
+                boolean lazyAnnotated = registryBeanClass.isAnnotated(Lazy.class);
+                beanDef.setLazyInit(lazyAnnotated);
+                Scope scope = (Scope) registryBeanClass.getAnnotation(Scope.class);
+                if(scope != null){
+                    beanDef.setScope(scope.value());
+                }
 
                 // 扫描到的类的默认的名称是 开头小写开头小写的类名
                 String beanName = StringUtils.toLowerCase(className.substring(className.lastIndexOf(".")+1));

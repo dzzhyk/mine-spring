@@ -1,6 +1,7 @@
 package com.yankaizhang.spring.beans.factory.config;
 
 import com.yankaizhang.spring.beans.BeanDefinitionRegistry;
+import com.yankaizhang.spring.beans.factory.BeanFactory;
 
 /**
  * {@link BeanFactoryPostProcessor}的进一步实现接口，优先级高于BeanFactoryPostProcessor<br/>
@@ -18,4 +19,8 @@ public interface BeanDefinitionRegistryPostProcessor extends BeanFactoryPostProc
      */
     void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws Exception;
 
+    @Override
+    default void postProcessBeanFactory(BeanFactory beanFactory) throws RuntimeException {
+
+    }
 }

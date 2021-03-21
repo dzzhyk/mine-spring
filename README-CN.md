@@ -4,6 +4,10 @@
 
 一个用于学习的简洁Spring框架实现
 
+- 在线`mine-spring` api文档 : [mine-spring-api-document](http://mine-spring-api.yankaizhang.com/)
+
+- 使用`mine-spring`搭建的web作品：[短链接生成服务器](https://github.com/dzzhyk/short-link-server)
+
 ## 背景
 
 mine-spring是本人学习spring框架原理和学习spring源码的练习产物，免费分享给大家！
@@ -31,7 +35,7 @@ mine-spring是本人学习spring框架原理和学习spring源码的练习产物
 <dependency>
     <groupId>com.yankaizhang</groupId>
     <artifactId>mine-spring</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
 </dependency>
 ```
 
@@ -54,7 +58,7 @@ public class TestController {
     }
 }
 ```
-更多详细的示例直接查看 `mine-spring-example` 模块
+更多详细的示例直接查看 `mine-spring-example` 部分，或者查看`mine-spring`实例项目：[短链接生成服务器](https://github.com/dzzhyk/short-link-server)
 
 ## 相关项目
 
@@ -81,6 +85,7 @@ public class TestController {
 
 - [x] ~~Controller方法不能被AOP切面切入问题~~
 - [x] ~~注解HandlerMapping的时候重复注册的问题~~
+- [x] ~~bean循环依赖问题~~
 
 ## 持有者
 
@@ -112,3 +117,27 @@ public class TestController {
 ## 开源协议
 
 - [MIT](./LICENSE) © dzzhyk
+
+
+## 类继承关系
+
+- BeanDefinition
+
+<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321135946207.png" alt="image-20210321135946207" style="zoom:50%;" />
+
+
+- BeanFactory
+
+<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321140051848.png" alt="image-20210321140051848" style="zoom:50%;" />
+
+
+- ApplicationContext
+
+<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321140144404.png" alt="image-20210321140144404" style="zoom:50%;" />
+
+
+- AopProxy
+
+<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321140304290.png" alt="image-20210321140304290" style="zoom:50%;" />
+
+<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321140322045.png" alt="image-20210321140322045" style="zoom:50%;" />

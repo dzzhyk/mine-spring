@@ -14,4 +14,13 @@ public interface FactoryBean<T> {
      * @throws Exception 创建过程异常
      */
     T getObject() throws Exception;
+
+
+    /**
+     * 工厂创建对象是否为单例
+     * @return 默认为单例
+     */
+    default boolean isSingleton(){
+        return true;
+    }
 }
