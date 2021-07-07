@@ -46,6 +46,7 @@ public interface AnnotatedTypeMetadata {
 	/**
 	 * 判断当前的数据上有没有某个注解，经常用到！
 	 * @param annotationClass 注解类class
+	 * @return 是否存在某个注解
 	 */
 	default boolean isAnnotated(Class<? extends Annotation> annotationClass) {
 		return (null != getAnnotation(annotationClass));

@@ -3,6 +3,8 @@ package com.yankaizhang.spring.core.type;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * 方法元数据的一个标准实现
@@ -64,5 +66,25 @@ public class StandMethodMetadata implements MethodMetadata {
     @Override
     public Annotation[] getAnnotations() {
         return this.annotations;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        StandMethodMetadata that = (StandMethodMetadata) o;
+        return Objects.equals(introspectedMethod, that.introspectedMethod) &&
+                Arrays.equals(annotations, that.annotations);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(introspectedMethod);
+        result = 31 * result + Arrays.hashCode(annotations);
+        return result;
     }
 }

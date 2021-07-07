@@ -12,7 +12,7 @@ import java.util.Comparator;
  */
 public class AdviceSupportComparator implements Comparator<AdvisedSupport> {
 
-    public static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AdviceSupportComparator.class);
+    private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AdviceSupportComparator.class);
 
     @Override
     public int compare(AdvisedSupport o1, AdvisedSupport o2) {

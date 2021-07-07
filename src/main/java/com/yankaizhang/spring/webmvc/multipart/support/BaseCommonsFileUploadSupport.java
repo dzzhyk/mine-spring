@@ -1,4 +1,4 @@
-package com.yankaizhang.spring.webmvc.multipart.commons;
+package com.yankaizhang.spring.webmvc.multipart.support;
 
 import com.yankaizhang.spring.core.LinkedMultiValueMap;
 import com.yankaizhang.spring.core.MultiValueMap;
@@ -23,7 +23,7 @@ import java.util.Map;
  * @author dzzhyk
  * @since 2020-11-28 13:41:22
  */
-public abstract class CommonsFileUploadSupport {
+public abstract class BaseCommonsFileUploadSupport {
 
     private static final String DEFAULT_CHARACTER_ENCODING = "utf-8";
 
@@ -42,7 +42,7 @@ public abstract class CommonsFileUploadSupport {
     /**
      * 实例化工厂
      */
-    public CommonsFileUploadSupport() {
+    public BaseCommonsFileUploadSupport() {
         this.fileItemFactory = newFileItemFactory();
         this.fileUpload = newFileUpload(getFileItemFactory());
     }

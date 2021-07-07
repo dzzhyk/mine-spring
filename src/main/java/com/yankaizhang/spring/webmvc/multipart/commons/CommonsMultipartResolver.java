@@ -4,11 +4,10 @@ import com.yankaizhang.spring.webmvc.context.ServletContextAware;
 import com.yankaizhang.spring.webmvc.multipart.MultipartRequest;
 import com.yankaizhang.spring.webmvc.multipart.MultipartResolver;
 import com.yankaizhang.spring.webmvc.multipart.support.AbstractMultipartRequest;
+import com.yankaizhang.spring.webmvc.multipart.support.BaseCommonsFileUploadSupport;
 import com.yankaizhang.spring.webmvc.multipart.support.DefaultMultipartRequest;
 import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,7 @@ import java.util.List;
  * @since 2020-11-28 13:41:33
  */
 
-public class CommonsMultipartResolver extends CommonsFileUploadSupport
+public class CommonsMultipartResolver extends BaseCommonsFileUploadSupport
 		implements MultipartResolver, ServletContextAware {
 
 	/**

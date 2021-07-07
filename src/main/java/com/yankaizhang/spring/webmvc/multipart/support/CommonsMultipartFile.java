@@ -1,9 +1,10 @@
-package com.yankaizhang.spring.webmvc.multipart.commons;
+package com.yankaizhang.spring.webmvc.multipart.support;
 
 import com.yankaizhang.spring.webmvc.multipart.MultipartFile;
-import org.apache.commons.fileupload.DefaultFileItem;
+//import org.apache.commons.fileupload.DefaultFileItem;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,8 +87,8 @@ public class CommonsMultipartFile implements MultipartFile {
 			this.fileItem.write(dest);
 			if (logger.isDebugEnabled()) {
 				String action = "transferred";
-				if (this.fileItem instanceof DefaultFileItem) {
-					action = ((DefaultFileItem) this.fileItem).getStoreLocation().exists() ? "copied" : "moved";
+				if (this.fileItem instanceof DiskFileItem) {
+					action = ((DiskFileItem) this.fileItem).getStoreLocation().exists() ? "copied" : "moved";
 				}
 				logger.debug("Multipart file [" + getName() + "] with original file name [" +
 										 getOriginalFilename() + "], stored " + getStorageDescription() + ": " +
@@ -110,8 +111,8 @@ public class CommonsMultipartFile implements MultipartFile {
 		if (this.fileItem.isInMemory()) {
 			return "in memory";
 		}
-		else if (this.fileItem instanceof DefaultFileItem) {
-			return "at [" + ((DefaultFileItem) this.fileItem).getStoreLocation().getAbsolutePath() + "]";
+		else if (this.fileItem instanceof DiskFileItem) {
+			return "at [" + ((DiskFileItem) this.fileItem).getStoreLocation().getAbsolutePath() + "]";
 		}
 		else {
 			return "at disk";
