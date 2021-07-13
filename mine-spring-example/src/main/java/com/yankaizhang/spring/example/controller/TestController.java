@@ -2,7 +2,7 @@ package com.yankaizhang.spring.example.controller;
 
 import com.yankaizhang.spring.beans.factory.annotation.Autowired;
 import com.yankaizhang.spring.context.annotation.Controller;
-import com.yankaizhang.spring.example.entity.Result;
+import com.yankaizhang.spring.example.entity.R;
 import com.yankaizhang.spring.example.entity.User;
 import com.yankaizhang.spring.example.service.impl.TestServiceImpl;
 import com.yankaizhang.spring.webmvc.annotation.RequestBody;
@@ -31,6 +31,7 @@ public class TestController {
     @Autowired
     private TestServiceImpl testService;
 
+    private static final String DIR = "E:\\mine-spring\\mine-spring-example\\upload\\";
 
     @RequestMapping({"/", "/index"})
     public String index(HttpServletRequest request){
@@ -64,9 +65,11 @@ public class TestController {
      */
     @RequestMapping("/upload")
     @ResponseBody
-    public Result upload(@RequestParam("file") MultipartFile file,
+    public R upload(@RequestParam("file") MultipartFile file,
                          @RequestParam("username") String name){
-        if (file == null) return Result.failed();
+        if (file == null) {
+            return R.error();
+        }
         String fileName = file.getName();
         log.info("文件名 : " + fileName);
         log.info("参数username : " + name);
@@ -74,9 +77,8 @@ public class TestController {
         //获取文件的真实文件名
         String trueName = file.getOriginalFilename();
         if (null == trueName){
-            return Result.failed();
+            return R.error();
         }
-        String DIR = "/Users/dzzhyk/Desktop/openSource/mine-spring/mine-spring-example/upload/";
         String saveName = UUID.randomUUID().toString();
 
         File dir = new File(DIR);
@@ -85,16 +87,16 @@ public class TestController {
         if (!dir.exists()){
             boolean mkdirs = dir.mkdirs();
             if (!mkdirs){
-                return Result.failed();
+                return R.error();
             }
         }
         try {
             file.transferTo(newFile);
         } catch (IOException e) {
             e.printStackTrace();
-            return Result.failed();
+            return R.error();
         }
-        return Result.success();
+        return R.ok();
     }
 
 
@@ -123,23 +125,23 @@ public class TestController {
      */
     @RequestMapping("/req")
     @ResponseBody
-    public Result body(@RequestBody List<User> users,
+    public R body(@RequestBody List<User> users,
                        @RequestParam("p") Integer page){
         System.out.println("获取了包装后的请求体 : " + users);
         System.out.println("同时获取了额外的请求参数 : " + page);
         System.out.println("请求参数Class : " + page.getClass());
-        return Result.success();
+        return R.ok();
     }
 
 
     @RequestMapping("/char")
     @ResponseBody
-    public Result body(@RequestParam("ch") Character ch){
+    public R body(@RequestParam("ch") Character ch){
 
         // "123" -> '1'
         System.out.println("获取了char请求参数 : " + ch);
         System.out.println("char请求参数Class : " + ch.getClass());
-        return Result.success();
+        return R.ok();
 
     }
 
