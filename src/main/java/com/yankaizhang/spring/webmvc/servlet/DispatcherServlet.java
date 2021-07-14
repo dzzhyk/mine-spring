@@ -1,8 +1,6 @@
 package com.yankaizhang.spring.webmvc.servlet;
 
 import com.yankaizhang.spring.aop.support.AopUtils;
-import com.yankaizhang.spring.beans.holder.BeanWrapper;
-import com.yankaizhang.spring.context.annotation.Bean;
 import com.yankaizhang.spring.context.impl.AnnotationConfigApplicationContext;
 import com.yankaizhang.spring.context.annotation.Controller;
 import com.yankaizhang.spring.web.ViewResolver;
@@ -19,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
