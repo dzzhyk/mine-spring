@@ -9,14 +9,17 @@
 <html>
 <head>
     <title>Title</title>
-    <link rel="stylesheet" href="css/my.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/my.css">
 </head>
 <body>
 
-    <h1>${msg}</h1>
+    <h1 class="my">${msg}</h1>
 
     <form method="post" action="/upload" enctype="multipart/form-data">
         <input type="file" name="file">
+        <label>username:
+            <input type="text" name="username">
+        </label>
         <button type="submit">提交</button>
     </form>
 

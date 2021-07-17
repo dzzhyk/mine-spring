@@ -257,7 +257,7 @@ public class DispatcherServlet extends FrameworkServlet {
             LocalDateTime now = LocalDateTime.now();
             buffer.append("<h1>500 Exception</h1>").append(now.format(dtf))
                     .append("<br>https://github.com/dzzhyk/mine-spring<br>")
-                    .append("<br>mine-spring 0.0.2<br>");
+                    .append("<br>mine-spring 0.0.5<br>");
             buffer.append("<h2>Error Message</h2>").append(e.getMessage()).append("<hr><h2>StackTrace</h2>");
             StackTraceElement[] stackTrace = e.getStackTrace();
             for (StackTraceElement stackTraceElement : stackTrace) {

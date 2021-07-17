@@ -4,4 +4,16 @@
 
 <web-app>
   <display-name>mine-spring Web Application</display-name>
+
+  <!-- config your static resource here. -->
+  <!--
+    If mine-spring does not find the corresponding map path,
+    it will be handed over to the 'default' servlet to try to process it as a static resource
+  -->
+
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.css</url-pattern>
+  </servlet-mapping>
+
 </web-app>
