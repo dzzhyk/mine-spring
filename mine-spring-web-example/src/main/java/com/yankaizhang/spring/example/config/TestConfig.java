@@ -29,11 +29,18 @@ public class TestConfig {
 
 
     /**
-     * 文件处理器这个后续会加参数配置
+     * multipart文件处理器
      */
     @Bean
     public CommonsMultipartResolver multipartResolver(){
-        return new CommonsMultipartResolver();
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        // 200MB
+        multipartResolver.setMaxUploadSize(1024 * 1024 * 200);
+        multipartResolver.setDefaultEncoding("utf-8");
+        multipartResolver.setMaxUploadSizePerFile(1024 * 1024 * 20);
+        multipartResolver.setMaxInMemorySize(1024 * 10);
+
+        return multipartResolver;
     }
 
 

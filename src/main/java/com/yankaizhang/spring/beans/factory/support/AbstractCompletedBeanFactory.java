@@ -289,7 +289,7 @@ public abstract class AbstractCompletedBeanFactory extends AbstractConfigurableB
                 Class<?> factoryClazz = factoryBeanInUse.getClass();
                 Method factoryMethod = null;
                 try {
-
+                    // 目前只能获取无参factoryMethod
                     factoryMethod = factoryClazz.getMethod(factoryMethodName);
                     instance = factoryMethod.invoke(factoryBeanInUse);
 

@@ -124,24 +124,24 @@ If you like this repository, why not star 🌟 or fork ✈️ it ? I'm working h
 
 - BeanDefinition
 
-<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321135946207.png" alt="image-20210321135946207" style="zoom:150%;" />
+<img src="https://gitee.com/dzzhyk/MarkdownPics/raw/master/image-20210321135946207.png" alt="image-20210321135946207" style="zoom:150%;" />
 
 
 
 - BeanFactory
 
-<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321140051848.png" alt="image-20210321140051848" style="zoom:150%;" />
+<img src="https://gitee.com/dzzhyk/MarkdownPics/raw/master/image-20210321140051848.png" alt="image-20210321140051848" style="zoom:150%;" />
 
 
 
 - ApplicationContext
 
-<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321140144404.png" alt="image-20210321140144404" style="zoom:150%;" />
+<img src="https://gitee.com/dzzhyk/MarkdownPics/raw/master/image-20210321140144404.png" alt="image-20210321140144404" style="zoom:150%;" />
 
 
 
 - AopProxy
 
-<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321140304290.png" alt="image-20210321140304290" style="zoom:50%;" />
+<img src="https://gitee.com/dzzhyk/MarkdownPics/raw/master/image-20210321140304290.png" alt="image-20210321140304290" style="zoom:50%;" />
 
-<img src="https://gitee.com/dzzhyk/markdown-pics/raw/master/image-20210321140322045.png" alt="image-20210321140322045" style="zoom:50%;" />
+<img src="https://gitee.com/dzzhyk/MarkdownPics/raw/master/image-20210321140322045.png" alt="image-20210321140322045" style="zoom:50%;" />
